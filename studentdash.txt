@@ -1,0 +1,27 @@
+### 🎓 Titre du projet :
+
+* **StudentDash** : Plateforme de suivi académique et d'alertes étudiantes.
+
+> **Description courte (Pitch) :**
+> Ce projet consiste à développer un espace web dédié aux étudiants pour simplifier et optimiser la gestion de leur scolarité. L'application combine un tableau de bord de suivi des résultats, un simulateur de notes pour valider ses semestres, et un assistant automatisé via Telegram pour les rappels d'emploi du temps et les nouvelles notes.
+
+---
+
+### 📋 Liste détaillée des fonctionnalités
+
+**1. Gestion et suivi académique (Interface Web)**
+
+* **Tableau de bord centralisé :** Visualisation rapide de l'ensemble des notes obtenues, de la moyenne générale et de l'état d'avancement du semestre.
+* **Simulateur de réussite (Calculateur d'UE) :** Outil interactif et prédictif. L'utilisateur peut calculer la note minimale requise dans une matière spécifique pour valider son Unité d'Enseignement (UE), le système calculant automatiquement le résultat en fonction du coefficient de chaque enseignement.
+
+**2. Système d'assistance automatisée (Bot Telegram)**
+
+* **Rappel d'agenda quotidien :** Envoi d'une notification push la veille au soir indiquant le premier cours du lendemain matin (incluant l'heure, la matière, et potentiellement la salle).
+* **Alerte de résultats :** Notification instantanée envoyée directement sur le téléphone de l'étudiant dès qu'une nouvelle note est saisie ou publiée sur la plateforme.
+
+---
+
+**💡 Conseils pour ton projet :**
+
+* **Pour le simulateur :** Assure-toi que la base de données gère bien les structures complexes (Semestre > UE > Matière > Examen/Contrôle Continu) avec leurs coefficients respectifs.
+* **Pour Telegram :** L'API Telegram est très bien documentée pour ce genre de bots. Tu devras lier l'ID Telegram de l'utilisateur à son compte sur ton site web pour que le bot sache à qui envoyer la notification.

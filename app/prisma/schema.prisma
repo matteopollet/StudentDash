@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Mines Alès CyberNotes credentials (AES-256 encrypted)
+  minesId          String?
+  minesPasswordEnc String?
+  lastSync         DateTime?
+  academicPath     String    @default("DL") // "DL" or "SR"
+
+  accounts Account[]
+  sessions Session[]
+  grades   Grade[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Academic structure
+model Grade {
+  id          String   @id @default(cuid())
+  userId      String
+  semester    String   // e.g. "S5", "S6"
+  ueCode      String   // e.g. "5.1 MATH"
+  ueName      String   // e.g. "Mathématiques Outils et Concepts"
+  subjectName String
+  coefficient Float
+  value       Float?   // null if not yet graded
+  gradeType   String?  // "Examen", "CC", etc.
+  scrapedAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, semester, ueCode, subjectName, gradeType])
+  @@index([userId, semester])
+}
+
+model CurriculumSubject {
+  id          String @id @default(cuid())
+  semester    String // e.g. "S5"
+  path        String @default("COMMON") // "COMMON", "DL", "SR"
+  ueCode      String // e.g. "5.1 MATH"
+  ueName      String // e.g. "Mathématiques Outils et Concepts"
+  subjectName String // e.g. "Mathématiques pour l'ingénieur"
+  coefficient Float
+
+  @@unique([semester, path, ueCode, subjectName])
+}

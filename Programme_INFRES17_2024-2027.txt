@@ -1,0 +1,349 @@
+================================================================
+PROGRAMME DES ENSEIGNEMENTS - SPÉCIALITÉ INFORMATIQUE ET RÉSEAUX
+Formation d'ingénieurs par apprentissage
+Promotion INFRES 17 (2024-2027)
+================================================================
+
+================================================================
+SEMESTRE 5 — Programme 2024-2025 (prévisionnel)
+================================================================
+
+[Module: 5.1 MATH] UE Mathématiques Outils et Concepts — ECTS: 3
+  - Mathématiques pour l'ingénieur                 | h: 36 | Coef: 3
+  - Structures de données et Algorithmique          | h: 12 | Coef: 1
+
+[Module: 5.2 BST] UE Bases Scientifiques ou Technologiques — ECTS: 3
+  - DevOps : fondamentaux                           | h: 6  | Coef: -
+  - Langage de développement fonctionnel            | h: 24 | Coef: 1
+  - Réseaux et protocoles - 1                       | h: 27 | Coef: 1
+
+[Module: 5.3 BST] UE Bases Scientifiques ou Technologiques — ECTS: 3
+  - Projets intégrateurs                            | h: 22 | Coef: 1
+  - Unix utilisateurs                               | h: 30 | Coef: 1
+
+[Module: 5.4 BST] UE Bases Scientifiques ou Technologiques — ECTS: 3
+  - Développement web                               | h: 18 | Coef: 1
+  - Langage de développement orienté objet          | h: 21 | Coef: 1
+
+[Module: 5.5 ASSI] UE Architecture et Sécurité du Système d'Information — ECTS: 3
+  - Ethical hacking                                 | h: 24 | Coef: 1
+  - Virtualisation et conteneurisation: fondamentaux| h: 30 | Coef: 1
+
+[Module: 5.6 DIM] UE Développement de l'Ingénieur Manager — ECTS: 3
+  - Jeu d'entreprise : initiation à la gestion      | h: 21 | Coef: 1
+  - Gestion de projet : simulation chef de projet   | h: 21 | Coef: 1
+  - Gestion de projet: outils et méthodes           | h: 18 | Coef: 1
+
+[Module: 5.7 LING] UE Linguistique — ECTS: 1
+  - Anglais                                         | h: 27 | Coef: 1
+
+[Module: 5.8 DPPA] UE Développement Personnel et Professionnel de l'Apprenti — ECTS: 1
+  - Mission 1 : projet d'emploi                     | h: 20 | Coef: 1
+
+TOTAL École Semestre 5 : 357h — 20 ECTS
+[5.9 EE] UE Entreprise: comprendre le rôle de l'ingénieur : 455h — 10 ECTS
+
+================================================================
+SEMESTRE 6 — Programme 2024-2025 (prévisionnel)
+================================================================
+
+[Module: 6.1 MATH] UE Mathématiques Outils et Concepts — ECTS: 4
+  - Probabilités et statistiques                              | h: 25 | Coef: 1
+  - Mathématiques pour l'ingénieur : graphes, analyse numérique | h: 24 | Coef: 1
+  - Traitement numérique de l'information                    | h: 23 | Coef: 1
+
+[Module: 6.2 BST] UE Bases Scientifiques ou Technologiques — ECTS: 3
+  - Gestion de versions décentralisée                        | h: 12 | Coef: 1
+  - Architectures middleware / Téléphonie IP                 | h: 33 | Coef: 3
+
+[Module: 6.3 ASSI] UE Architecture et Sécurité du Système d'Information — ECTS: 3
+  - Réseaux et protocoles - 2                                | h: 24 | Coef: 1
+  - Sécurité applicative / Sécurité des réseaux et systèmes | h: 30 | Coef: 1
+
+[Module: 6.4 ASSI] UE Architecture et Sécurité du Système d'Information — ECTS: 3
+  - Orchestration de conteneur                               | h: 25 | Coef: 1
+  - Bases de données : SGBDR                                 | h: 30 | Coef: 1
+
+[Module: 6.5 PROJ] UE Projet — ECTS: 3
+  - Analyse fonctionnelle et rédaction de cahier des charges | h: 20 | Coef: 1
+  - Projet                                                   | h: 34 | Coef: 1
+
+[Module: 6.6 LING] UE Linguistique — ECTS: 3
+  - Anglais                                                  | h: 54 | Coef: 1
+
+[Module: 6.7 DPPA] UE Développement Personnel et Professionnel de l'Apprenti — ECTS: 1
+  - Séminaire créativité                                     | h: 12 | Coef: -
+  - Mission 2 : Responsabilité sociétale de l'ingénieur     | h: 17 | Coef: 1
+
+TOTAL École Semestre 6 : 363h — 20 ECTS
+[6.9 EE] UE Entreprise: comprendre le rôle de l'ingénieur : 490h — 10 ECTS
+
+================================================================
+SEMESTRE 7 — Programme 2025-2026 (prévisionnel)
+Deux parcours en parallèle à partir du S7
+================================================================
+
+------------------------------------------------------------
+SEMESTRE 7 — Parcours DL : Développement Logiciel
+------------------------------------------------------------
+
+[Module: 7.1 BST] UE Bases Scientifiques ou Technologiques — ECTS: 3
+  - Analyse des risques numériques                           | h: 24 | Coef: 1
+  - Technologie des médias                                   | h: 28 | Coef: 1
+
+[Module: 7.2 ASSI] UE Architecture et Sécurité du Système d'Information — ECTS: 3
+  - Cryptographie et preuve numérique                        | h: 25 | Coef: 2
+  - Applications de la cryptographie                        | h: 12 | Coef: 1
+  - Infrastructure as code                                   | h: 12 | Coef: 1
+
+[Module: 7.3 GL] UE Génie Logiciel — ECTS: 4
+  - Validation des logiciels                                 | h: 30 | Coef: 1
+  - Bonnes pratiques de production de code                   | h: 34 | Coef: 1
+
+[Module: 7.4 GL] UE Génie Logiciel — ECTS: 4
+  - Architecture logicielle: Microservices - 1               | h: 30 | Coef: 3
+  - Intégration et déploiement continus                      | h: 20 | Coef: 2
+
+[Module: 7.5 DIM] UE Développement de l'Ingénieur Manager — ECTS: 3
+  - Gestion de projet : ateliers électifs                    | h: 18 | Coef: 1
+  - Droits social et spécifiques au métier (droits informatique) | h: 20 | Coef: 1
+
+[Module: 7.6 LING] UE Linguistique — ECTS: 2
+  - Anglais ou autre langue vivante                          | h: 30 | Coef: 1
+
+[Module: 7.7 DPPA] UE Développement Personnel et Professionnel de l'Apprenti — ECTS: 1
+  - Mission 3 : transition de technicien à ingénieur         | h: 20 | Coef: 1
+
+TOTAL École S7 DL : 303h — 20 ECTS
+[7.8 EE] UE Entreprise: Devenir ingénieur : 525h — 10 ECTS
+
+------------------------------------------------------------
+SEMESTRE 7 — Parcours SR : Systèmes et Réseaux
+------------------------------------------------------------
+
+[Module: 7.1 BST] UE Bases Scientifiques ou Technologiques — ECTS: 3
+  - Analyse des risques numériques                           | h: 24 | Coef: 1
+  - Technologie des médias                                   | h: 28 | Coef: 1
+
+[Module: 7.2 ASSI] UE Architecture et Sécurité du Système d'Information — ECTS: 4
+  - Cryptographie et preuve numérique                        | h: 25 | Coef: 2
+  - Applications de la cryptographie                        | h: 12 | Coef: 1
+  - Infrastructure : open Stack                              | h: 24 | Coef: 2
+
+[Module: 7.3 SI] UE Systèmes Informatiques — ECTS: 2
+  - Intégration et déploiement continus                      | h: 14 | Coef: 1
+  - Administration système Windows                           | h: 20 | Coef: 1
+
+[Module: 7.4 RI] UE Réseaux Informatiques — ECTS: 5
+  - Réseaux avancés                                          | h: 34 | Coef: 1
+  - Administration des services réseaux                      | h: 34 | Coef: 1
+
+[Module: 7.5 DIM] UE Développement de l'Ingénieur Manager — ECTS: 3
+  - Gestion de projet : ateliers électifs                    | h: 18 | Coef: 1
+  - Droits social et spécifiques au métier (droits informatique) | h: 20 | Coef: 1
+
+[Module: 7.6 LING] UE Linguistique — ECTS: 2
+  - Anglais ou autre langue vivante                          | h: 30 | Coef: 1
+
+[Module: 7.7 DPPA] UE Développement Personnel et Professionnel de l'Apprenti — ECTS: 1
+  - Mission 3 : transition de technicien à ingénieur         | h: 20 | Coef: 1
+
+TOTAL École S7 SR : 303h — 20 ECTS
+[7.8 EE] UE Entreprise: Devenir ingénieur : 525h — 10 ECTS
+
+================================================================
+SEMESTRE 8 — Programme 2025-2026 (prévisionnel)
+================================================================
+
+------------------------------------------------------------
+SEMESTRE 8 — Parcours DL : Développement Logiciel
+------------------------------------------------------------
+
+[Module: 8.1.a DEV] UE Développement — ECTS: 3
+  - Systèmes embarqués et I.O.T                              | h: 29 | Coef: 1
+  - Informatique mobile: Androïd                             | h: 36 | Coef: 1
+
+[Module: 8.1.b DEV] UE Développement — ECTS: 3
+  - Modélisations et résolutions de problèmes à base d'IA   | h: 30 | Coef: 1
+  - Optimisation de code                                     | h: 24 | Coef: 1
+
+[Module: 8.2 GL] UE Génie Logiciel — ECTS: 1
+  - Architecture logicielle: Microservices - 2               | h: 20 | Coef: 1
+  - Métrologie                                               | h: 14 | Coef: 1
+
+[Module: 8.3 PROJ] UE Projet — ECTS: 5
+  - Scrum Master : préparation à la certification            | h: 24 | Coef: 2
+  - Initiation à la Recherche                                | h: 30 | Coef: 3
+  - Projet fil rouge ou projet Recherche                     | h: 40 | Coef: 4
+
+[Module: 8.4 DIM] UE Développement de l'Ingénieur Manager — ECTS: 2
+  - Management entreprise et équipe                          | h: 12 | Coef: 1
+  - Qualité                                                  | h: 18 | Coef: 1
+
+[Module: 8.5 LING] UE Linguistique — ECTS: 1
+  - Anglais ou autre langue vivante                          | h: 30 | Coef: 1
+
+[Module: 8.6 DPPA] UE Développement Personnel et Professionnel de l'Apprenti — ECTS: 1
+  - Mission 4 : cœur de métier                               | h: 20 | Coef: 1
+
+TOTAL École S8 DL : 327h — 16 ECTS
+[8.7 EE] UE Entreprise: Devenir ingénieur : 560h — 14 ECTS
+
+------------------------------------------------------------
+SEMESTRE 8 — Parcours SR : Systèmes et Réseaux
+------------------------------------------------------------
+
+[Module: 8.1 SI] UE Systèmes Informatiques — ECTS: 4
+  - Langage de script                                        | h: 30 | Coef: 3
+  - Administration système Linux                             | h: 30 | Coef: 3
+  - Infrastructure as code                                   | h: 20 | Coef: 2
+
+[Module: 8.2 RI] UE Réseaux Informatiques — ECTS: 3
+  - Sécurité des réseaux: outils et équipements dédiés       | h: 24 | Coef: 2
+  - Supervision et gestion des réseaux                       | h: 35 | Coef: 3
+  - Métrologie                                               | h: 14 | Coef: 1
+
+[Module: 8.3 PROJ] UE Projet — ECTS: 5
+  - Scrum Master : préparation à la certification            | h: 24 | Coef: 2
+  - Initiation à la Recherche                                | h: 30 | Coef: 3
+  - Projet fil rouge ou projet Recherche                     | h: 40 | Coef: 4
+
+[Module: 8.4 DIM] UE Développement de l'Ingénieur Manager — ECTS: 2
+  - Management entreprise et équipe                          | h: 12 | Coef: 1
+  - Qualité                                                  | h: 18 | Coef: 1
+
+[Module: 8.5 LING] UE Linguistique — ECTS: 1
+  - Anglais ou autre langue vivante                          | h: 30 | Coef: 1
+
+[Module: 8.6 DPPA] UE Développement Personnel et Professionnel de l'Apprenti — ECTS: 1
+  - Mission 4 : cœur de métier                               | h: 20 | Coef: 1
+
+TOTAL École S8 SR : 327h — 16 ECTS
+[8.7 EE] UE Entreprise: Devenir ingénieur : 560h — 14 ECTS
+
+================================================================
+SEMESTRE 9 — Programme 2026-2027 (prévisionnel)
+================================================================
+
+------------------------------------------------------------
+SEMESTRE 9 — Parcours DL : Développement Logiciel
+------------------------------------------------------------
+
+[Module: 9.1 BST] UE Bases Scientifiques ou Technologiques — ECTS: 2
+  - Sobriété numérique : Green IT                            | h: 12 | Coef: 1
+  - Open Source                                              | h: 12 | Coef: 1
+  - Veille technologique                                     | h: 14 | Coef: 1
+
+[Module: 9.2 DEV] UE Développement — ECTS: 5
+  - Frontend                                                 | h: 20 | Coef: 2
+  - Environnement ASP .Net                                   | h: 36 | Coef: 3
+  - Intelligence artificielle : apprentissage profond        | h: 45 | Coef: 4
+
+[Module: 9.3 GL] UE Génie Logiciel — ECTS: 1
+  - Cours gestion des dépendances, risques et maintenabilité | h: 20 | Coef: 1
+  - Expérience utilisateur : UX et UI Design                 | h: 14 | Coef: 1
+
+[Module: 9.4 GL] UE Génie Logiciel — ECTS: 2
+  - Base de données NoSQL                                    | h: 28 | Coef: 1
+  - Big data et modélisation                                 | h: 22 | Coef: 1
+
+[Module: 9.5 ASSI] UE Architectures et Sécurité du Système d'Information — ECTS: 2
+  - Solutions Clouds                                         | h: 20 | Coef: 1
+  - Function & Back-end as a service : FaaS & BaaS           | h: 20 | Coef: 1
+
+[Module: 9.6 PROJ] UE Projet — ECTS: 7
+  - Création d'entreprise et d'activités (incubateur technologique) | h: 20 | Coef: 2
+  - Qualités des services informatiques: ITIL                | h: 18 | Coef: 2
+  - Projet fil rouge ou projet Recherche                     | h: 129| Coef: 8
+
+[Module: 9.7 DPPA] UE Développement Personnel et Professionnel de l'Apprenti — ECTS: 1
+  - Mission 5 : bilan de compétences                         | h: 20 | Coef: 1
+
+TOTAL École S9 DL : 450h — 20 ECTS
+[9.8 EE] UE Entreprise: Agir en ingénieur : 350h — 10 ECTS
+
+------------------------------------------------------------
+SEMESTRE 9 — Parcours SR : Systèmes et Réseaux
+------------------------------------------------------------
+
+[Module: 9.1 BST] UE Bases Scientifiques ou Technologiques — ECTS: 2
+  - Sobriété numérique : Green IT                            | h: 12 | Coef: 1
+  - Open Source                                              | h: 12 | Coef: 1
+  - Veille technologique                                     | h: 14 | Coef: 1
+
+[Module: 9.2 SI] UE Systèmes Informatiques — ECTS: 3
+  - Gestion de parc                                          | h: 18 | Coef: 1
+  - Gestion des logs                                         | h: 16 | Coef: 1
+  - Microservices                                            | h: 20 | Coef: 1
+
+[Module: 9.3 SI] UE Systèmes Informatiques — ECTS: 2
+  - Virtualisation de stockage                               | h: 18 | Coef: 2
+  - Architectures de stockage SAN / NAS                      | h: 34 | Coef: 3
+
+[Module: 9.4 RI] UE Réseaux Informatiques — ECTS: 3
+  - Réseaux mobiles et IOT                                   | h: 34 | Coef: 1
+  - Réseaux WiFi                                             | h: 35 | Coef: 1
+
+[Module: 9.5 ASSI] UE Architectures et Sécurité du Système d'Information — ECTS: 2
+  - Solutions Clouds                                         | h: 20 | Coef: 2
+  - Automatisation systèmes et réseaux                       | h: 30 | Coef: 3
+
+[Module: 9.6 PROJ] UE Projet — ECTS: 7
+  - Création d'entreprise et d'activités (incubateur technologique) | h: 20 | Coef: 2
+  - Qualités des services informatiques: ITIL                | h: 18 | Coef: 2
+  - Projet fil rouge ou projet Recherche                     | h: 129| Coef: 8
+
+[Module: 9.8 DPPA] UE Développement Personnel et Professionnel de l'Apprenti — ECTS: 1
+  - Mission 5 : bilan de compétences                         | h: 20 | Coef: 1
+
+TOTAL École S9 SR : 450h — 20 ECTS
+[9.9 EE] UE Entreprise: Agir en ingénieur : 350h — 10 ECTS
+
+================================================================
+SEMESTRE 10 — Programme 2026-2027 (prévisionnel)
+================================================================
+
+[Module: 10.1 DPPA] UE Développement Personnel et Professionnel de l'Apprenti — ECTS: 10
+  - Mission 6 : bilan de formation                           | h: /  | Coef: 1
+
+TOTAL École Semestre 10 : — 10 ECTS
+[10.2 EE] UE Entreprise: Agir en ingénieur : 910h — 20 ECTS
+
+================================================================
+RÉCAPITULATIF DU PROGRAMME — VOLUMES HORAIRES ET ECTS TOTAUX
+================================================================
+
+--- VOLET MUTUALISÉ (commun aux deux parcours) ---
+UE Mathématiques Outils et Concepts                          | vol. h: 120  | ECTS: 7
+UE Développement Personnel et Professionnel de l'Apprenti   | vol. h: 109  | ECTS: 15
+UE Développement de l'Ingénieur Manager                     | vol. h: 128  | ECTS: 8
+UE Linguistique                                              | vol. h: 141  | ECTS: 7
+UE Bases Scientifiques ou Technologiques                     | vol. h: 283  | ECTS: 17
+TOTAL Volet mutualisé                                        | vol. h: 781  | ECTS: 54
+
+--- VOLET MÉTIER — Parcours DL : Développement Logiciel ---
+UE Architecture et Sécurité du Système d'Information        | vol. h: 252  | ECTS: 14
+UE Génie Logiciel                                            | vol. h: 232  | ECTS: 12
+UE Développement                                             | vol. h: 220  | ECTS: 11
+UE Projet                                                    | vol. h: 315  | ECTS: 15
+TOTAL Volet métier DL                                        | vol. h: 1019 | ECTS: 52
+
+--- VOLET MÉTIER — Parcours SR : Systèmes et Réseaux ---
+UE Architecture et Sécurité du Système d'Information        | vol. h: 274  | ECTS: 15
+UE Systèmes informatiques                                    | vol. h: 220  | ECTS: 11
+UE Réseaux informatiques                                     | vol. h: 210  | ECTS: 11
+UE Projet                                                    | vol. h: 315  | ECTS: 15
+TOTAL Volet métier SR                                        | vol. h: 1019 | ECTS: 52
+
+--- VOLET ENTREPRISE (commun aux deux parcours) ---
+UE Entreprise: comprendre le rôle de l'ingénieur            | vol. h: 945  | ECTS: 20
+UE Entreprise: Devenir ingénieur                             | vol. h: 1085 | ECTS: 24
+UE Entreprise: Agir en ingénieur                             | vol. h: 1260 | ECTS: 30
+TOTAL Volet entreprise                                       | vol. h: 3290 | ECTS: 74
+
+--- TOTAL GÉNÉRAL (École + Entreprise) ---
+TOTAL (DL ou SR)                                             | vol. h: 1800 | ECTS: 106
+
+================================================================
+Note: Document approuvé par le Comité de l'enseignement du 13 juin 2024
+================================================================
