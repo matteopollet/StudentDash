@@ -24,6 +24,21 @@ model User {
   accounts Account[]
   sessions Session[]
   grades   Grade[]
+  events   Event[]
+}
+
+model Event {
+  id          String   @id // ICS UID
+  userId      String
+  summary     String
+  description String?
+  location    String?
+  start       DateTime
+  end         DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, start])
 }
 
 model Account {

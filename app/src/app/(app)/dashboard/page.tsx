@@ -56,6 +56,8 @@ export default function DashboardPage() {
   const [hasCredentials, setHasCredentials] = useState<boolean | null>(null)
   const [lastSync, setLastSync] = useState<string | null>(null)
 
+  const [nextEvent, setNextEvent] = useState<any>(null)
+
   const showSnack = (msg: string) => {
     setSnack(msg)
     setTimeout(() => setSnack(null), 3500)
@@ -63,16 +65,22 @@ export default function DashboardPage() {
 
   const loadData = useCallback(async () => {
     try {
-      const [gradesRes, credRes] = await Promise.all([
+      const [gradesRes, credRes, planRes] = await Promise.all([
         fetch('/api/grades'),
         fetch('/api/credentials'),
+        fetch('/api/planning')
       ])
       const gradesData = await gradesRes.json()
       const credData = await credRes.json()
+      const planData = await planRes.json()
+      
       setData(gradesData)
-      setHasCredentials(credData.hasCredentials)
+      setHasCredentials(!!credData.minesId)
       if (credData.lastSync) {
         setLastSync(new Date(credData.lastSync).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }))
+      }
+      if (planData.events && planData.events.length > 0) {
+        setNextEvent(planData.events[0])
       }
     } finally {
       setLoading(false)
@@ -84,14 +92,25 @@ export default function DashboardPage() {
   const handleSync = async () => {
     setSyncing(true)
     try {
-      const res = await fetch('/api/sync', { method: 'POST' })
-      const d = await res.json()
-      if (d.success) {
-        showSnack(`✓ ${d.gradesCount} notes synchronisées`)
+      const [gradesRes, planRes] = await Promise.all([
+        fetch('/api/sync', { method: 'POST' }),
+        fetch('/api/planning', { method: 'POST' })
+      ])
+      const gradesData = await gradesRes.json()
+      const planData = await planRes.json()
+      
+      let msg = ''
+      if (gradesData.success) msg += `✓ ${gradesData.gradesCount} notes`
+      if (planData.success) msg += ` • ${planData.count} cours`
+      
+      if (msg) {
+        showSnack(`${msg} synchronisés`)
         loadData()
       } else {
-        showSnack(`Erreur : ${d.error}`)
+        showSnack(`Erreur de synchronisation`)
       }
+    } catch (err: any) {
+      showSnack(`Erreur : ${err.message}`)
     } finally {
       setSyncing(false)
     }
@@ -197,6 +216,35 @@ export default function DashboardPage() {
             </div>
           )}
         </div>
+
+        {/* Next Event Card */}
+        {nextEvent && (
+          <Link href="/planning" className="md-card md-card-elevated animate-in" style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem', background: 'var(--md-primary-container)', color: 'var(--md-on-primary-container)', textDecoration: 'none' }}>
+            <div style={{ background: 'var(--md-primary)', color: 'var(--md-on-primary)', width: 48, height: 48, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span className="material-symbols-rounded">event</span>
+            </div>
+            <div style={{ flex: 1 }}>
+              <p style={{ fontSize: 'var(--md-label-small)', fontWeight: 600, opacity: 0.8, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>
+                Prochain cours • {new Date(nextEvent.start).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })}
+              </p>
+              <p style={{ fontSize: 'var(--md-title-medium)', fontWeight: 700, margin: '0 0 4px 0', lineHeight: 1.2 }}>
+                {nextEvent.summary}
+              </p>
+              <div style={{ display: 'flex', gap: '0.75rem', fontSize: 'var(--md-body-small)', opacity: 0.9 }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <span className="material-symbols-rounded" style={{ fontSize: 14 }}>schedule</span>
+                  {new Date(nextEvent.start).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                </span>
+                {nextEvent.location && (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span className="material-symbols-rounded" style={{ fontSize: 14 }}>location_on</span>
+                    {nextEvent.location}
+                  </span>
+                )}
+              </div>
+            </div>
+          </Link>
+        )}
 
         {/* Semester cards */}
         <h2 style={{ fontSize: 'var(--md-title-medium)', color: 'var(--md-on-surface-variant)', margin: '1.5rem 0 0.75rem', fontWeight: 500 }}>

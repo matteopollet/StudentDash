@@ -6,6 +6,7 @@ import styles from './BottomNav.module.css'
 const navItems = [
   { href: '/dashboard', icon: 'dashboard', label: 'Accueil' },
   { href: '/grades', icon: 'school', label: 'Notes' },
+  { href: '/planning', icon: 'calendar_month', label: 'Planning' },
   { href: '/simulator', icon: 'calculate', label: 'Simulateur' },
   { href: '/settings', icon: 'settings', label: 'Réglages' },
 ]
