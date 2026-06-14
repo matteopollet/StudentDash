@@ -1,0 +1,6 @@
+# Google OAuth client secret
+client_secret_*.json
+
+# Editor
+.idea/
+.vscode/

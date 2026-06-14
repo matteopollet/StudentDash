@@ -652,3 +652,65 @@ body {
   position: absolute;
   text-align: center;
 }
+
+/* ─── PWA Install Banner ─── */
+.pwa-install-banner {
+  position: fixed;
+  bottom: 96px;
+  left: 1rem;
+  right: 1rem;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--md-surface-container-high);
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--md-shape-xl);
+  padding: 1rem 1.25rem;
+  z-index: 150;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 1px 4px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.pwa-install-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.pwa-install-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pwa-install-text strong {
+  font-size: var(--md-title-medium);
+  color: var(--md-on-surface);
+}
+
+.pwa-install-text span {
+  font-size: var(--md-body-small);
+  color: var(--md-on-surface-variant);
+}
+
+.pwa-install-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* ─── PWA Standalone mode adjustments ─── */
+@media (display-mode: standalone) {
+  .md-top-bar {
+    padding-top: env(safe-area-inset-top, 0);
+    height: calc(64px + env(safe-area-inset-top, 0));
+  }
+
+  .pwa-install-banner {
+    display: none;
+  }
+}
+
