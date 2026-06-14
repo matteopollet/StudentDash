@@ -285,21 +285,21 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
           </div>
 
           <div style={{ 
-            background: 'var(--md-surface-variant)', 
-            padding: '1rem', 
-            borderRadius: 'var(--md-shape-sm)',
-            color: 'var(--md-on-surface-variant)',
+            marginTop: '0.5rem',
+            paddingTop: '1rem',
+            borderTop: '1px solid rgba(var(--md-primary-rgb, 103, 80, 164), 0.2)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             flexWrap: 'wrap',
-            gap: '1rem',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.1)'
+            gap: '1rem'
           }}>
             <div>
-              <p style={{ fontSize: 'var(--md-label-medium)', color: 'var(--md-on-surface-variant)', opacity: 0.8 }}>Moyenne UE simulée</p>
-              <p style={{ fontSize: 'var(--md-title-large)', fontWeight: 700, color: isSimValidated ? 'var(--md-success)' : 'var(--md-primary)' }}>
-                {simulatedUeAvg !== null ? simulatedUeAvg.toFixed(2).replace('.', ',') : '—'} / 20
+              <p style={{ fontSize: 'var(--md-label-medium)', color: 'var(--md-on-primary-container)', opacity: 0.8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Moyenne UE simulée
+              </p>
+              <p style={{ fontSize: 'var(--md-title-large)', fontWeight: 700, color: isSimValidated ? 'var(--md-success)' : 'var(--md-on-primary-container)' }}>
+                {simulatedUeAvg !== null ? simulatedUeAvg.toFixed(2).replace('.', ',') : '—'} <span style={{ fontSize: 'var(--md-title-medium)', fontWeight: 400, opacity: 0.8 }}>/ 20</span>
               </p>
             </div>
           </div>

@@ -444,20 +444,21 @@ export default function DashboardPage() {
 
       {/* Share Modal */}
       {showShare && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 200, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', backdropFilter: 'blur(4px)' }}>
+        <div style={{ position: 'fixed', inset: 0, zIndex: 200, backgroundColor: 'rgba(0,0,0,0.8)', overflowY: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem 1rem', backdropFilter: 'blur(4px)' }}>
           
           {/* Content to be captured */}
           <div 
             ref={shareRef}
             style={{ 
-              width: '100%', 
-              maxWidth: 500, 
+              width: 360, 
+              minHeight: 640,
               background: 'linear-gradient(135deg, var(--md-surface) 0%, var(--md-surface-container-high) 100%)', 
               borderRadius: 'var(--md-shape-xl)', 
-              padding: 'clamp(1rem, 5vw, 2.5rem)', 
+              padding: '2rem', 
               display: 'flex', 
               flexDirection: 'column', 
               alignItems: 'center',
+              justifyContent: 'space-between',
               boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
               position: 'relative',
               overflow: 'hidden',
@@ -469,10 +470,12 @@ export default function DashboardPage() {
             <div style={{ position: 'absolute', bottom: -50, left: -50, width: 200, height: 200, borderRadius: '50%', background: 'var(--md-tertiary)', opacity: 0.08, filter: 'blur(30px)' }} />
 
             {/* Header */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', zIndex: 1, flexWrap: 'wrap', justifyContent: 'center' }}>
-              <span className="material-symbols-rounded filled" style={{ color: 'var(--md-primary)', fontSize: 32 }}>school</span>
-              <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--md-on-surface)', letterSpacing: '-0.5px' }}>StudentDash</span>
-              <span style={{ fontSize: '0.9rem', color: 'var(--md-on-surface-variant)', fontWeight: 500 }}>| Bilan Académique</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', zIndex: 1, justifyContent: 'center' }}>
+              <span className="material-symbols-rounded filled" style={{ color: 'var(--md-primary)', fontSize: 36 }}>school</span>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--md-on-surface)', letterSpacing: '-0.5px', lineHeight: 1.1 }}>StudentDash</span>
+                <span style={{ fontSize: '0.85rem', color: 'var(--md-primary)', fontWeight: 600 }}>Bilan Académique</span>
+              </div>
             </div>
 
             {/* User Info */}
@@ -484,9 +487,9 @@ export default function DashboardPage() {
             </div>
 
             {/* Gauge */}
-            <div style={{ marginBottom: '2rem', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <CanvasScoreRing value={overallAvg !== null && !isNaN(overallAvg) ? Number(overallAvg.toFixed(2)) : null} size={130} />
-              <div style={{ marginTop: '1rem', fontSize: '0.8rem', color: 'var(--md-on-surface-variant)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', background: 'var(--md-surface-variant)', padding: '0.25rem 0.75rem', borderRadius: '1rem' }}>
+              <div style={{ marginTop: '1rem', fontSize: '0.8rem', color: 'var(--md-on-surface-variant)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '2px' }}>
                 Moyenne Générale
               </div>
             </div>
@@ -494,47 +497,47 @@ export default function DashboardPage() {
             {/* Best & Worst */}
             <div style={{ width: '100%', display: 'flex', gap: '0.75rem', marginBottom: '1.5rem', zIndex: 1 }}>
               {/* Best */}
-              <div style={{ flex: 1, minWidth: 0, background: 'var(--md-surface)', padding: '1rem', borderRadius: 'var(--md-shape-lg)', border: '1px solid rgba(74, 222, 128, 0.3)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--md-success)', marginBottom: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+              <div style={{ flex: 1, minWidth: 0, background: 'rgba(74, 222, 128, 0.1)', padding: '1rem', borderRadius: 'var(--md-shape-lg)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#4ade80', marginBottom: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
                   <span className="material-symbols-rounded" style={{ fontSize: 18 }}>trending_up</span>
                   <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Meilleure Note</span>
                 </div>
-                <span style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--md-on-surface)', lineHeight: 1 }}>
+                <span style={{ fontSize: '1.8rem', fontWeight: 800, color: '#4ade80', lineHeight: 1 }}>
                   {bestGradeObj?.value?.toFixed(2) ?? '—'}
                 </span>
-                <span style={{ fontSize: '0.75rem', color: 'var(--md-on-surface-variant)', marginTop: '0.75rem', lineHeight: 1.3, wordBreak: 'break-word', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                  {bestGradeObj?.subjectName ?? ''}
+                <span style={{ fontSize: '0.75rem', color: 'var(--md-on-surface)', marginTop: '0.75rem', lineHeight: 1.3, wordBreak: 'break-word', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  {bestGradeObj?.subjectName ? (bestGradeObj.subjectName.length > 40 ? bestGradeObj.subjectName.slice(0, 37) + '...' : bestGradeObj.subjectName) : ''}
                 </span>
               </div>
               
               {/* Worst */}
-              <div style={{ flex: 1, minWidth: 0, background: 'var(--md-surface)', padding: '1rem', borderRadius: 'var(--md-shape-lg)', border: '1px solid rgba(248, 113, 113, 0.3)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--md-error)', marginBottom: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+              <div style={{ flex: 1, minWidth: 0, background: 'rgba(248, 113, 113, 0.1)', padding: '1rem', borderRadius: 'var(--md-shape-lg)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#f87171', marginBottom: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
                   <span className="material-symbols-rounded" style={{ fontSize: 18 }}>trending_down</span>
                   <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Pire Note</span>
                 </div>
-                <span style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--md-on-surface)', lineHeight: 1 }}>
+                <span style={{ fontSize: '1.8rem', fontWeight: 800, color: '#f87171', lineHeight: 1 }}>
                   {worstGradeObj?.value?.toFixed(2) ?? '—'}
                 </span>
-                <span style={{ fontSize: '0.75rem', color: 'var(--md-on-surface-variant)', marginTop: '0.75rem', lineHeight: 1.3, wordBreak: 'break-word', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                  {worstGradeObj?.subjectName ?? ''}
+                <span style={{ fontSize: '0.75rem', color: 'var(--md-on-surface)', marginTop: '0.75rem', lineHeight: 1.3, wordBreak: 'break-word', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  {worstGradeObj?.subjectName ? (worstGradeObj.subjectName.length > 40 ? worstGradeObj.subjectName.slice(0, 37) + '...' : worstGradeObj.subjectName) : ''}
                 </span>
               </div>
             </div>
 
             {/* Semesters Table */}
             {semesters.length > 0 && (
-              <div style={{ width: '100%', zIndex: 1, marginBottom: '1rem' }}>
+              <div style={{ width: '100%', zIndex: 1 }}>
                 <div style={{ background: 'var(--md-surface)', borderRadius: 'var(--md-shape-lg)', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', border: '1px solid var(--md-outline-variant)' }}>
                   <div style={{ background: 'var(--md-surface-variant)', padding: '0.5rem 0.75rem', borderBottom: '1px solid var(--md-outline-variant)' }}>
                     <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--md-on-surface-variant)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Moyennes par Semestre</span>
                   </div>
                   <div style={{ padding: '0.5rem' }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: '0.4rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.4rem' }}>
                       {semesters.map(sem => (
                         <div key={sem} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.4rem 0.75rem', background: 'var(--md-surface-container-lowest)', borderRadius: '6px', border: '1px solid var(--md-surface-container)' }}>
                           <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--md-on-surface)' }}>{sem}</span>
-                          <span style={{ fontSize: '0.9rem', fontWeight: 800, color: data!.semesterAverages[sem]! >= 10 ? 'var(--md-success)' : 'var(--md-error)' }}>
+                          <span style={{ fontSize: '0.9rem', fontWeight: 800, color: data!.semesterAverages[sem]! >= 10 ? '#4ade80' : '#f87171' }}>
                             {data!.semesterAverages[sem]?.toFixed(2) ?? '—'}
                           </span>
                         </div>
@@ -554,7 +557,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Action buttons (not captured) */}
-          <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', flexShrink: 0 }}>
             <button 
               className="md-btn md-btn-tonal"
               onClick={() => setShowShare(false)}
