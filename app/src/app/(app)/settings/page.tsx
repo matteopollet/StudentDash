@@ -200,7 +200,7 @@ export default function SettingsPage() {
               <input
                 id="mines-id"
                 type="text"
-                placeholder="ex: matteo.pollet"
+                placeholder="ex: prenom.nom"
                 value={minesId}
                 onChange={e => setMinesId(e.target.value)}
                 autoComplete="username"
