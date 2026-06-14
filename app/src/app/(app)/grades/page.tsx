@@ -42,8 +42,16 @@ function GradesContent() {
   const [loading, setLoading] = useState(true)
   const [activeSem, setActiveSem] = useState<string>(semParam ?? '')
   const [expandedUes, setExpandedUes] = useState<Set<string>>(new Set())
+  const [syncing, setSyncing] = useState(false)
+  const [snack, setSnack] = useState<{ msg: string; visible: boolean }>({ msg: '', visible: false })
 
-  useEffect(() => {
+  const showSnack = (msg: string) => {
+    setSnack({ msg, visible: true })
+    setTimeout(() => setSnack(s => ({ ...s, visible: false })), 3000)
+  }
+
+  const loadData = () => {
+    setLoading(true)
     fetch('/api/grades')
       .then(r => r.json())
       .then(d => {
@@ -59,7 +67,30 @@ function GradesContent() {
         }
       })
       .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    loadData()
   }, [])
+
+  const handleSync = async () => {
+    setSyncing(true)
+    try {
+      const gradesRes = await fetch('/api/sync', { method: 'POST' })
+      const gradesData = await gradesRes.json()
+      
+      if (gradesData.success) {
+        showSnack(`Synchronisation réussie (${gradesData.gradesCount} notes)`)
+        loadData()
+      } else {
+        showSnack(`Erreur de synchronisation`)
+      }
+    } catch (err: any) {
+      showSnack(`Erreur : ${err.message}`)
+    } finally {
+      setSyncing(false)
+    }
+  }
 
   useEffect(() => {
     if (semParam) setActiveSem(semParam)
@@ -79,8 +110,17 @@ function GradesContent() {
 
   return (
     <>
-      <header className="md-top-bar">
+      <header className="md-top-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span className="md-top-bar-title">Mes notes</span>
+        <button 
+          className="md-icon-button" 
+          onClick={handleSync} 
+          disabled={syncing} 
+          aria-label="Synchroniser les notes"
+            style={{ background: 'transparent', border: 'none', color: 'var(--md-on-surface)', width: 48, height: 48, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <span className={`material-symbols-rounded ${syncing ? 'spin' : ''}`}>sync</span>
+        </button>
       </header>
 
       <main className="page-content">
@@ -246,6 +286,13 @@ function GradesContent() {
           </div>
         )}
       </main>
+
+      {/* Snackbar */}
+      {snack.visible && (
+        <div className="md-snackbar" role="status" aria-live="polite">
+          {snack.msg}
+        </div>
+      )}
     </>
   )
 }

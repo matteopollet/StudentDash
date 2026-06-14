@@ -12,7 +12,7 @@ export async function POST() {
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { minesId: true, minesPasswordEnc: true, academicPath: true },
+    select: { minesId: true, minesPasswordEnc: true, academicPath: true, lastSync: true },
   })
 
   if (!user?.minesId || !user?.minesPasswordEnc) {
