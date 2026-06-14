@@ -5,12 +5,6 @@ import { decrypt } from '@/lib/crypto'
 import { scrapeCyberNotes } from '@/lib/scraper'
 import webpush from 'web-push'
 
-webpush.setVapidDetails(
-  'mailto:studentdash@example.com',
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || '',
-  process.env.VAPID_PRIVATE_KEY || ''
-)
-
 // POST /api/sync — manually trigger a grade sync
 export async function POST() {
   const session = await auth()
@@ -18,7 +12,7 @@ export async function POST() {
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { minesId: true, minesPasswordEnc: true },
+    select: { minesId: true, minesPasswordEnc: true, academicPath: true },
   })
 
   if (!user?.minesId || !user?.minesPasswordEnc) {
@@ -82,9 +76,18 @@ export async function POST() {
     })
 
     // Broadcast Push Notifications for newly released subjects
-    if (newlyReleasedSubjects.length > 0) {
+    if (newlyReleasedSubjects.length > 0 && process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+      webpush.setVapidDetails(
+        'mailto:studentdash@example.com',
+        process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+        process.env.VAPID_PRIVATE_KEY
+      )
+
       const subscriptions = await prisma.pushSubscription.findMany({
-        where: { userId: { not: session.user.id } }
+        where: { 
+          userId: { not: session.user.id },
+          user: { academicPath: user.academicPath }
+        }
       })
 
       for (const subject of newlyReleasedSubjects) {
@@ -116,3 +119,4 @@ export async function POST() {
     return NextResponse.json({ error: err.message ?? 'Sync failed' }, { status: 500 })
   }
 }
+
