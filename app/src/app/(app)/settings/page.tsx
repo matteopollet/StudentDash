@@ -69,10 +69,22 @@ export default function SettingsPage() {
       })
       const d = await res.json()
       if (d.success) {
-        setStatus({ type: 'success', msg: `✓ Identifiants sauvegardés et ${d.gradesCount} notes synchronisées !` })
+        setStatus({ type: 'success', msg: `✓ Identifiants sauvegardés et ${d.gradesCount} notes récupérées. Synchronisation du planning en cours...` })
         setExistingId(minesId)
         setMinesPassword('')
         setLastSync(new Date().toLocaleString('fr-FR'))
+        
+        try {
+          const planRes = await fetch('/api/planning', { method: 'POST' })
+          const planData = await planRes.json()
+          if (planData.success) {
+            setStatus({ type: 'success', msg: `✓ Tout est prêt ! ${d.gradesCount} notes et ${planData.count} cours synchronisés.` })
+          } else {
+            setStatus({ type: 'success', msg: `✓ Notes OK, mais erreur planning : ${planData.error}` })
+          }
+        } catch {
+          setStatus({ type: 'success', msg: `✓ Notes OK, erreur réseau pour le planning.` })
+        }
       } else {
         setStatus({ type: 'error', msg: d.error ?? 'Erreur lors de la validation des identifiants.' })
       }
