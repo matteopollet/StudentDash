@@ -131,13 +131,15 @@ export default function DashboardPage() {
         <span className="material-symbols-rounded filled" style={{ color: 'var(--md-primary)', fontSize: 28 }}>school</span>
         <span className="md-top-bar-title">StudentDash</span>
         {session?.user?.image && (
-          <Image
-            src={session.user.image}
-            alt={session.user.name ?? 'Avatar'}
-            width={36}
-            height={36}
-            style={{ borderRadius: '50%', objectFit: 'cover' }}
-          />
+          <Link href="/settings" style={{ display: 'flex' }} aria-label="Réglages">
+            <Image
+              src={session.user.image}
+              alt={session.user.name ?? 'Avatar'}
+              width={36}
+              height={36}
+              style={{ borderRadius: '50%', objectFit: 'cover', cursor: 'pointer' }}
+            />
+          </Link>
         )}
       </header>
 
