@@ -316,10 +316,11 @@ export default function DashboardPage() {
           Accès rapide
         </h2>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.75rem' }}>
           {[
             { href: '/grades', icon: 'school', label: 'Toutes mes notes', color: 'var(--md-primary)' },
             { href: '/simulator', icon: 'calculate', label: 'Simulateur d\'UE', color: 'var(--md-tertiary)' },
+            { href: '/documents', icon: 'folder_open', label: 'Documents', color: 'var(--md-success)' },
           ].map(item => (
             <Link
               key={item.href}
