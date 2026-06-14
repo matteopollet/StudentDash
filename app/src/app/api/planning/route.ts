@@ -160,30 +160,34 @@ export async function POST() {
 
     const parsedEvents = parseICS(icsRes.data)
     
-    // Save to DB
-    const tx = parsedEvents.map(e => 
-      prisma.event.upsert({
-        where: { id: e.id },
-        update: {
-          summary: e.summary || '',
-          description: e.description || null,
-          location: e.location || null,
-          start: e.start,
-          end: e.end
-        },
-        create: {
-          id: e.id,
-          userId: session.user.id,
-          summary: e.summary || '',
-          description: e.description || null,
-          location: e.location || null,
-          start: e.start,
-          end: e.end
-        }
-      })
-    )
-    
-    await prisma.$transaction(tx)
+    // Save to DB in small batches to avoid transaction timeout on remote DB
+    const BATCH_SIZE = 10
+    for (let i = 0; i < parsedEvents.length; i += BATCH_SIZE) {
+      const batch = parsedEvents.slice(i, i + BATCH_SIZE)
+      await prisma.$transaction(
+        batch.map(e =>
+          prisma.event.upsert({
+            where: { id: e.id },
+            update: {
+              summary: e.summary || '',
+              description: e.description || null,
+              location: e.location || null,
+              start: e.start,
+              end: e.end
+            },
+            create: {
+              id: e.id,
+              userId: session.user.id,
+              summary: e.summary || '',
+              description: e.description || null,
+              location: e.location || null,
+              start: e.start,
+              end: e.end
+            }
+          })
+        )
+      )
+    }
     
     return NextResponse.json({ success: true, count: parsedEvents.length })
   } catch (error: any) {
