@@ -104,6 +104,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
          setVar('--md-surface-container-highest', isDark ? theme.palettes.neutral.tone(22) : theme.palettes.neutral.tone(90))
          root.style.setProperty('--md-surface-container-lowest', isDark ? '#0f0d13' : '#ffffff')
       }
+
+      // Update theme-color meta tag for Edge-to-Edge mobile status bar
+      let metaThemeColor = document.getElementById('meta-theme-color')
+      if (!metaThemeColor) {
+        metaThemeColor = document.createElement('meta')
+        metaThemeColor.setAttribute('name', 'theme-color')
+        metaThemeColor.setAttribute('id', 'meta-theme-color')
+        document.head.appendChild(metaThemeColor)
+      }
+      metaThemeColor.setAttribute('content', hexFromArgb(scheme.background))
     }
 
     applyTheme()
