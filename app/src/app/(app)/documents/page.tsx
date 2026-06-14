@@ -8,7 +8,8 @@ const documents = [
     description: "Alternance et périodes en entreprise (2024-2027)",
     filename: "R-FIA-89-Calendrier_apprentissage_2024-2027_v02.2.pdf",
     icon: 'calendar_month',
-    color: 'var(--md-primary)'
+    containerColor: 'var(--md-primary-container)',
+    onContainerColor: 'var(--md-on-primary-container)'
   },
   {
     id: 'programme',
@@ -16,7 +17,8 @@ const documents = [
     description: "Syllabus détaillé de la formation",
     filename: "FIA-Programme-Infres-promotion-17(2024-2027).pdf",
     icon: 'menu_book',
-    color: 'var(--md-tertiary)'
+    containerColor: 'var(--md-tertiary-container)',
+    onContainerColor: 'var(--md-on-tertiary-container)'
   },
   {
     id: 'referentiel',
@@ -24,7 +26,8 @@ const documents = [
     description: "Compétences à valider pour le diplôme",
     filename: "REFERENTIEL_COMPETENCES_INFRES.pdf",
     icon: 'verified',
-    color: 'var(--md-success)'
+    containerColor: 'var(--md-success-container)',
+    onContainerColor: 'var(--md-on-success-container)'
   },
   {
     id: 'missions',
@@ -32,7 +35,8 @@ const documents = [
     description: "Document Pédagogique et Professionnel d'Apprentissage",
     filename: "DPPA_missions_planning2024-2027.pdf",
     icon: 'work',
-    color: '#c4930d' // Warning/Amber color
+    containerColor: '#FFDF99', // Custom amber container
+    onContainerColor: '#261900' // Custom on-amber text
   }
 ]
 
@@ -47,7 +51,7 @@ export default function DocumentsPage() {
       </header>
 
       <main className="page-content">
-        <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface-variant)', marginBottom: '1.5rem' }}>
+        <p style={{ fontSize: 'var(--md-body-large)', color: 'var(--md-on-surface-variant)', marginBottom: '1.5rem', lineHeight: 1.5 }}>
           Retrouvez ici tous les documents administratifs et pédagogiques essentiels de votre scolarité.
         </p>
 
@@ -56,8 +60,8 @@ export default function DocumentsPage() {
             <div key={doc.id} className="md-card md-card-elevated animate-in" style={{ animationDelay: `${i * 50}ms` }}>
               <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
                 <div style={{ 
-                  background: `color-mix(in srgb, ${doc.color} 15%, transparent)`, 
-                  color: doc.color, 
+                  background: doc.containerColor, 
+                  color: doc.onContainerColor, 
                   width: 48, 
                   height: 48, 
                   borderRadius: 'var(--md-shape-sm)', 
@@ -83,7 +87,7 @@ export default function DocumentsPage() {
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="md-btn md-btn-filled"
-                      style={{ height: 32, fontSize: '0.75rem', padding: '0 1rem', background: doc.color }}
+                      style={{ height: 32, fontSize: '0.75rem', padding: '0 1rem', background: doc.containerColor, color: doc.onContainerColor }}
                     >
                       <span className="material-symbols-rounded" style={{ fontSize: 16 }}>visibility</span>
                       Ouvrir
@@ -91,8 +95,8 @@ export default function DocumentsPage() {
                     <a 
                       href={`/documents/${doc.filename}`} 
                       download
-                      className="md-btn md-btn-tonal"
-                      style={{ height: 32, fontSize: '0.75rem', padding: '0 1rem' }}
+                      className="md-btn md-btn-text"
+                      style={{ height: 32, fontSize: '0.75rem', padding: '0 1rem', color: 'var(--md-on-surface-variant)' }}
                     >
                       <span className="material-symbols-rounded" style={{ fontSize: 16 }}>download</span>
                       Télécharger

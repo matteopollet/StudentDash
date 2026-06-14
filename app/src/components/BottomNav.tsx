@@ -12,6 +12,8 @@ const navItems = [
 export function BottomNav() {
   const pathname = usePathname()
 
+  if (pathname === '/settings') return null
+
   return (
     <nav className="md-nav-bar" role="navigation" aria-label="Navigation principale">
       {navItems.map((item) => {

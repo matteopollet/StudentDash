@@ -2,6 +2,7 @@
 import { useSession, signOut } from 'next-auth/react'
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function SettingsPage() {
   const { data: session } = useSession()
@@ -140,8 +141,10 @@ export default function SettingsPage() {
   return (
     <>
       <header className="md-top-bar">
-        <span className="material-symbols-rounded filled" style={{ color: 'var(--md-primary)', fontSize: 24 }}>settings</span>
-        <span className="md-top-bar-title">Réglages</span>
+        <Link href="/dashboard" className="md-icon-button" style={{ color: 'var(--md-on-surface)', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 48, height: 48, borderRadius: '50%', marginLeft: -8 }}>
+          <span className="material-symbols-rounded">arrow_back</span>
+        </Link>
+        <span className="md-top-bar-title" style={{ marginLeft: 8 }}>Réglages</span>
       </header>
 
       <main className="page-content">
@@ -206,39 +209,60 @@ export default function SettingsPage() {
               </div>
             )}
 
-            <div style={{ marginBottom: '1rem' }}>
-              <label
-                htmlFor="mines-id"
-                style={{ display: 'block', fontSize: 'var(--md-label-medium)', color: 'var(--md-on-surface-variant)', marginBottom: '0.5rem' }}
-              >
-                Identifiant Mines Alès
-              </label>
-              <input
-                id="mines-id"
-                type="text"
-                placeholder="ex: prenom.nom"
-                value={minesId}
-                onChange={e => setMinesId(e.target.value)}
-                autoComplete="username"
-                style={{
-                  width: '100%',
-                  height: 48,
-                  padding: '0 1rem',
-                  background: 'var(--md-surface-container-highest)',
-                  border: '1px solid var(--md-outline)',
-                  borderRadius: 'var(--md-shape-xs)',
-                  color: 'var(--md-on-surface)',
-                  fontFamily: 'var(--font-family)',
-                  fontSize: 'var(--md-body-large)',
-                  outline: 'none',
-                }}
-              />
+            <div style={{ position: 'relative', marginTop: '12px', marginBottom: '1.25rem' }}>
+                <label
+                  htmlFor="mines-id"
+                  style={{ 
+                    position: 'absolute', 
+                    top: '-8px', 
+                    left: '12px', 
+                    background: 'var(--md-surface-container)', 
+                    padding: '0 4px', 
+                    fontSize: 'var(--md-label-small)', 
+                    color: 'var(--md-primary)',
+                    zIndex: 1 
+                  }}
+                >
+                  Identifiant Mines Alès
+                </label>
+                <input
+                  id="mines-id"
+                  type="text"
+                  placeholder=" "
+                  value={minesId}
+                  onChange={e => setMinesId(e.target.value)}
+                  autoComplete="username"
+                  style={{
+                    width: '100%',
+                    height: 56,
+                    padding: '0 1rem',
+                    background: 'transparent',
+                    border: '1px solid var(--md-outline)',
+                    borderRadius: 'var(--md-shape-xs)',
+                    color: 'var(--md-on-surface)',
+                    fontFamily: 'var(--font-family)',
+                    fontSize: 'var(--md-body-large)',
+                    outline: 'none',
+                    boxSizing: 'border-box'
+                  }}
+                  onFocus={(e) => { e.target.style.borderColor = 'var(--md-primary)'; e.target.style.borderWidth = '2px'; }}
+                  onBlur={(e) => { e.target.style.borderColor = 'var(--md-outline)'; e.target.style.borderWidth = '1px'; }}
+                />
             </div>
 
-            <div style={{ marginBottom: '1.25rem' }}>
+            <div style={{ position: 'relative', marginTop: '12px', marginBottom: '1.25rem' }}>
               <label
                 htmlFor="academic-path"
-                style={{ display: 'block', fontSize: 'var(--md-label-medium)', color: 'var(--md-on-surface-variant)', marginBottom: '0.5rem' }}
+                style={{ 
+                  position: 'absolute', 
+                  top: '-8px', 
+                  left: '12px', 
+                  background: 'var(--md-surface-container)', 
+                  padding: '0 4px', 
+                  fontSize: 'var(--md-label-small)', 
+                  color: 'var(--md-primary)',
+                  zIndex: 1 
+                }}
               >
                 Parcours Académique
               </label>
@@ -248,9 +272,9 @@ export default function SettingsPage() {
                 onChange={e => setAcademicPath(e.target.value)}
                 style={{
                   width: '100%',
-                  height: 48,
+                  height: 56,
                   padding: '0 1rem',
-                  background: 'var(--md-surface-container-highest)',
+                  background: 'transparent',
                   border: '1px solid var(--md-outline)',
                   borderRadius: 'var(--md-shape-xs)',
                   color: 'var(--md-on-surface)',
@@ -258,17 +282,29 @@ export default function SettingsPage() {
                   fontSize: 'var(--md-body-large)',
                   outline: 'none',
                   appearance: 'none',
+                  boxSizing: 'border-box'
                 }}
+                onFocus={(e) => { e.target.style.borderColor = 'var(--md-primary)'; e.target.style.borderWidth = '2px'; }}
+                onBlur={(e) => { e.target.style.borderColor = 'var(--md-outline)'; e.target.style.borderWidth = '1px'; }}
               >
                 <option value="DL">Développement Logiciel (DL)</option>
                 <option value="SR">Systèmes et Réseaux (SR)</option>
               </select>
             </div>
 
-            <div style={{ marginBottom: '1.25rem' }}>
+            <div style={{ position: 'relative', marginTop: '12px', marginBottom: '1.25rem' }}>
               <label
                 htmlFor="mines-password"
-                style={{ display: 'block', fontSize: 'var(--md-label-medium)', color: 'var(--md-on-surface-variant)', marginBottom: '0.5rem' }}
+                style={{ 
+                  position: 'absolute', 
+                  top: '-8px', 
+                  left: '12px', 
+                  background: 'var(--md-surface-container)', 
+                  padding: '0 4px', 
+                  fontSize: 'var(--md-label-small)', 
+                  color: 'var(--md-primary)',
+                  zIndex: 1 
+                }}
               >
                 Mot de passe Mines Alès
               </label>
@@ -276,22 +312,25 @@ export default function SettingsPage() {
                 <input
                   id="mines-password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="••••••••"
+                  placeholder=" "
                   value={minesPassword}
                   onChange={e => setMinesPassword(e.target.value)}
                   autoComplete="current-password"
                   style={{
                     width: '100%',
-                    height: 48,
+                    height: 56,
                     padding: '0 3rem 0 1rem',
-                    background: 'var(--md-surface-container-highest)',
+                    background: 'transparent',
                     border: '1px solid var(--md-outline)',
                     borderRadius: 'var(--md-shape-xs)',
                     color: 'var(--md-on-surface)',
                     fontFamily: 'var(--font-family)',
                     fontSize: 'var(--md-body-large)',
                     outline: 'none',
+                    boxSizing: 'border-box'
                   }}
+                  onFocus={(e) => { e.target.style.borderColor = 'var(--md-primary)'; e.target.style.borderWidth = '2px'; }}
+                  onBlur={(e) => { e.target.style.borderColor = 'var(--md-outline)'; e.target.style.borderWidth = '1px'; }}
                 />
                 <button
                   type="button"
@@ -353,8 +392,9 @@ export default function SettingsPage() {
               )}
             </button>
 
-            <p style={{ fontSize: 'var(--md-label-small)', color: 'var(--md-on-surface-variant)', marginTop: '0.75rem', textAlign: 'center', opacity: 0.7 }}>
-              🔒 Votre mot de passe est chiffré avec AES-256 avant d&apos;être stocké.
+            <p style={{ fontSize: '0.75rem', color: 'var(--md-on-surface-variant)', marginTop: '1.25rem', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+              <span className="material-symbols-rounded" style={{ fontSize: 16 }}>lock</span>
+              Votre mot de passe est chiffré avec AES-256 avant d&apos;être stocké.
             </p>
           </div>
         </section>
@@ -375,14 +415,36 @@ export default function SettingsPage() {
                   Recevez une alerte lorsqu'une nouvelle note est publiée pour votre promotion.
                 </p>
               </div>
-              <button
-                className={`md-btn ${pushEnabled ? 'md-btn-outlined' : 'md-btn-tonal'}`}
-                onClick={handlePushToggle}
-                disabled={pushLoading}
-                style={{ height: 36, padding: '0 1rem', fontSize: '0.75rem', minWidth: 110 }}
-              >
-                {pushLoading ? '...' : pushEnabled ? 'Désactiver' : 'Activer'}
-              </button>
+              <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', position: 'relative' }}>
+                <input 
+                  type="checkbox" 
+                  checked={pushEnabled} 
+                  onChange={handlePushToggle} 
+                  disabled={pushLoading}
+                  style={{ opacity: 0, position: 'absolute', width: 0, height: 0 }} 
+                />
+                <div style={{ 
+                  width: 52, 
+                  height: 32, 
+                  background: pushEnabled ? 'var(--md-primary)' : 'var(--md-surface-variant)', 
+                  borderRadius: 16, 
+                  position: 'relative', 
+                  transition: 'background 0.2s',
+                  border: pushEnabled ? 'none' : '2px solid var(--md-outline)',
+                  boxSizing: 'border-box'
+                }}>
+                  <div style={{
+                    width: pushEnabled ? 24 : 16,
+                    height: pushEnabled ? 24 : 16,
+                    background: pushEnabled ? 'var(--md-on-primary)' : 'var(--md-outline)',
+                    borderRadius: '50%',
+                    position: 'absolute',
+                    top: pushEnabled ? 4 : 6,
+                    left: pushEnabled ? 24 : 6,
+                    transition: 'all 0.2s'
+                  }} />
+                </div>
+              </label>
             </div>
           </div>
         </section>
@@ -400,11 +462,11 @@ export default function SettingsPage() {
               { icon: 'code', label: 'Stack', value: 'Next.js · Prisma · PostgreSQL' },
               { icon: 'security', label: 'Chiffrement', value: 'AES-256-CBC' },
             ].map(item => (
-              <div key={item.icon} className="md-list-item" style={{ padding: '0.625rem 0' }}>
-                <span className="material-symbols-rounded filled" style={{ color: 'var(--md-primary)', fontSize: 20 }}>{item.icon}</span>
+              <div key={item.icon} className="md-list-item" style={{ padding: '0.75rem 0', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <span className="material-symbols-rounded filled" style={{ color: 'var(--md-on-surface-variant)', fontSize: 24, flexShrink: 0 }}>{item.icon}</span>
                 <div style={{ flex: 1 }}>
-                  <p style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)' }}>{item.label}</p>
-                  <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)' }}>{item.value}</p>
+                  <p style={{ fontSize: 'var(--md-body-large)', color: 'var(--md-on-surface)', lineHeight: 1.2 }}>{item.value}</p>
+                  <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface-variant)', marginTop: 4 }}>{item.label}</p>
                 </div>
               </div>
             ))}

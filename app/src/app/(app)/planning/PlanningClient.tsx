@@ -160,29 +160,45 @@ export default function PlanningClient() {
                       name = match[2].charAt(0).toUpperCase() + match[2].slice(1).toLowerCase();
                     }
 
+                    const isNextEvent = groupIndex === 0 && i === 0;
+
+                    const cardBg = isNextEvent ? 'var(--md-primary-container)' : undefined;
+                    const cardBorder = isNextEvent ? '6px solid var(--md-primary)' : '6px solid var(--md-primary-container)';
+                    const textColorMain = isNextEvent ? 'var(--md-on-primary-container)' : 'var(--md-on-surface)';
+                    const textColorSub = isNextEvent ? 'var(--md-on-primary-container)' : 'var(--md-on-surface-variant)';
+                    const chipBg = isNextEvent ? 'var(--md-primary)' : 'var(--md-surface-variant)';
+                    const chipText = isNextEvent ? 'var(--md-on-primary)' : 'var(--md-on-surface)';
+                    const innerBorder = isNextEvent ? '1px solid rgba(0,0,0,0.1)' : '1px solid var(--md-outline-variant)';
+                    const iconColor = isNextEvent ? 'var(--md-primary)' : 'var(--md-primary-container)';
+
                     return (
-                      <div key={event.id} className="md-card md-card-elevated" style={{ padding: '1rem', display: 'flex', gap: '1rem', borderLeft: '6px solid var(--md-primary-container)', borderRadius: 'var(--md-shape-md)' }}>
+                      <div key={event.id} className="md-card md-card-elevated" style={{ padding: '1rem', display: 'flex', gap: '1rem', borderLeft: cardBorder, borderRadius: 'var(--md-shape-md)', background: cardBg }}>
                         <div style={{ display: 'flex', flexDirection: 'column', minWidth: '4.5rem', alignItems: 'center', justifyContent: 'center' }}>
-                          <span style={{ fontSize: 'var(--md-title-medium)', fontWeight: 700, color: 'var(--md-on-surface)' }}>{formatTime(event.start)}</span>
-                          <span style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface-variant)' }}>{formatTime(event.end)}</span>
+                          <span style={{ fontSize: 'var(--md-title-medium)', fontWeight: 700, color: textColorMain }}>{formatTime(event.start)}</span>
+                          <span style={{ fontSize: 'var(--md-body-medium)', color: textColorSub, opacity: isNextEvent ? 0.8 : 1 }}>{formatTime(event.end)}</span>
                         </div>
-                        <div style={{ flex: 1, paddingLeft: '1rem', borderLeft: '1px solid var(--md-outline-variant)' }}>
+                        <div style={{ flex: 1, paddingLeft: '1rem', borderLeft: innerBorder }}>
+                          {isNextEvent && (
+                            <p style={{ fontSize: 'var(--md-label-small)', fontWeight: 600, opacity: 0.8, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4, color: textColorMain }}>
+                              Prochain cours
+                            </p>
+                          )}
                           {code ? (
                             <div style={{ marginBottom: '6px', display: 'flex', alignItems: 'flex-start', gap: '8px', flexDirection: 'column' }}>
-                              <span style={{ background: 'var(--md-surface-variant)', color: 'var(--md-on-surface)', padding: '2px 8px', borderRadius: '8px', fontSize: 'var(--md-label-medium)', fontWeight: 600, letterSpacing: '0.5px' }}>{code}</span>
-                              <h3 style={{ fontSize: 'var(--md-body-large)', fontWeight: 600, color: 'var(--md-on-surface)', lineHeight: 1.3 }}>{name}</h3>
+                              <span style={{ background: chipBg, color: chipText, padding: '2px 8px', borderRadius: '8px', fontSize: 'var(--md-label-medium)', fontWeight: 600, letterSpacing: '0.5px' }}>{code}</span>
+                              <h3 style={{ fontSize: 'var(--md-body-large)', fontWeight: 600, color: textColorMain, lineHeight: 1.3 }}>{name}</h3>
                             </div>
                           ) : (
-                            <h3 style={{ fontSize: 'var(--md-body-large)', fontWeight: 600, color: 'var(--md-on-surface)', marginBottom: 6, lineHeight: 1.3 }}>{name}</h3>
+                            <h3 style={{ fontSize: 'var(--md-body-large)', fontWeight: 600, color: textColorMain, marginBottom: 6, lineHeight: 1.3 }}>{name}</h3>
                           )}
                           {event.location && (
-                            <p style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)', display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
-                              <span className="material-symbols-rounded" style={{ fontSize: 16, color: 'var(--md-primary-container)' }}>location_on</span>
+                            <p style={{ fontSize: 'var(--md-body-small)', color: textColorSub, display: 'flex', alignItems: 'center', gap: 6, marginTop: 4, opacity: isNextEvent ? 0.9 : 1 }}>
+                              <span className="material-symbols-rounded" style={{ fontSize: 16, color: iconColor }}>location_on</span>
                               {event.location}
                             </p>
                           )}
                           {event.description && (
-                            <p style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)', marginTop: 8, fontStyle: 'italic', paddingLeft: '22px' }}>
+                            <p style={{ fontSize: 'var(--md-body-small)', color: textColorSub, marginTop: 8, fontStyle: 'italic', paddingLeft: '22px', opacity: isNextEvent ? 0.9 : 1 }}>
                               {event.description}
                             </p>
                           )}
