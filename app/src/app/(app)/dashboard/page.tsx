@@ -15,7 +15,7 @@ function ScoreRing({ value, max = 20, size = 100, disableAnimation = false }: { 
   const radius = (size - 12) / 2
   const circumference = 2 * Math.PI * radius
   const progress = value !== null ? (value / max) * circumference : 0
-  const color = value === null ? 'var(--md-outline)' : value >= 14 ? 'var(--md-success)' : value >= 12 ? '#4ade80' : value >= 10 ? '#c4930d' : 'var(--md-error)'
+  const color = value === null ? 'var(--md-outline)' : value >= 14 ? '#4ade80' : value >= 12 ? '#86efac' : value >= 10 ? '#facc15' : 'var(--md-error)'
 
   return (
     <div className="score-ring" style={{ flexShrink: 0, width: size, height: size, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -50,7 +50,7 @@ function ScoreRing({ value, max = 20, size = 100, disableAnimation = false }: { 
 
 function CanvasScoreRing({ value, max = 20, size = 100 }: { value: number | null; max?: number; size?: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const color = value === null ? 'var(--md-outline)' : value >= 14 ? 'var(--md-success)' : value >= 12 ? '#4ade80' : value >= 10 ? '#c4930d' : 'var(--md-error)'
+  const color = value === null ? 'var(--md-outline)' : value >= 14 ? '#4ade80' : value >= 12 ? '#86efac' : value >= 10 ? '#facc15' : 'var(--md-error)'
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -243,19 +243,32 @@ export default function DashboardPage() {
   return (
     <>
       {/* Top App Bar */}
-      <header className="md-top-bar">
-        <span className="material-symbols-rounded filled" style={{ color: 'var(--md-primary)', fontSize: 28 }}>school</span>
-        <span className="md-top-bar-title">StudentDash</span>
-        {session?.user && (
-          <Link href="/settings" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40, borderRadius: '50%', background: 'var(--md-surface-variant)', color: 'var(--md-on-surface-variant)', textDecoration: 'none' }} aria-label="Réglages">
-            <span className="material-symbols-rounded">settings</span>
-          </Link>
-        )}
+      <header className="md-top-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '64px', padding: '0 1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <span className="md-top-bar-title" style={{ fontSize: 'var(--md-title-large)', fontWeight: 400 }}>StudentDash</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <button 
+            onClick={handleSync} 
+            disabled={syncing || !hasCredentials}
+            className="md-icon-button"
+            style={{ background: 'transparent', border: 'none', color: 'var(--md-on-surface)', width: 48, height: 48, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            aria-label="Synchroniser les notes"
+            title={!hasCredentials ? 'Configurez vos identifiants dans Réglages' : undefined}
+          >
+            <span className={`material-symbols-rounded ${syncing ? 'spin' : ''}`}>sync</span>
+          </button>
+          {session?.user && (
+            <Link href="/settings" className="md-icon-button" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 48, height: 48, borderRadius: '50%', color: 'var(--md-on-surface)', textDecoration: 'none' }} aria-label="Réglages">
+              <span className="material-symbols-rounded">settings</span>
+            </Link>
+          )}
+        </div>
       </header>
 
       <main className="page-content">
         {/* Welcome section */}
-        <section className={styles.welcome} aria-label="Bienvenue">
+        <section className={styles.welcome} aria-label="Bienvenue" style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', marginBottom: '1.5rem' }}>
           <div>
             <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface-variant)' }}>
               Bonjour,
@@ -264,25 +277,13 @@ export default function DashboardPage() {
               {session?.user?.name?.split(' ')[0] ?? 'Étudiant'} 👋
             </h1>
           </div>
-          <button
-            id="btn-sync"
-            className="md-btn md-btn-tonal"
-            onClick={handleSync}
-            disabled={syncing || !hasCredentials}
-            aria-label="Synchroniser les notes"
-            title={!hasCredentials ? 'Configurez vos identifiants dans Réglages' : undefined}
-          >
-            <span className={`material-symbols-rounded ${syncing ? 'spin' : ''}`} style={{ fontSize: 18 }}>sync</span>
-            {syncing ? 'Synchro…' : 'Sync'}
-          </button>
+          {lastSync && (
+            <p style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)' }}>
+              <span className="material-symbols-rounded" style={{ fontSize: 16 }}>history</span>
+              Dernière synchro: {lastSync}
+            </p>
+          )}
         </section>
-
-        {lastSync && (
-          <p style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 'var(--md-label-small)', color: 'var(--md-on-surface-variant)', marginBottom: '1rem', opacity: 0.7 }}>
-            <span className="material-symbols-rounded" style={{ fontSize: 14 }}>history</span>
-            {lastSync}
-          </p>
-        )}
 
         {/* No credentials banner / modal */}
         {!loading && hasCredentials === false && (
@@ -303,7 +304,7 @@ export default function DashboardPage() {
         )}
 
         {/* Overall average hero card */}
-        <div className={`md-card md-card-elevated animate-in ${styles.heroCard}`} aria-label="Moyenne générale">
+        <div className={`md-card md-card-elevated animate-in ${styles.heroCard}`} style={{ position: 'relative' }} aria-label="Moyenne générale">
           {loading ? (
             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
               <div className="skeleton" style={{ width: 100, height: 100, borderRadius: '50%' }} />
@@ -313,8 +314,16 @@ export default function DashboardPage() {
               </div>
             </div>
           ) : (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
-              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flex: '1 1 auto', minWidth: 200 }}>
+            <>
+              <button 
+                onClick={() => setShowShare(true)} 
+                className="md-icon-button" 
+                style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', color: 'var(--md-on-surface)', border: 'none', width: 48, height: 48, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                aria-label="Partager mon bilan"
+              >
+                <span className="material-symbols-rounded" style={{ fontSize: 24 }}>share</span>
+              </button>
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', paddingRight: '2rem' }}>
                 <ScoreRing value={overallAvg !== null && !isNaN(overallAvg) ? Number(overallAvg.toFixed(2)) : null} size={108} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{ fontSize: 'var(--md-title-large)', fontWeight: 600, color: 'var(--md-on-surface)', margin: '0 0 0.25rem 0', wordBreak: 'break-word', lineHeight: 1.2 }}>Moyenne générale</p>
@@ -329,15 +338,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </div>
-              <button 
-                onClick={() => setShowShare(true)} 
-                className="md-icon-button" 
-                style={{ flexShrink: 0, background: 'var(--md-primary)', color: 'var(--md-on-primary)', border: 'none', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}
-                aria-label="Partager mon bilan"
-              >
-                <span className="material-symbols-rounded" style={{ fontSize: 20 }}>share</span>
-              </button>
-            </div>
+            </>
           )}
         </div>
 
@@ -352,7 +353,13 @@ export default function DashboardPage() {
                 Prochain cours • {new Date(nextEvent.start).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })}
               </p>
               <p style={{ fontSize: 'var(--md-title-medium)', fontWeight: 700, margin: '0 0 4px 0', lineHeight: 1.2 }}>
-                {nextEvent.summary}
+                {(function(summary) {
+                  const match = summary.match(/^([\w\.]+)\s+(.*)$/);
+                  if (match) {
+                    return match[1] + ' ' + match[2].charAt(0).toUpperCase() + match[2].slice(1).toLowerCase();
+                  }
+                  return summary.charAt(0).toUpperCase() + summary.slice(1).toLowerCase();
+                })(nextEvent.summary)}
               </p>
               <div style={{ display: 'flex', gap: '0.75rem', fontSize: 'var(--md-body-small)', opacity: 0.9 }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -410,7 +417,7 @@ export default function DashboardPage() {
                       <p style={{ fontSize: 'var(--md-title-medium)', fontWeight: 600, color: 'var(--md-on-surface)' }}>
                         Semestre {sem}
                       </p>
-                      <p style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)' }}>
+                      <p style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)', fontWeight: 500 }}>
                         {count}/{total} matière{total !== 1 ? 's' : ''} notée{total !== 1 ? 's' : ''}
                       </p>
                     </div>
@@ -424,8 +431,8 @@ export default function DashboardPage() {
                       <span className="material-symbols-rounded" style={{ color: 'var(--md-on-surface-variant)' }}>chevron_right</span>
                     </div>
                   </div>
-                  <div className="md-linear-progress" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
-                    <div className="md-linear-progress-track" style={{ width: `${pct}%` }} />
+                  <div className="md-linear-progress" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} style={{ background: 'var(--md-surface-variant)', height: 4, borderRadius: 2, overflow: 'hidden', marginTop: 12 }}>
+                    <div className="md-linear-progress-track" style={{ width: `${pct}%`, background: 'var(--md-primary)', height: '100%', borderRadius: 2 }} />
                   </div>
                 </Link>
               )
@@ -440,9 +447,9 @@ export default function DashboardPage() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.75rem' }}>
           {[
-            { href: '/grades', icon: 'school', label: 'Toutes mes notes', color: 'var(--md-primary)' },
-            { href: '/simulator', icon: 'calculate', label: 'Simulateur d\'UE', color: 'var(--md-tertiary)' },
-            { href: '/documents', icon: 'folder_open', label: 'Documents', color: 'var(--md-success)' },
+            { href: '/grades', icon: 'school', label: 'Toutes mes notes' },
+            { href: '/simulator', icon: 'calculate', label: 'Simulateur d\'UE' },
+            { href: '/documents', icon: 'folder_open', label: 'Documents' },
           ].map(item => (
             <Link
               key={item.href}
@@ -450,7 +457,7 @@ export default function DashboardPage() {
               className="md-card md-card-elevated animate-in"
               style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '1.25rem 1rem' }}
             >
-              <span className="material-symbols-rounded filled" style={{ fontSize: 28, color: item.color }}>
+              <span className="material-symbols-rounded filled" style={{ fontSize: 28, color: 'var(--md-primary)' }}>
                 {item.icon}
               </span>
               <span style={{ fontSize: 'var(--md-body-medium)', fontWeight: 500, color: 'var(--md-on-surface)' }}>

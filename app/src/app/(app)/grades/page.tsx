@@ -80,57 +80,75 @@ function GradesContent() {
   return (
     <>
       <header className="md-top-bar">
-        <span className="material-symbols-rounded filled" style={{ color: 'var(--md-primary)', fontSize: 24 }}>school</span>
         <span className="md-top-bar-title">Mes notes</span>
       </header>
 
       <main className="page-content">
-        {/* Semester selector chips */}
-        <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem', marginBottom: '1rem' }} role="tablist" aria-label="Semestres">
+        {/* Segmented Button for Semester selector */}
+        <div style={{ display: 'flex', overflowX: 'auto', paddingBottom: '0.5rem', marginBottom: '1.5rem', width: '100%', WebkitOverflowScrolling: 'touch' }} role="tablist" aria-label="Semestres">
           {loading ? (
-            [1,2,3].map(i => <div key={i} className="skeleton" style={{ width: 60, height: 32, borderRadius: 'var(--md-shape-sm)', flexShrink: 0 }} />)
-          ) : (
-            semesters.map(sem => (
-              <button
-                key={sem}
-                role="tab"
-                aria-selected={activeSem === sem}
-                className={`md-chip ${activeSem === sem ? 'active' : ''}`}
-                onClick={() => setActiveSem(sem)}
-                id={`tab-${sem}`}
-              >
-                {sem}
-              </button>
-            ))
-          )}
+            <div className="skeleton" style={{ width: 240, height: 40, borderRadius: 'var(--md-shape-full)' }} />
+          ) : semesters.length > 0 ? (
+            <div style={{ display: 'inline-flex', border: '1px solid var(--md-outline)', borderRadius: 'var(--md-shape-full)', overflow: 'hidden' }}>
+              {semesters.map((sem, i) => (
+                <button
+                  key={sem}
+                  role="tab"
+                  aria-selected={activeSem === sem}
+                  style={{
+                    background: activeSem === sem ? 'var(--md-secondary-container)' : 'transparent',
+                    color: activeSem === sem ? 'var(--md-on-secondary-container)' : 'var(--md-on-surface)',
+                    border: 'none',
+                    borderRight: i < semesters.length - 1 ? '1px solid var(--md-outline)' : 'none',
+                    padding: activeSem === sem ? '0 1rem 0 0.75rem' : '0 1rem',
+                    height: '40px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    fontSize: 'var(--md-label-large)',
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                    transition: 'background-color 200ms'
+                  }}
+                  onClick={() => setActiveSem(sem)}
+                  id={`tab-${sem}`}
+                >
+                  {activeSem === sem && <span className="material-symbols-rounded" style={{ fontSize: 18, marginRight: 8 }}>check</span>}
+                  {sem}
+                </button>
+              ))}
+            </div>
+          ) : null}
         </div>
 
         {/* Semester average summary */}
         {!loading && activeSem && data && (
-          <div className="md-card md-card-elevated animate-in" style={{ marginBottom: '1rem', padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="md-card md-card-elevated animate-in" style={{ marginBottom: '1.5rem', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div>
-              <p style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)' }}>Semestre {activeSem}</p>
-              <p style={{ fontSize: 'var(--md-headline-small)', fontWeight: 500, color: 'var(--md-on-surface)' }}>
-                Moyenne: {' '}
-                <span style={{ color: 'var(--md-primary)' }}>
-                  {data.semesterAverages[activeSem]?.toFixed(2) ?? '—'}/20
+              <p style={{ fontSize: 'var(--md-title-medium)', color: 'var(--md-on-surface-variant)', marginBottom: '0.25rem' }}>Semestre {activeSem}</p>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem' }}>
+                <span style={{ fontSize: 'var(--md-display-small)', fontWeight: 600, color: 'var(--md-primary-container)' }}>
+                  {data.semesterAverages[activeSem]?.toFixed(2) ?? '—'}
                 </span>
-              </p>
+                <span style={{ fontSize: 'var(--md-headline-small)', color: 'var(--md-on-surface-variant)', fontWeight: 500 }}>/20</span>
+              </div>
             </div>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', borderTop: '1px solid var(--md-outline-variant)', paddingTop: '1rem', marginTop: '0.5rem' }}>
               <button
-                className="md-btn md-btn-text"
-                style={{ height: 36, fontSize: '0.75rem', padding: '0 0.5rem' }}
-                onClick={() => setExpandedUes(new Set(Object.keys(currentUes)))}
+                className="md-btn"
+                style={{ background: 'transparent', color: 'var(--md-primary-container)', padding: '0 1rem', height: 40 }}
+                onClick={() => {
+                  const allKeys = Object.keys(currentUes);
+                  if (expandedUes.size === allKeys.length) {
+                    setExpandedUes(new Set());
+                  } else {
+                    setExpandedUes(new Set(allKeys));
+                  }
+                }}
               >
-                Tout ouvrir
-              </button>
-              <button
-                className="md-btn md-btn-text"
-                style={{ height: 36, fontSize: '0.75rem', padding: '0 0.5rem' }}
-                onClick={() => setExpandedUes(new Set())}
-              >
-                Réduire
+                <span className="material-symbols-rounded" style={{ fontSize: 20 }}>
+                  {expandedUes.size === Object.keys(currentUes).length ? 'unfold_less' : 'unfold_more'}
+                </span>
+                {expandedUes.size === Object.keys(currentUes).length ? 'Tout réduire' : 'Tout développer'}
               </button>
             </div>
           </div>
@@ -161,31 +179,31 @@ function GradesContent() {
                   {/* UE header */}
                   <button
                     className="md-list-item"
-                    style={{ width: '100%', background: 'transparent', border: 'none', cursor: 'pointer', borderRadius: 0, padding: '0.875rem 1rem' }}
+                    style={{ width: '100%', minHeight: '48px', background: 'transparent', border: 'none', cursor: 'pointer', borderRadius: 0, padding: '1rem' }}
                     onClick={() => toggleUe(ueCode)}
                     aria-expanded={isExpanded}
                     aria-controls={`ue-${ueCode}`}
                   >
                     <div style={{ flex: 1, textAlign: 'left' }}>
-                      <p style={{ fontSize: 'var(--md-title-small)', fontWeight: 600, color: 'var(--md-on-surface)' }}>
+                      <p style={{ fontSize: 'var(--md-title-medium)', fontWeight: 600, color: 'var(--md-on-surface)' }}>
                         {ueCode}
                       </p>
-                      <p style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)', marginTop: 2 }}>
+                      <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface-variant)', marginTop: 2 }}>
                         {ueName}
                       </p>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                       {ueAvg !== null && (
                         <span
                           className={`grade-badge ${gradeClass(ueAvg)}`}
                           style={{
-                            height: 28, fontSize: '0.75rem', minWidth: 'auto', padding: '0 0.5rem'
+                            height: 28, fontSize: '0.875rem', fontWeight: 600, minWidth: 'auto', padding: '0 0.5rem'
                           }}
                         >
                           {ueAvg.toFixed(2)}/20
                         </span>
                       )}
-                      <span className="material-symbols-rounded" style={{ color: 'var(--md-on-surface-variant)', transition: 'transform 200ms', transform: isExpanded ? 'rotate(180deg)' : 'none', fontSize: 20 }}>
+                      <span className="material-symbols-rounded" style={{ color: 'var(--md-on-surface-variant)', transition: 'transform 200ms', transform: isExpanded ? 'rotate(180deg)' : 'none', fontSize: 24 }}>
                         expand_more
                       </span>
                     </div>
@@ -201,19 +219,21 @@ function GradesContent() {
                           style={{
                             borderBottom: j < subjects.length - 1 ? '1px solid var(--md-outline-variant)' : 'none',
                             borderRadius: 0,
-                            padding: '0.75rem 1rem',
+                            padding: '0.75rem 1rem 0.75rem 2rem',
+                            minHeight: '56px',
+                            background: 'var(--md-surface)'
                           }}
                         >
                           <div style={{ flex: 1 }}>
-                            <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)' }}>
+                            <p style={{ fontSize: 'var(--md-body-large)', color: 'var(--md-on-surface)' }}>
                               {grade.subjectName}
                             </p>
-                            <p style={{ fontSize: 'var(--md-label-small)', color: 'var(--md-on-surface-variant)', marginTop: 2 }}>
+                            <p style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)', marginTop: 2 }}>
                               Coef. {grade.coefficient}
                               {grade.gradeType ? ` · ${grade.gradeType}` : ''}
                             </p>
                           </div>
-                          <span className={`grade-badge ${gradeClass(grade.value)}`} aria-label={`Note ${grade.value ?? 'non disponible'}`}>
+                          <span className={`grade-badge ${gradeClass(grade.value)}`} style={{ fontSize: '0.875rem', fontWeight: 600 }} aria-label={`Note ${grade.value ?? 'non disponible'}`}>
                             {grade.value !== null ? grade.value.toFixed(2) : '—'}
                           </span>
                         </div>
