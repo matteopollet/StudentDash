@@ -470,36 +470,28 @@ export default function DashboardPage() {
             <div style={{ position: 'absolute', bottom: -50, left: -50, width: 200, height: 200, borderRadius: '50%', background: 'var(--md-tertiary)', opacity: 0.08, filter: 'blur(30px)' }} />
 
             {/* Header */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', zIndex: 1, justifyContent: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2.5rem', zIndex: 1, justifyContent: 'center' }}>
               <span className="material-symbols-rounded filled" style={{ color: 'var(--md-primary)', fontSize: 36 }}>school</span>
               <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--md-on-surface)', letterSpacing: '-0.5px', lineHeight: 1.1 }}>StudentDash</span>
-                <span style={{ fontSize: '0.85rem', color: 'var(--md-primary)', fontWeight: 600 }}>Bilan Académique</span>
+                <span style={{ fontSize: '0.85rem', color: 'var(--md-primary)', fontWeight: 600 }}>Bilan de {session?.user?.name ?? 'Étudiant'}</span>
               </div>
-            </div>
-
-            {/* User Info */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--md-primary-container)', padding: '0.5rem 1.25rem', borderRadius: '2rem', marginBottom: '2rem', zIndex: 1, border: '1px solid rgba(103, 80, 164, 0.2)' }}>
-              <span className="material-symbols-rounded" style={{ color: 'var(--md-on-primary-container)', fontSize: 18 }}>person</span>
-              <span style={{ fontSize: '1rem', color: 'var(--md-on-primary-container)', fontWeight: 600, textAlign: 'center' }}>
-                Bilan de : {session?.user?.name ?? 'Étudiant'}
-              </span>
             </div>
 
             {/* Gauge */}
-            <div style={{ zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <CanvasScoreRing value={overallAvg !== null && !isNaN(overallAvg) ? Number(overallAvg.toFixed(2)) : null} size={130} />
-              <div style={{ marginTop: '1rem', fontSize: '0.8rem', color: 'var(--md-on-surface-variant)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '2px' }}>
+            <div style={{ zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '2rem' }}>
+              <div style={{ marginBottom: '1rem', fontSize: '0.8rem', color: 'var(--md-on-surface-variant)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '2px' }}>
                 Moyenne Générale
               </div>
+              <CanvasScoreRing value={overallAvg !== null && !isNaN(overallAvg) ? Number(overallAvg.toFixed(2)) : null} size={130} />
             </div>
 
             {/* Best & Worst */}
             <div style={{ width: '100%', display: 'flex', gap: '0.75rem', marginBottom: '1.5rem', zIndex: 1 }}>
               {/* Best */}
               <div style={{ flex: 1, minWidth: 0, background: 'rgba(74, 222, 128, 0.1)', padding: '1rem', borderRadius: 'var(--md-shape-lg)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#4ade80', marginBottom: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-                  <span className="material-symbols-rounded" style={{ fontSize: 18 }}>trending_up</span>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', color: '#4ade80', marginBottom: '0.5rem' }}>
+                  <span className="material-symbols-rounded" style={{ fontSize: 20 }}>trending_up</span>
                   <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Meilleure Note</span>
                 </div>
                 <span style={{ fontSize: '1.8rem', fontWeight: 800, color: '#4ade80', lineHeight: 1 }}>
@@ -512,8 +504,8 @@ export default function DashboardPage() {
               
               {/* Worst */}
               <div style={{ flex: 1, minWidth: 0, background: 'rgba(248, 113, 113, 0.1)', padding: '1rem', borderRadius: 'var(--md-shape-lg)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#f87171', marginBottom: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-                  <span className="material-symbols-rounded" style={{ fontSize: 18 }}>trending_down</span>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', color: '#f87171', marginBottom: '0.5rem' }}>
+                  <span className="material-symbols-rounded" style={{ fontSize: 20 }}>trending_down</span>
                   <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Pire Note</span>
                 </div>
                 <span style={{ fontSize: '1.8rem', fontWeight: 800, color: '#f87171', lineHeight: 1 }}>

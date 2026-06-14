@@ -3,9 +3,11 @@ import { useSession, signOut } from 'next-auth/react'
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useTheme } from '@/components/ThemeProvider'
 
 export default function SettingsPage() {
   const { data: session } = useSession()
+  const { mode, setMode, colorHex, setColorHex } = useTheme()
   const [minesId, setMinesId] = useState('')
   const [minesPassword, setMinesPassword] = useState('')
   const [academicPath, setAcademicPath] = useState('DL')
@@ -14,6 +16,17 @@ export default function SettingsPage() {
   const [existingId, setExistingId] = useState<string | null>(null)
   const [lastSync, setLastSync] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
+  const [isStandalone, setIsStandalone] = useState(true)
+  const [isIOS, setIsIOS] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isPWA = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone
+      setIsStandalone(!!isPWA)
+      const ua = window.navigator.userAgent.toLowerCase()
+      setIsIOS(/iphone|ipad|ipod/.test(ua))
+    }
+  }, [])
   const [deleteStep, setDeleteStep] = useState(0)
   const [deleteCheckbox, setDeleteCheckbox] = useState(false)
   
@@ -448,6 +461,138 @@ export default function SettingsPage() {
             </div>
           </div>
         </section>
+
+        {/* Appearance section */}
+        <section aria-label="Apparence">
+          <h2 style={{ fontSize: 'var(--md-title-medium)', fontWeight: 500, color: 'var(--md-on-surface-variant)', margin: '1.25rem 0 0.75rem' }}>
+            Apparence
+          </h2>
+
+          <div className="md-card md-card-elevated animate-in" style={{ padding: '1.25rem', marginBottom: '1rem' }}>
+            <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)', fontWeight: 500, marginBottom: '0.75rem' }}>
+              Mode d'affichage
+            </p>
+            
+            <div style={{ display: 'flex', background: 'var(--md-surface-variant)', borderRadius: '2rem', padding: '4px', marginBottom: '1.5rem' }}>
+              {(['system', 'light', 'dark'] as const).map(m => (
+                <button
+                  key={m}
+                  onClick={() => setMode(m)}
+                  style={{
+                    flex: 1,
+                    height: 40,
+                    borderRadius: '2rem',
+                    border: 'none',
+                    background: mode === m ? 'var(--md-surface)' : 'transparent',
+                    color: mode === m ? 'var(--md-on-surface)' : 'var(--md-on-surface-variant)',
+                    fontWeight: mode === m ? 600 : 500,
+                    fontSize: '0.85rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6,
+                    boxShadow: mode === m ? '0 2px 4px rgba(0,0,0,0.1)' : 'none',
+                    transition: 'all 0.2s',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <span className="material-symbols-rounded" style={{ fontSize: 18 }}>
+                    {m === 'system' ? 'smartphone' : m === 'light' ? 'light_mode' : 'dark_mode'}
+                  </span>
+                  {m === 'system' ? 'Système' : m === 'light' ? 'Clair' : 'Sombre'}
+                </button>
+              ))}
+            </div>
+
+            <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)', fontWeight: 500, marginBottom: '0.75rem' }}>
+              Couleur d'accentuation
+            </p>
+            
+            <div style={{ display: 'flex', gap: '0.75rem', overflowX: 'auto', paddingBottom: '0.5rem', scrollbarWidth: 'none' }}>
+              {[
+                { hex: '#6750A4', name: 'Violet (Défaut)' },
+                { hex: '#006A60', name: 'Menthe' },
+                { hex: '#0061A4', name: 'Bleu Océan' },
+                { hex: '#8C4A60', name: 'Rose Poudré' },
+                { hex: '#984061', name: 'Framboise' },
+                { hex: '#A23F16', name: 'Terre Cuite' },
+                { hex: '#4B6320', name: 'Vert Kaki' },
+                { hex: '#6A5F00', name: 'Or' },
+              ].map(color => (
+                <button
+                  key={color.hex}
+                  onClick={() => setColorHex(color.hex)}
+                  title={color.name}
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: '50%',
+                    background: color.hex,
+                    border: colorHex === color.hex ? '2px solid var(--md-on-surface)' : '2px solid transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s',
+                    transform: colorHex === color.hex ? 'scale(1.05)' : 'scale(1)'
+                  }}
+                >
+                  {colorHex === color.hex && (
+                    <span className="material-symbols-rounded" style={{ color: '#ffffff', fontSize: 24, filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))' }}>
+                      check
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Mobile App Install section */}
+        {!isStandalone && (
+          <section aria-label="Application Mobile">
+            <h2 style={{ fontSize: 'var(--md-title-medium)', fontWeight: 500, color: 'var(--md-on-surface-variant)', margin: '1.25rem 0 0.75rem' }}>
+              Application Mobile
+            </h2>
+
+            <div className="md-card md-card-elevated animate-in" style={{ padding: '1.25rem', marginBottom: '1rem', background: 'var(--md-primary-container)', border: '1px solid rgba(103, 80, 164, 0.2)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
+                <span className="material-symbols-rounded filled" style={{ color: 'var(--md-on-primary-container)', fontSize: 32 }}>install_mobile</span>
+                <div>
+                  <p style={{ fontSize: 'var(--md-body-large)', color: 'var(--md-on-primary-container)', fontWeight: 600 }}>Installer StudentDash</p>
+                  <p style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-primary-container)', opacity: 0.9 }}>
+                    Ajoutez l'application sur votre téléphone pour un accès instantané et des notifications.
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ background: 'var(--md-surface)', padding: '1rem', borderRadius: 'var(--md-shape-sm)' }}>
+                {isIOS ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)' }}>
+                      <strong>Sur iPhone (Safari) :</strong>
+                    </p>
+                    <ol style={{ margin: 0, paddingLeft: '1.25rem', color: 'var(--md-on-surface-variant)', fontSize: '0.85rem' }}>
+                      <li style={{ marginBottom: 6 }}>Appuyez sur l'icône de <strong>Partage</strong> en bas (le carré avec la flèche).</li>
+                      <li>Faites défiler et choisissez <strong>Sur l'écran d'accueil</strong>.</li>
+                    </ol>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)' }}>
+                      <strong>Sur Android (Chrome) :</strong>
+                    </p>
+                    <ol style={{ margin: 0, paddingLeft: '1.25rem', color: 'var(--md-on-surface-variant)', fontSize: '0.85rem' }}>
+                      <li style={{ marginBottom: 6 }}>Appuyez sur le menu (les <strong>3 petits points</strong> en haut à droite).</li>
+                      <li>Choisissez <strong>Ajouter à l'écran d'accueil</strong> ou <strong>Installer l'application</strong>.</li>
+                    </ol>
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* About section */}
         <section aria-label="À propos">

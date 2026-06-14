@@ -35,6 +35,8 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 }
 
+import { ThemeProvider } from '@/components/ThemeProvider'
+
 export default async function RootLayout({
   children,
 }: {
@@ -48,11 +50,13 @@ export default async function RootLayout({
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>
       <body>
-        <SessionProvider session={session}>
-          <PWARegister />
-          <PWAInstallPrompt />
-          {children}
-        </SessionProvider>
+        <ThemeProvider>
+          <SessionProvider session={session}>
+            <PWARegister />
+            <PWAInstallPrompt />
+            {children}
+          </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
