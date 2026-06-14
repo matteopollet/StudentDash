@@ -49,18 +49,26 @@ export default function PlanningClient() {
   const handleSync = async () => {
     setSyncing(true)
     try {
-      const res = await fetch('/api/planning', { method: 'POST' })
-      const data = await res.json()
-      if (data.error) {
-        setError(data.error)
-        showSnack(`Erreur: ${data.error}`)
-      } else {
-        showSnack(`✓ ${data.count} cours synchronisés`)
+      const [gradesRes, planRes] = await Promise.all([
+        fetch('/api/sync', { method: 'POST' }),
+        fetch('/api/planning', { method: 'POST' })
+      ])
+      const gradesData = await gradesRes.json()
+      const planData = await planRes.json()
+      
+      let msg = ''
+      if (gradesData.success) msg += `✓ ${gradesData.gradesCount} notes`
+      if (planData.success) msg += (msg ? ' • ' : '✓ ') + `${planData.count} cours`
+      
+      if (msg) {
+        showSnack(`${msg} synchronisés`)
         loadData()
+      } else {
+        showSnack('Erreur lors de la synchronisation')
       }
-    } catch (err: any) {
-      setError(err.message)
-      showSnack(`Erreur: ${err.message}`)
+    } catch (e: any) {
+      setError(e.message)
+      showSnack(`Erreur: ${e.message}`)
     } finally {
       setSyncing(false)
     }

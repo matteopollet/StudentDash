@@ -18,7 +18,7 @@ function ScoreRing({ value, max = 20, size = 100, disableAnimation = false }: { 
   const color = value === null ? 'var(--md-outline)' : value >= 14 ? 'var(--md-success)' : value >= 12 ? '#4ade80' : value >= 10 ? '#c4930d' : 'var(--md-error)'
 
   return (
-    <div className="score-ring" style={{ width: size, height: size, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div className="score-ring" style={{ flexShrink: 0, width: size, height: size, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true" style={{ position: 'absolute', top: 0, left: 0 }}>
         <circle
           cx={size / 2} cy={size / 2} r={radius}
@@ -104,7 +104,7 @@ function CanvasScoreRing({ value, max = 20, size = 100 }: { value: number | null
   }, [value, max, size, color])
 
   return (
-    <div style={{ width: size, height: size, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ flexShrink: 0, width: size, height: size, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <canvas 
         ref={canvasRef} 
         style={{ width: size, height: size, position: 'absolute', top: 0, left: 0 }}
@@ -313,11 +313,11 @@ export default function DashboardPage() {
               </div>
             </div>
           ) : (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flex: '1 1 auto', minWidth: 200 }}>
                 <ScoreRing value={overallAvg !== null && !isNaN(overallAvg) ? Number(overallAvg.toFixed(2)) : null} size={108} />
-                <div>
-                  <p style={{ fontSize: 'var(--md-headline-small)', fontWeight: 600, color: 'var(--md-on-surface)', margin: '0 0 0.25rem 0' }}>Moyenne générale</p>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: 'var(--md-title-large)', fontWeight: 600, color: 'var(--md-on-surface)', margin: '0 0 0.25rem 0', wordBreak: 'break-word', lineHeight: 1.2 }}>Moyenne générale</p>
                   <p style={{ fontSize: 'var(--md-title-small)', color: 'var(--md-on-surface-variant)' }}>
                     {semesters.length} semestre{semesters.length !== 1 ? 's' : ''}
                   </p>
@@ -332,7 +332,7 @@ export default function DashboardPage() {
               <button 
                 onClick={() => setShowShare(true)} 
                 className="md-icon-button" 
-                style={{ background: 'var(--md-primary)', color: 'var(--md-on-primary)', border: 'none', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}
+                style={{ flexShrink: 0, background: 'var(--md-primary)', color: 'var(--md-on-primary)', border: 'none', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}
                 aria-label="Partager mon bilan"
               >
                 <span className="material-symbols-rounded" style={{ fontSize: 20 }}>share</span>
