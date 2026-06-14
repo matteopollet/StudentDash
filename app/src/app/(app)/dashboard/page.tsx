@@ -1,6 +1,6 @@
 'use client'
 import { useSession } from 'next-auth/react'
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 
 import Link from 'next/link'
 import styles from './page.module.css'
@@ -11,37 +11,109 @@ interface GradeData {
   semesterAverages: Record<string, number | null>
 }
 
-function ScoreRing({ value, max = 20, size = 100 }: { value: number | null; max?: number; size?: number }) {
+function ScoreRing({ value, max = 20, size = 100, disableAnimation = false }: { value: number | null; max?: number; size?: number; disableAnimation?: boolean }) {
   const radius = (size - 12) / 2
   const circumference = 2 * Math.PI * radius
   const progress = value !== null ? (value / max) * circumference : 0
   const color = value === null ? 'var(--md-outline)' : value >= 14 ? 'var(--md-success)' : value >= 12 ? '#4ade80' : value >= 10 ? '#c4930d' : 'var(--md-error)'
 
   return (
-    <div className="score-ring" style={{ width: size, height: size }}>
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true">
+    <div className="score-ring" style={{ width: size, height: size, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true" style={{ position: 'absolute', top: 0, left: 0 }}>
         <circle
           cx={size / 2} cy={size / 2} r={radius}
           fill="none"
           stroke="var(--md-surface-container-highest)"
-          strokeWidth={6}
+          strokeWidth={8}
         />
         <circle
           cx={size / 2} cy={size / 2} r={radius}
           fill="none"
           stroke={color}
-          strokeWidth={6}
+          strokeWidth={8}
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={circumference - progress}
-          style={{ transition: 'stroke-dashoffset 800ms var(--md-motion-emphasized)' }}
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+          style={{ transition: disableAnimation ? 'none' : 'stroke-dashoffset 800ms var(--md-motion-emphasized)' }}
         />
       </svg>
-      <div className="score-ring-text">
-        <div style={{ fontSize: size > 80 ? '1.25rem' : '0.875rem', fontWeight: 700, color: color, lineHeight: 1 }}>
+      <div className="score-ring-text" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 1 }}>
+        <div style={{ fontSize: size > 80 ? '1.5rem' : '1rem', fontWeight: 800, color: color, lineHeight: 1 }}>
           {value !== null ? value.toFixed(2) : '—'}
         </div>
-        <div style={{ fontSize: '0.6875rem', color: 'var(--md-on-surface-variant)', marginTop: 2 }}>/20</div>
+        <div style={{ fontSize: size > 80 ? '0.85rem' : '0.65rem', color: 'var(--md-on-surface-variant)', marginTop: 4, fontWeight: 600 }}>/20</div>
+      </div>
+    </div>
+  )
+}
+
+function CanvasScoreRing({ value, max = 20, size = 100 }: { value: number | null; max?: number; size?: number }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const color = value === null ? 'var(--md-outline)' : value >= 14 ? 'var(--md-success)' : value >= 12 ? '#4ade80' : value >= 10 ? '#c4930d' : 'var(--md-error)'
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    // Handle high DPI displays for crisp rendering
+    const dpr = window.devicePixelRatio || 1
+    canvas.width = size * dpr
+    canvas.height = size * dpr
+    ctx.scale(dpr, dpr)
+
+    ctx.clearRect(0, 0, size, size)
+
+    const cx = size / 2
+    const cy = size / 2
+    const radius = (size - 12) / 2
+
+    // Resolve CSS variables
+    const getCSSVar = (v: string) => {
+      if (v.startsWith('var(')) {
+        return getComputedStyle(document.documentElement).getPropertyValue(v.slice(4, -1)).trim()
+      }
+      return v
+    }
+
+    const bgColor = getCSSVar('var(--md-surface-container-highest)') || '#e5e7eb'
+    const strokeColor = getCSSVar(color) || color
+
+    // Draw background
+    ctx.beginPath()
+    ctx.arc(cx, cy, radius, 0, 2 * Math.PI)
+    ctx.lineWidth = 8
+    ctx.strokeStyle = bgColor
+    ctx.stroke()
+
+    // Draw progress
+    if (value !== null && value > 0) {
+      const progress = value / max
+      const startAngle = -Math.PI / 2
+      const endAngle = startAngle + (progress * 2 * Math.PI)
+      
+      ctx.beginPath()
+      ctx.arc(cx, cy, radius, startAngle, endAngle)
+      ctx.lineWidth = 8
+      ctx.strokeStyle = strokeColor
+      ctx.lineCap = 'round'
+      ctx.stroke()
+    }
+  }, [value, max, size, color])
+
+  return (
+    <div style={{ width: size, height: size, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <canvas 
+        ref={canvasRef} 
+        style={{ width: size, height: size, position: 'absolute', top: 0, left: 0 }}
+      />
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 1 }}>
+        <div style={{ fontSize: size > 80 ? '1.5rem' : '1rem', fontWeight: 800, color: color, lineHeight: 1 }}>
+          {value !== null ? value.toFixed(2) : '—'}
+        </div>
+        <div style={{ fontSize: size > 80 ? '0.85rem' : '0.65rem', color: 'var(--md-on-surface-variant)', marginTop: 4, fontWeight: 600 }}>/20</div>
       </div>
     </div>
   )
@@ -124,6 +196,50 @@ export default function DashboardPage() {
   const totalGrades = data?.grades.filter(g => g.value !== null).length ?? 0
   const totalSubjects = data?.grades.length ?? 0
 
+  let validGrades: any[] = []
+  if (data) {
+    validGrades = data.grades.filter(g => typeof g.value === 'number' && !isNaN(g.value))
+  }
+  const bestGradeObj = validGrades.length > 0 ? validGrades.reduce((prev, curr) => (prev.value > curr.value ? prev : curr)) : null
+  const worstGradeObj = validGrades.length > 0 ? validGrades.reduce((prev, curr) => (prev.value < curr.value ? prev : curr)) : null
+
+  const [showShare, setShowShare] = useState(false)
+  const [isSharing, setIsSharing] = useState(false)
+  const shareRef = useRef<HTMLDivElement>(null)
+
+  const handleShare = async () => {
+    if (!shareRef.current) return
+    setIsSharing(true)
+    try {
+      const html2canvas = (await import('html2canvas')).default
+      const canvas = await html2canvas(shareRef.current, { backgroundColor: null, scale: 2 })
+      canvas.toBlob(async (blob) => {
+        if (!blob) return
+        const file = new File([blob], 'studentdash-bilan.png', { type: 'image/png' })
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: 'Mon Bilan StudentDash',
+            text: 'Regarde mes notes ! Essaie toi aussi sur StudentDash :',
+            url: window.location.origin
+          })
+        } else {
+          const url = URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url
+          a.download = 'studentdash-bilan.png'
+          a.click()
+          URL.revokeObjectURL(url)
+        }
+      }, 'image/png')
+    } catch (e) {
+      console.error(e)
+      showSnack('Erreur lors du partage')
+    } finally {
+      setIsSharing(false)
+    }
+  }
+
   return (
     <>
       {/* Top App Bar */}
@@ -197,20 +313,30 @@ export default function DashboardPage() {
               </div>
             </div>
           ) : (
-            <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-              <ScoreRing value={overallAvg !== null && !isNaN(overallAvg) ? Number(overallAvg.toFixed(2)) : null} size={108} />
-              <div>
-                <p style={{ fontSize: 'var(--md-headline-small)', fontWeight: 600, color: 'var(--md-on-surface)', margin: '0 0 0.25rem 0' }}>Moyenne générale</p>
-                <p style={{ fontSize: 'var(--md-title-small)', color: 'var(--md-on-surface-variant)' }}>
-                  {semesters.length} semestre{semesters.length !== 1 ? 's' : ''}
-                </p>
-                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: 8 }}>
-                  <span className="md-chip active" style={{ height: 28, fontSize: '0.75rem' }}>
-                    <span className="material-symbols-rounded" style={{ fontSize: 14 }}>check_circle</span>
-                    {totalGrades}/{totalSubjects} notés
-                  </span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+                <ScoreRing value={overallAvg !== null && !isNaN(overallAvg) ? Number(overallAvg.toFixed(2)) : null} size={108} />
+                <div>
+                  <p style={{ fontSize: 'var(--md-headline-small)', fontWeight: 600, color: 'var(--md-on-surface)', margin: '0 0 0.25rem 0' }}>Moyenne générale</p>
+                  <p style={{ fontSize: 'var(--md-title-small)', color: 'var(--md-on-surface-variant)' }}>
+                    {semesters.length} semestre{semesters.length !== 1 ? 's' : ''}
+                  </p>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: 8 }}>
+                    <span className="md-chip active" style={{ height: 28, fontSize: '0.75rem' }}>
+                      <span className="material-symbols-rounded" style={{ fontSize: 14 }}>check_circle</span>
+                      {totalGrades}/{totalSubjects} notés
+                    </span>
+                  </div>
                 </div>
               </div>
+              <button 
+                onClick={() => setShowShare(true)} 
+                className="md-icon-button" 
+                style={{ background: 'var(--md-primary)', color: 'var(--md-on-primary)', border: 'none', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}
+                aria-label="Partager mon bilan"
+              >
+                <span className="material-symbols-rounded" style={{ fontSize: 20 }}>share</span>
+              </button>
             </div>
           )}
         </div>
@@ -339,6 +465,141 @@ export default function DashboardPage() {
       {snack && (
         <div className="md-snackbar" role="status" aria-live="polite">
           {snack}
+        </div>
+      )}
+
+      {/* Share Modal */}
+      {showShare && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 200, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', backdropFilter: 'blur(4px)' }}>
+          
+          {/* Content to be captured */}
+          <div 
+            ref={shareRef}
+            style={{ 
+              width: '100%', 
+              maxWidth: 500, 
+              background: 'linear-gradient(135deg, var(--md-surface) 0%, var(--md-surface-container-high) 100%)', 
+              borderRadius: 'var(--md-shape-xl)', 
+              padding: '2.5rem', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+              position: 'relative',
+              overflow: 'hidden',
+              fontFamily: 'system-ui, -apple-system, sans-serif'
+            }}
+          >
+            {/* Background design elements */}
+            <div style={{ position: 'absolute', top: -50, right: -50, width: 200, height: 200, borderRadius: '50%', background: 'var(--md-primary)', opacity: 0.08, filter: 'blur(30px)' }} />
+            <div style={{ position: 'absolute', bottom: -50, left: -50, width: 200, height: 200, borderRadius: '50%', background: 'var(--md-tertiary)', opacity: 0.08, filter: 'blur(30px)' }} />
+
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', zIndex: 1 }}>
+              <span className="material-symbols-rounded filled" style={{ color: 'var(--md-primary)', fontSize: 36 }}>school</span>
+              <span style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--md-on-surface)', letterSpacing: '-0.5px' }}>StudentDash</span>
+              <span style={{ fontSize: '1rem', color: 'var(--md-on-surface-variant)', marginLeft: '0.25rem', fontWeight: 500 }}>| Bilan Académique</span>
+            </div>
+
+            {/* User Info */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--md-primary-container)', padding: '0.6rem 1.5rem', borderRadius: '2rem', marginBottom: '2.5rem', zIndex: 1, border: '1px solid rgba(103, 80, 164, 0.2)' }}>
+              <span className="material-symbols-rounded" style={{ color: 'var(--md-on-primary-container)', fontSize: 20 }}>person</span>
+              <span style={{ fontSize: '1.1rem', color: 'var(--md-on-primary-container)', fontWeight: 600 }}>
+                Bilan de : {session?.user?.name ?? 'Étudiant'}
+              </span>
+            </div>
+
+            {/* Gauge */}
+            <div style={{ marginBottom: '2.5rem', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <CanvasScoreRing value={overallAvg !== null && !isNaN(overallAvg) ? Number(overallAvg.toFixed(2)) : null} size={150} />
+              <div style={{ marginTop: '1rem', fontSize: '0.9rem', color: 'var(--md-on-surface-variant)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', background: 'var(--md-surface-variant)', padding: '0.25rem 1rem', borderRadius: '1rem' }}>
+                Moyenne Générale
+              </div>
+            </div>
+
+            {/* Best & Worst */}
+            <div style={{ width: '100%', display: 'flex', gap: '1rem', marginBottom: '2rem', zIndex: 1 }}>
+              {/* Best */}
+              <div style={{ flex: 1, background: 'var(--md-surface)', padding: '1.25rem', borderRadius: 'var(--md-shape-lg)', border: '1px solid rgba(74, 222, 128, 0.3)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--md-success)', marginBottom: '0.75rem' }}>
+                  <span className="material-symbols-rounded" style={{ fontSize: 20 }}>trending_up</span>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Meilleure Note</span>
+                </div>
+                <span style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--md-on-surface)', lineHeight: 1 }}>
+                  {bestGradeObj?.value?.toFixed(2) ?? '—'}
+                </span>
+                <span style={{ fontSize: '0.85rem', color: 'var(--md-on-surface-variant)', marginTop: '1rem', lineHeight: 1.4, wordBreak: 'break-word' }}>
+                  {bestGradeObj?.subjectName ?? ''}
+                </span>
+              </div>
+              
+              {/* Worst */}
+              <div style={{ flex: 1, background: 'var(--md-surface)', padding: '1.25rem', borderRadius: 'var(--md-shape-lg)', border: '1px solid rgba(248, 113, 113, 0.3)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--md-error)', marginBottom: '0.75rem' }}>
+                  <span className="material-symbols-rounded" style={{ fontSize: 20 }}>trending_down</span>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Pire Note</span>
+                </div>
+                <span style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--md-on-surface)', lineHeight: 1 }}>
+                  {worstGradeObj?.value?.toFixed(2) ?? '—'}
+                </span>
+                <span style={{ fontSize: '0.85rem', color: 'var(--md-on-surface-variant)', marginTop: '1rem', lineHeight: 1.4, wordBreak: 'break-word' }}>
+                  {worstGradeObj?.subjectName ?? ''}
+                </span>
+              </div>
+            </div>
+
+            {/* Semesters Table */}
+            {semesters.length > 0 && (
+              <div style={{ width: '100%', zIndex: 1, marginBottom: '1.5rem' }}>
+                <div style={{ background: 'var(--md-surface)', borderRadius: 'var(--md-shape-lg)', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', border: '1px solid var(--md-outline-variant)' }}>
+                  <div style={{ background: 'var(--md-surface-variant)', padding: '0.75rem 1rem', borderBottom: '1px solid var(--md-outline-variant)' }}>
+                    <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--md-on-surface-variant)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Moyennes par Semestre</span>
+                  </div>
+                  <div style={{ padding: '0.75rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.5rem' }}>
+                      {semesters.map(sem => (
+                        <div key={sem} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 1rem', background: 'var(--md-surface-container-lowest)', borderRadius: '8px', border: '1px solid var(--md-surface-container)' }}>
+                          <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--md-on-surface)' }}>{sem}</span>
+                          <span style={{ fontSize: '1rem', fontWeight: 800, color: data!.semesterAverages[sem]! >= 10 ? 'var(--md-success)' : 'var(--md-error)' }}>
+                            {data!.semesterAverages[sem]?.toFixed(2) ?? '—'}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Footer Branding */}
+            <div style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '6px', opacity: 0.5, zIndex: 1 }}>
+              <span className="material-symbols-rounded" style={{ fontSize: 16 }}>verified</span>
+              <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>Généré par StudentDash</span>
+            </div>
+            
+          </div>
+
+          {/* Action buttons (not captured) */}
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+            <button 
+              className="md-btn md-btn-tonal"
+              onClick={() => setShowShare(false)}
+              disabled={isSharing}
+            >
+              Fermer
+            </button>
+            <button 
+              className="md-btn md-btn-filled"
+              onClick={handleShare}
+              disabled={isSharing}
+            >
+              {isSharing ? (
+                <><span className="material-symbols-rounded spin" style={{ fontSize: 18 }}>sync</span> Création...</>
+              ) : (
+                <><span className="material-symbols-rounded" style={{ fontSize: 18 }}>share</span> Partager l'image</>
+              )}
+            </button>
+          </div>
         </div>
       )}
     </>
