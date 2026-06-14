@@ -54,7 +54,7 @@ function GradesContent() {
         }
         // Expand all UEs by default
         if (d.grouped) {
-          const allUeKeys = Object.values(d.grouped).flatMap(ues => Object.keys(ues))
+          const allUeKeys = Object.values(d.grouped as Record<string, Record<string, unknown>>).flatMap(ues => Object.keys(ues))
           setExpandedUes(new Set(allUeKeys))
         }
       })
