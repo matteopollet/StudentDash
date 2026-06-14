@@ -196,6 +196,36 @@ export default function DashboardPage() {
   const totalGrades = data?.grades.filter(g => g.value !== null).length ?? 0
   const totalSubjects = data?.grades.length ?? 0
 
+  let trendIndicator = null;
+  if (data && semesters.length > 1) {
+    const currentSemAvg = data.semesterAverages[semesters[semesters.length - 1]];
+    const prevSemAvg = data.semesterAverages[semesters[semesters.length - 2]];
+    if (currentSemAvg !== null && prevSemAvg !== null) {
+      const diff = currentSemAvg - prevSemAvg;
+      const isPositive = diff > 0;
+      const isNeutral = diff === 0;
+      trendIndicator = (
+        <span style={{ 
+          display: 'inline-flex', 
+          alignItems: 'center', 
+          gap: 4, 
+          fontSize: '0.75rem', 
+          fontWeight: 600, 
+          padding: '0 8px', 
+          height: 28,
+          borderRadius: 'var(--md-shape-sm)', 
+          background: isPositive ? 'var(--md-success-container)' : isNeutral ? 'var(--md-surface-variant)' : 'var(--md-error-container)', 
+          color: isPositive ? 'var(--md-on-success-container)' : isNeutral ? 'var(--md-on-surface)' : 'var(--md-on-error-container)' 
+        }} aria-label={isPositive ? 'En hausse' : isNeutral ? 'Stable' : 'En baisse'}>
+          <span className="material-symbols-rounded" style={{ fontSize: 16 }}>
+            {isPositive ? 'trending_up' : isNeutral ? 'trending_flat' : 'trending_down'}
+          </span>
+          {isPositive ? '+' : ''}{diff.toFixed(2)}
+        </span>
+      )
+    }
+  }
+
   let validGrades: any[] = []
   if (data) {
     validGrades = data.grades.filter(g => typeof g.value === 'number' && !isNaN(g.value))
@@ -335,6 +365,7 @@ export default function DashboardPage() {
                       <span className="material-symbols-rounded" style={{ fontSize: 14 }}>check_circle</span>
                       {totalGrades}/{totalSubjects} notés
                     </span>
+                    {trendIndicator}
                   </div>
                 </div>
               </div>
@@ -377,69 +408,6 @@ export default function DashboardPage() {
           </Link>
         )}
 
-        {/* Semester cards */}
-        <h2 style={{ fontSize: 'var(--md-title-medium)', color: 'var(--md-on-surface-variant)', margin: '1.5rem 0 0.75rem', fontWeight: 500 }}>
-          Par semestre
-        </h2>
-
-        {loading ? (
-          <div className="stagger" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            {[1, 2, 3].map(i => (
-              <div key={i} className="skeleton animate-in" style={{ height: 80, borderRadius: 'var(--md-shape-lg)' }} />
-            ))}
-          </div>
-        ) : semesters.length === 0 ? (
-          <div className={`md-card animate-in ${styles.emptyState}`}>
-            <span className="material-symbols-rounded" style={{ fontSize: 48, color: 'var(--md-outline)' }}>assignment</span>
-            <p style={{ color: 'var(--md-on-surface-variant)', textAlign: 'center' }}>
-              Aucune note trouvée.<br />Synchronisez vos notes depuis CyberNotes.
-            </p>
-          </div>
-        ) : (
-          <div className="stagger" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            {semesters.map((sem, i) => {
-              const avg = data!.semesterAverages[sem]
-              const ues = data!.grouped[sem]
-              const count = Object.values(ues).flat().filter(g => g.value !== null).length
-              const total = Object.values(ues).flat().length
-              const pct = avg !== null ? (avg / 20) * 100 : 0
-
-              return (
-                <Link
-                  key={sem}
-                  href={`/grades?semester=${sem}`}
-                  className={`md-card md-card-elevated animate-in ${styles.semCard}`}
-                  style={{ animationDelay: `${i * 50}ms` }}
-                  aria-label={`Semestre ${sem}, moyenne ${avg?.toFixed(2) ?? '—'}`}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                    <div>
-                      <p style={{ fontSize: 'var(--md-title-medium)', fontWeight: 600, color: 'var(--md-on-surface)' }}>
-                        Semestre {sem}
-                      </p>
-                      <p style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)', fontWeight: 500 }}>
-                        {count}/{total} matière{total !== 1 ? 's' : ''} notée{total !== 1 ? 's' : ''}
-                      </p>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span
-                        className={`grade-badge ${avg === null ? 'grade-pending' : avg >= 8 ? 'grade-pass' : 'grade-fail'}`}
-                        aria-label={`Moyenne ${avg?.toFixed(2) ?? 'non disponible'}`}
-                      >
-                        {avg !== null ? avg.toFixed(2) : '—'}
-                      </span>
-                      <span className="material-symbols-rounded" style={{ color: 'var(--md-on-surface-variant)' }}>chevron_right</span>
-                    </div>
-                  </div>
-                  <div className="md-linear-progress" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} style={{ background: 'var(--md-surface-variant)', height: 4, borderRadius: 2, overflow: 'hidden', marginTop: 12 }}>
-                    <div className="md-linear-progress-track" style={{ width: `${pct}%`, background: 'var(--md-primary)', height: '100%', borderRadius: 2 }} />
-                  </div>
-                </Link>
-              )
-            })}
-          </div>
-        )}
-
         {/* Quick links */}
         <h2 style={{ fontSize: 'var(--md-title-medium)', color: 'var(--md-on-surface-variant)', margin: '1.5rem 0 0.75rem', fontWeight: 500 }}>
           Accès rapide
@@ -447,7 +415,6 @@ export default function DashboardPage() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.75rem' }}>
           {[
-            { href: '/grades', icon: 'school', label: 'Toutes mes notes' },
             { href: '/simulator', icon: 'calculate', label: 'Simulateur d\'UE' },
             { href: '/documents', icon: 'folder_open', label: 'Documents' },
           ].map(item => (
