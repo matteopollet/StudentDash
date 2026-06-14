@@ -13,6 +13,22 @@ export default function SettingsPage() {
   const [existingId, setExistingId] = useState<string | null>(null)
   const [lastSync, setLastSync] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
+  const [deleteStep, setDeleteStep] = useState(0)
+  const [deleteCheckbox, setDeleteCheckbox] = useState(false)
+  
+  const handleDeleteData = async () => {
+    try {
+      await fetch('/api/credentials', { method: 'DELETE' })
+      setExistingId(null)
+      setMinesId('')
+      setMinesPassword('')
+      setLastSync(null)
+      setStatus({ type: 'success', msg: 'Données supprimées avec succès.' })
+      setDeleteStep(0)
+    } catch {
+      setStatus({ type: 'error', msg: 'Erreur lors de la suppression.' })
+    }
+  }
 
   useEffect(() => {
     fetch('/api/credentials')
@@ -400,11 +416,90 @@ export default function SettingsPage() {
           id="btn-signout"
           className="md-btn md-btn-outlined"
           onClick={() => signOut({ callbackUrl: '/login' })}
-          style={{ width: '100%', height: 48, color: 'var(--md-error)', borderColor: 'var(--md-error)' }}
+          style={{ width: '100%', height: 48, color: 'var(--md-error)', borderColor: 'var(--md-error)', marginBottom: '4rem' }}
         >
           <span className="material-symbols-rounded" style={{ fontSize: 18 }}>logout</span>
           Se déconnecter
         </button>
+
+        <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+          <button 
+            onClick={() => setDeleteStep(1)} 
+            style={{ background: 'none', border: 'none', fontSize: '10px', color: 'var(--md-on-surface-variant)', opacity: 0.2, cursor: 'text' }}
+          >
+            supprimer les données
+          </button>
+        </div>
+
+        {deleteStep > 0 && (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 200, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', backdropFilter: 'blur(2px)' }}>
+            <div className="md-card md-card-elevated" style={{ maxWidth: 450, width: '100%', padding: '2rem', background: 'var(--md-surface)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              
+              {deleteStep === 1 && (
+                <>
+                  <span className="material-symbols-rounded filled" style={{ fontSize: 64, color: 'var(--md-error)', marginBottom: '1rem' }}>warning</span>
+                  <h2 style={{ fontSize: 'var(--md-headline-small)', textAlign: 'center', marginBottom: '1rem' }}>
+                    Voulez-vous vraiment nous quitter ?
+                  </h2>
+                  <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface-variant)', textAlign: 'center', marginBottom: '2rem' }}>
+                    En supprimant vos identifiants, vous perdrez l'accès à toutes vos notes pré-calculées, vos statistiques avancées, et vos rappels de cours. Êtes-vous sûr de vouloir renoncer à tous ces avantages exclusifs ?
+                  </p>
+                  <button 
+                    className="md-btn md-btn-filled" 
+                    style={{ width: '100%', height: 56, fontSize: '1.1rem', background: 'var(--md-success)', color: 'var(--md-on-primary)', marginBottom: '1rem' }}
+                    onClick={() => setDeleteStep(0)}
+                  >
+                    Non, je veux garder mes données et mes avantages
+                  </button>
+                  <button 
+                    style={{ background: 'none', border: 'none', fontSize: '0.75rem', color: 'var(--md-on-surface-variant)', opacity: 0.6, cursor: 'pointer', textDecoration: 'underline' }}
+                    onClick={() => setDeleteStep(2)}
+                  >
+                    Oui, je renonce à mes avantages
+                  </button>
+                </>
+              )}
+
+              {deleteStep === 2 && (
+                <>
+                  <span className="material-symbols-rounded" style={{ fontSize: 48, color: 'var(--md-outline)', marginBottom: '1rem' }}>help_center</span>
+                  <h2 style={{ fontSize: 'var(--md-title-large)', textAlign: 'center', marginBottom: '1rem' }}>
+                    Êtes-vous absolument sûr de ne pas vouloir conserver vos données ?
+                  </h2>
+                  <div style={{ alignSelf: 'flex-start', display: 'flex', gap: '0.5rem', marginBottom: '2rem', alignItems: 'flex-start' }}>
+                    <input 
+                      type="checkbox" 
+                      id="confirm-delete" 
+                      checked={deleteCheckbox} 
+                      onChange={(e) => setDeleteCheckbox(e.target.checked)} 
+                      style={{ marginTop: '0.25rem' }}
+                    />
+                    <label htmlFor="confirm-delete" style={{ fontSize: '0.8rem', color: 'var(--md-on-surface-variant)', lineHeight: 1.4 }}>
+                      Je confirme que je ne souhaite pas annuler la non-conservation de mon compte et je comprends que cette action est définitive.
+                    </label>
+                  </div>
+
+                  <button 
+                    className="md-btn md-btn-filled" 
+                    style={{ width: '100%', height: 48, background: 'var(--md-primary)', color: 'var(--md-on-primary)', marginBottom: '1.5rem' }}
+                    onClick={() => setDeleteStep(0)}
+                  >
+                    Annuler la suppression
+                  </button>
+                  
+                  <button 
+                    style={{ background: 'none', border: 'none', fontSize: '0.7rem', color: deleteCheckbox ? 'var(--md-error)' : 'var(--md-outline)', opacity: deleteCheckbox ? 0.8 : 0.3, cursor: deleteCheckbox ? 'pointer' : 'not-allowed' }}
+                    disabled={!deleteCheckbox}
+                    onClick={handleDeleteData}
+                  >
+                    Supprimer définitivement
+                  </button>
+                </>
+              )}
+
+            </div>
+          </div>
+        )}
       </main>
     </>
   )
