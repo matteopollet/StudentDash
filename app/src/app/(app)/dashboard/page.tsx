@@ -140,7 +140,7 @@ export default function DashboardPage() {
       const [gradesRes, credRes, planRes] = await Promise.all([
         fetch('/api/grades'),
         fetch('/api/credentials'),
-        fetch('/api/planning')
+        fetch('/api/planning?limit=1')
       ])
       const gradesData = await gradesRes.json()
       const credData = await credRes.json()

@@ -71,7 +71,7 @@ function parseICS(icsData: string) {
   return events
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   const session = await auth()
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
@@ -81,12 +81,21 @@ export async function GET() {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } })
+    if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+
+    // Extract optional limit query parameter
+    const url = new URL(request.url)
+    const limitParam = url.searchParams.get('limit')
+    const limit = limitParam ? parseInt(limitParam, 10) : undefined
+
     const events = await prisma.event.findMany({
       where: {
-        userId: session.user.id,
+        path: user.academicPath,
         start: { gte: today }
       },
-      orderBy: { start: 'asc' }
+      orderBy: { start: 'asc' },
+      ...(limit ? { take: limit } : {})
     })
     return NextResponse.json({ events })
   } catch (err: any) {
@@ -107,6 +116,21 @@ export async function POST() {
 
     if (!user || !user.minesId || !user.minesPasswordEnc) {
       return NextResponse.json({ error: 'Credentials not configured' }, { status: 400 })
+    }
+
+    // Rate limiting: avoid fetching if this path was synced within the last hour
+    const latestEvent = await prisma.event.findFirst({
+      where: { path: user.academicPath },
+      orderBy: { updatedAt: 'desc' }
+    })
+
+    if (latestEvent) {
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000)
+      if (latestEvent.updatedAt > oneHourAgo) {
+        // Return success using cached DB events
+        const count = await prisma.event.count({ where: { path: user.academicPath } })
+        return NextResponse.json({ success: true, count, cached: true })
+      }
     }
 
     const password = decrypt(user.minesPasswordEnc)
@@ -167,7 +191,7 @@ export async function POST() {
       await prisma.$transaction(
         batch.map(e =>
           prisma.event.upsert({
-            where: { id: e.id },
+            where: { path_icsUid: { path: user.academicPath, icsUid: e.id } },
             update: {
               summary: e.summary || '',
               description: e.description || null,
@@ -176,8 +200,8 @@ export async function POST() {
               end: e.end
             },
             create: {
-              id: e.id,
-              userId: session.user.id,
+              path: user.academicPath,
+              icsUid: e.id,
               summary: e.summary || '',
               description: e.description || null,
               location: e.location || null,

@@ -19,6 +19,16 @@ export async function POST() {
     return NextResponse.json({ error: 'No credentials configured' }, { status: 400 })
   }
 
+  // Rate limiting for grades sync: Max 1 scrape every 15 minutes per user
+  if (user.lastSync) {
+    const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000)
+    if (user.lastSync > fifteenMinutesAgo) {
+      // Just return success and don't spam the school server
+      const gradesCount = await prisma.grade.count({ where: { userId: session.user.id } })
+      return NextResponse.json({ success: true, gradesCount, cached: true })
+    }
+  }
+
   try {
     const password = decrypt(user.minesPasswordEnc)
     const grades = await scrapeCyberNotes(user.minesId, password)

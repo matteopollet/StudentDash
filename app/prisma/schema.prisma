@@ -24,22 +24,22 @@ model User {
   accounts Account[]
   sessions Session[]
   grades   Grade[]
-  events   Event[]
   pushSubscriptions PushSubscription[]
 }
 
 model Event {
-  id          String   @id // ICS UID
-  userId      String
+  id          String   @id @default(cuid())
+  path        String   // e.g. "DL" or "SR"
+  icsUid      String
   summary     String
   description String?
   location    String?
   start       DateTime
   end         DateTime
+  updatedAt   DateTime @default(now()) @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, start])
+  @@unique([path, icsUid])
+  @@index([path, start])
 }
 
 model Account {
