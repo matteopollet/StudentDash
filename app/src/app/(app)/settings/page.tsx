@@ -53,6 +53,73 @@ export default function SettingsPage() {
     }
   }
 
+  const [pushEnabled, setPushEnabled] = useState(false)
+  const [pushLoading, setPushLoading] = useState(true)
+
+  useEffect(() => {
+    // Check push status
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window) {
+      navigator.serviceWorker.ready.then(reg => {
+        reg.pushManager.getSubscription().then(sub => {
+          setPushEnabled(!!sub)
+          setPushLoading(false)
+        })
+      })
+    } else {
+      setPushLoading(false)
+    }
+  }, [])
+
+  function urlBase64ToUint8Array(base64String: string) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4)
+    const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/')
+    const rawData = window.atob(base64)
+    const outputArray = new Uint8Array(rawData.length)
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i)
+    }
+    return outputArray
+  }
+
+  const handlePushToggle = async () => {
+    setPushLoading(true)
+    try {
+      const reg = await navigator.serviceWorker.ready
+      if (pushEnabled) {
+        const sub = await reg.pushManager.getSubscription()
+        if (sub) {
+          await sub.unsubscribe()
+          await fetch('/api/push/unsubscribe', {
+            method: 'POST',
+            body: JSON.stringify({ endpoint: sub.endpoint })
+          })
+        }
+        setPushEnabled(false)
+        setStatus({ type: 'success', msg: 'Notifications désactivées.' })
+      } else {
+        const perm = await Notification.requestPermission()
+        if (perm === 'granted') {
+          const sub = await reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!)
+          })
+          await fetch('/api/push/subscribe', {
+            method: 'POST',
+            body: JSON.stringify(sub)
+          })
+          setPushEnabled(true)
+          setStatus({ type: 'success', msg: 'Notifications activées !' })
+        } else {
+          setStatus({ type: 'error', msg: 'Permission refusée par le navigateur.' })
+        }
+      }
+    } catch (e: any) {
+      setStatus({ type: 'error', msg: `Erreur Push: ${e.message}` })
+    } finally {
+      setPushLoading(false)
+    }
+  }
+
   return (
     <>
       <header className="md-top-bar">
@@ -272,6 +339,34 @@ export default function SettingsPage() {
             <p style={{ fontSize: 'var(--md-label-small)', color: 'var(--md-on-surface-variant)', marginTop: '0.75rem', textAlign: 'center', opacity: 0.7 }}>
               🔒 Votre mot de passe est chiffré avec AES-256 avant d&apos;être stocké.
             </p>
+          </div>
+        </section>
+
+        {/* Notifications section */}
+        <section aria-label="Notifications">
+          <h2 style={{ fontSize: 'var(--md-title-medium)', fontWeight: 500, color: 'var(--md-on-surface-variant)', margin: '1.25rem 0 0.75rem' }}>
+            Notifications
+          </h2>
+
+          <div className="md-card md-card-elevated animate-in" style={{ padding: '1.25rem', marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)', fontWeight: 500 }}>
+                  Nouvelles notes
+                </p>
+                <p style={{ fontSize: 'var(--md-label-small)', color: 'var(--md-on-surface-variant)', marginTop: 4, maxWidth: '80%' }}>
+                  Recevez une alerte lorsqu'une nouvelle note est publiée pour votre promotion.
+                </p>
+              </div>
+              <button
+                className={`md-btn ${pushEnabled ? 'md-btn-outlined' : 'md-btn-tonal'}`}
+                onClick={handlePushToggle}
+                disabled={pushLoading}
+                style={{ height: 36, padding: '0 1rem', fontSize: '0.75rem', minWidth: 110 }}
+              >
+                {pushLoading ? '...' : pushEnabled ? 'Désactiver' : 'Activer'}
+              </button>
+            </div>
           </div>
         </section>
 

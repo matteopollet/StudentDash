@@ -3,6 +3,13 @@ import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
 import { decrypt } from '@/lib/crypto'
 import { scrapeCyberNotes } from '@/lib/scraper'
+import webpush from 'web-push'
+
+webpush.setVapidDetails(
+  'mailto:studentdash@example.com',
+  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || '',
+  process.env.VAPID_PRIVATE_KEY || ''
+)
 
 // POST /api/sync — manually trigger a grade sync
 export async function POST() {
@@ -21,8 +28,24 @@ export async function POST() {
   try {
     const password = decrypt(user.minesPasswordEnc)
     const grades = await scrapeCyberNotes(user.minesId, password)
+    
+    const newlyReleasedSubjects: string[] = []
 
     for (const grade of grades) {
+      // Community Sync Logic: Check if this grade is newly released for the whole school
+      if (grade.value !== null) {
+        const existingGradeInDb = await prisma.grade.findFirst({
+          where: {
+            semester: grade.semester,
+            subjectName: grade.subjectName,
+            value: { not: null }
+          }
+        })
+        if (!existingGradeInDb && !newlyReleasedSubjects.includes(grade.subjectName)) {
+          newlyReleasedSubjects.push(grade.subjectName)
+        }
+      }
+
       await prisma.grade.upsert({
         where: {
           userId_semester_ueCode_subjectName_gradeType: {
@@ -57,6 +80,36 @@ export async function POST() {
       where: { id: session.user.id },
       data: { lastSync: new Date() },
     })
+
+    // Broadcast Push Notifications for newly released subjects
+    if (newlyReleasedSubjects.length > 0) {
+      const subscriptions = await prisma.pushSubscription.findMany({
+        where: { userId: { not: session.user.id } }
+      })
+
+      for (const subject of newlyReleasedSubjects) {
+        const payload = JSON.stringify({
+          title: 'Nouvelle note disponible !',
+          body: `Une note en "${subject}" semble avoir été publiée. Ouvrez l'appli pour vérifier !`,
+          url: '/grades'
+        })
+
+        await Promise.allSettled(
+          subscriptions.map(sub => 
+            webpush.sendNotification({
+              endpoint: sub.endpoint,
+              keys: { p256dh: sub.p256dh, auth: sub.auth }
+            }, payload)
+            .catch(err => {
+              if (err.statusCode === 410 || err.statusCode === 404) {
+                // Subscription has expired or is no longer valid, delete it
+                return prisma.pushSubscription.delete({ where: { id: sub.id } })
+              }
+            })
+          )
+        )
+      }
+    }
 
     return NextResponse.json({ success: true, gradesCount: grades.length })
   } catch (err: any) {
