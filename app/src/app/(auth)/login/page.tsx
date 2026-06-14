@@ -1,5 +1,6 @@
 'use client'
 import { signIn } from 'next-auth/react'
+import Link from 'next/link'
 import styles from './page.module.css'
 
 export default function LoginPage() {
@@ -57,7 +58,7 @@ export default function LoginPage() {
         </button>
 
         <p className={styles.legal}>
-          En continuant, vous acceptez les conditions d&apos;utilisation de StudentDash.
+          En continuant, vous acceptez les <Link href="/terms" style={{ textDecoration: 'underline', color: 'var(--md-primary)' }}>conditions d&apos;utilisation</Link> de StudentDash.
           Vos identifiants Mines Alès sont stockés chiffrés (AES-256).
         </p>
       </div>

@@ -89,3 +89,26 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: err.message ?? 'Scraping failed' }, { status: 422 })
   }
 }
+
+// DELETE /api/credentials - wipe user data
+export async function DELETE() {
+  const session = await auth()
+  if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  // Delete all grades for the user
+  await prisma.grade.deleteMany({
+    where: { userId: session.user.id }
+  })
+  
+  // Clear credentials
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: {
+      minesId: null,
+      minesPasswordEnc: null,
+      lastSync: null
+    }
+  })
+
+  return NextResponse.json({ success: true })
+}

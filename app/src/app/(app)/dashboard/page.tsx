@@ -1,7 +1,7 @@
 'use client'
 import { useSession } from 'next-auth/react'
 import { useEffect, useState, useCallback } from 'react'
-import Image from 'next/image'
+
 import Link from 'next/link'
 import styles from './page.module.css'
 
@@ -130,15 +130,9 @@ export default function DashboardPage() {
       <header className="md-top-bar">
         <span className="material-symbols-rounded filled" style={{ color: 'var(--md-primary)', fontSize: 28 }}>school</span>
         <span className="md-top-bar-title">StudentDash</span>
-        {session?.user?.image && (
-          <Link href="/settings" style={{ display: 'flex' }} aria-label="Réglages">
-            <Image
-              src={session.user.image}
-              alt={session.user.name ?? 'Avatar'}
-              width={36}
-              height={36}
-              style={{ borderRadius: '50%', objectFit: 'cover', cursor: 'pointer' }}
-            />
+        {session?.user && (
+          <Link href="/settings" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40, borderRadius: '50%', background: 'var(--md-surface-variant)', color: 'var(--md-on-surface-variant)', textDecoration: 'none' }} aria-label="Réglages">
+            <span className="material-symbols-rounded">settings</span>
           </Link>
         )}
       </header>
@@ -174,19 +168,21 @@ export default function DashboardPage() {
           </p>
         )}
 
-        {/* No credentials banner */}
+        {/* No credentials banner / modal */}
         {!loading && hasCredentials === false && (
-          <div className={`md-card animate-in ${styles.credBanner}`} role="alert">
-            <span className="material-symbols-rounded filled" style={{ color: 'var(--md-tertiary)', fontSize: 24 }}>info</span>
-            <div>
-              <strong>Configurez CyberNotes</strong>
-              <p style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)', marginTop: 4 }}>
-                Ajoutez vos identifiants Mines Alès pour synchroniser vos notes automatiquement.
+          <div style={{ position: 'fixed', inset: 0, zIndex: 100, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', backdropFilter: 'blur(4px)' }}>
+            <div className="md-card md-card-elevated animate-in" style={{ maxWidth: 400, width: '100%', padding: '2rem', textAlign: 'center', background: 'var(--md-surface)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--md-primary-container)', color: 'var(--md-on-primary-container)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
+                <span className="material-symbols-rounded filled" style={{ fontSize: 32 }}>person_add</span>
+              </div>
+              <h2 style={{ fontSize: 'var(--md-headline-small)', margin: '0 0 1rem 0', color: 'var(--md-on-surface)' }}>Bienvenue ! 👋</h2>
+              <p style={{ fontSize: 'var(--md-body-large)', color: 'var(--md-on-surface-variant)', marginBottom: '2rem', lineHeight: 1.5 }}>
+                Pour voir vos notes et votre emploi du temps, vous devez renseigner vos identifiants Mines Alès (CyberNotes) dans les paramètres.
               </p>
+              <Link href="/settings" className="md-btn md-btn-filled" style={{ width: '100%', height: 48, fontSize: '1rem' }}>
+                Aller aux paramètres
+              </Link>
             </div>
-            <Link href="/settings" className="md-btn md-btn-tonal" style={{ height: 36, fontSize: '0.75rem' }}>
-              Configurer
-            </Link>
           </div>
         )}
 
