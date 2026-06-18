@@ -304,35 +304,25 @@
 }
 
 /* ─── Desktop Grid ─── */
+/* ─── Desktop Grid ─── */
 @media (min-width: 900px) {
-  .tabBar {
-    display: none;
+  .dayCard {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
   }
 
   .swipeContainer {
+    /* On desktop, hide the scrollbar but keep it scrollable programmatically or via trackpad */
+    overflow-x: auto;
+  }
+  
+  /* Skeleton updates for 2 columns */
+  .skeletonCard {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1rem;
-    overflow: visible;
-    scroll-snap-type: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .swipePane {
-    flex: unset;
-    scroll-snap-align: unset;
-    scroll-snap-stop: unset;
-  }
-
-  .skeletonWrap {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1rem;
-  }
-
-  .skeletonTabs {
-    display: none;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
   }
 }
 

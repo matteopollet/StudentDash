@@ -714,3 +714,56 @@ body {
   }
 }
 
+/* ─── Desktop Responsive Overrides (MD3 Navigation Rail & Grid) ─── */
+@media (min-width: 900px) {
+  /* Transform Bottom Nav into a Navigation Rail on left */
+  .md-nav-bar {
+    top: 0;
+    right: auto;
+    width: 80px;
+    height: 100vh;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 2rem;
+    border-top: none;
+    border-right: 1px solid var(--md-outline-variant);
+  }
+
+  .md-nav-item {
+    flex: unset;
+    height: 80px;
+    width: 100%;
+  }
+
+  /* Shift main content & top bar to the right */
+  .page-content {
+    margin-left: 80px;
+    padding-bottom: 2rem; /* Remove bottom padding meant for mobile nav */
+    max-width: 800px;
+  }
+
+  .md-top-bar {
+    margin-left: 80px;
+    width: calc(100% - 80px);
+  }
+
+  /* Dashboard Horizontal Scroll becomes a 3-column Grid */
+  .horizontal-scroll {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 1.5rem !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  .horizontal-scroll > a {
+    flex: unset !important;
+    height: auto !important;
+  }
+
+  .horizontal-scroll > div[aria-hidden="true"] {
+    display: none !important;
+  }
+}
+
