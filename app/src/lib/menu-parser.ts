@@ -18,6 +18,7 @@
  */
 
 // Use the legacy build for Node.js (no DOM / canvas dependency)
+import './pdf-polyfills'
 import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist/legacy/build/pdf.mjs'
 
 // Next.js static import to bundle the worker properly
