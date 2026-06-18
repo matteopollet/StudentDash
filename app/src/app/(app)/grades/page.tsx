@@ -166,7 +166,7 @@ function GradesContent() {
             <div>
               <p style={{ fontSize: 'var(--md-title-medium)', color: 'var(--md-on-surface-variant)', marginBottom: '0.25rem' }}>Semestre {activeSem}</p>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem' }}>
-                <span style={{ fontSize: 'var(--md-display-small)', fontWeight: 600, color: 'var(--md-primary-container)' }}>
+                <span style={{ fontSize: 'var(--md-display-small)', fontWeight: 600, color: 'var(--md-primary)' }}>
                   {data.semesterAverages[activeSem]?.toFixed(2) ?? '—'}
                 </span>
                 <span style={{ fontSize: 'var(--md-headline-small)', color: 'var(--md-on-surface-variant)', fontWeight: 500 }}>/20</span>
@@ -175,7 +175,7 @@ function GradesContent() {
             <div style={{ display: 'flex', justifyContent: 'flex-end', borderTop: '1px solid var(--md-outline-variant)', paddingTop: '1rem', marginTop: '0.5rem' }}>
               <button
                 className="md-btn"
-                style={{ background: 'transparent', color: 'var(--md-primary-container)', padding: '0 1rem', height: 40 }}
+                style={{ background: 'transparent', color: 'var(--md-primary)', padding: '0 1rem', height: 40 }}
                 onClick={() => {
                   const allKeys = Object.keys(currentUes);
                   if (expandedUes.size === allKeys.length) {

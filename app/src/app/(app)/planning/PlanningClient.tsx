@@ -139,7 +139,7 @@ export default function PlanningClient() {
                 <h2 style={{ 
                   fontSize: 'var(--md-headline-small)', 
                   fontWeight: 600, 
-                  color: 'var(--md-primary-container)', 
+                  color: 'var(--md-primary)', 
                   textTransform: 'capitalize',
                   marginBottom: '1rem',
                   position: 'sticky',
