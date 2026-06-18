@@ -82,6 +82,16 @@ export default function PlanningClient() {
     groupedEvents[day].push(e)
   })
 
+  // Find the next upcoming or ongoing event
+  const now = new Date()
+  let nextEventId: string | null = null
+  for (const e of events) {
+    if (new Date(e.end) > now) {
+      nextEventId = e.id
+      break
+    }
+  }
+
   return (
     <>
       <header className="md-top-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '64px' }}>
@@ -143,10 +153,14 @@ export default function PlanningClient() {
                   textTransform: 'capitalize',
                   marginBottom: '1rem',
                   position: 'sticky',
-                  top: '4.5rem',
-                  background: 'var(--md-background)',
-                  padding: '1.5rem 0 1rem',
-                  zIndex: 10
+                  top: '64px',
+                  background: 'color-mix(in srgb, var(--md-background) 35%, transparent)',
+                  backdropFilter: 'blur(16px)',
+                  WebkitBackdropFilter: 'blur(16px)',
+                  padding: '1rem',
+                  margin: '0 -1rem',
+                  zIndex: 10,
+                  borderBottom: '1px solid color-mix(in srgb, var(--md-outline-variant) 30%, transparent)'
                 }}>
                   {day}
                 </h2>
@@ -160,7 +174,7 @@ export default function PlanningClient() {
                       name = match[2].charAt(0).toUpperCase() + match[2].slice(1).toLowerCase();
                     }
 
-                    const isNextEvent = groupIndex === 0 && i === 0;
+                    const isNextEvent = event.id === nextEventId;
 
                     const cardBg = isNextEvent ? 'var(--md-primary-container)' : undefined;
                     const cardBorder = isNextEvent ? '6px solid var(--md-primary)' : '6px solid var(--md-primary-container)';

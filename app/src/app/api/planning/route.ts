@@ -78,6 +78,7 @@ export async function GET(request: Request) {
   }
 
   try {
+    const now = new Date()
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     
@@ -92,7 +93,7 @@ export async function GET(request: Request) {
     const events = await prisma.event.findMany({
       where: {
         path: user.academicPath,
-        start: { gte: today }
+        ...(limit === 1 ? { end: { gt: now } } : { start: { gte: today } })
       },
       orderBy: { start: 'asc' },
       ...(limit ? { take: limit } : {})
