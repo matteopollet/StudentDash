@@ -350,140 +350,144 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Overall average hero card */}
-        <div className={`md-card md-card-elevated animate-in ${styles.heroCard}`} style={{ position: 'relative' }} aria-label="Moyenne générale">
-          {loading ? (
-            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              <div className="skeleton" style={{ width: 100, height: 100, borderRadius: '50%' }} />
-              <div style={{ flex: 1 }}>
-                <div className="skeleton" style={{ width: '60%', height: 20, marginBottom: 8 }} />
-                <div className="skeleton" style={{ width: '40%', height: 16 }} />
-              </div>
-            </div>
-          ) : (
-            <>
-              <button 
-                onClick={() => setShowShare(true)} 
-                className="md-icon-button" 
-                style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', color: 'var(--md-on-surface)', border: 'none', width: 48, height: 48, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
-                aria-label="Partager mon bilan"
-              >
-                <span className="material-symbols-rounded" style={{ fontSize: 24 }}>share</span>
-              </button>
-              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', paddingRight: '2rem' }}>
-                <ScoreRing value={overallAvg !== null && !isNaN(overallAvg) ? Number(overallAvg.toFixed(2)) : null} size={108} />
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: 'var(--md-title-large)', fontWeight: 600, color: 'var(--md-on-surface)', margin: '0 0 0.25rem 0', wordBreak: 'break-word', lineHeight: 1.2 }}>Moyenne générale</p>
-                  <p style={{ fontSize: 'var(--md-title-small)', color: 'var(--md-on-surface-variant)' }}>
-                    {semesters.length} semestre{semesters.length !== 1 ? 's' : ''}
-                  </p>
-                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: 8 }}>
-                    <span className="md-chip active" style={{ height: 28, fontSize: '0.75rem' }}>
-                      <span className="material-symbols-rounded" style={{ fontSize: 14 }}>check_circle</span>
-                      {totalGrades}/{totalSubjects} notés
-                    </span>
-                    {trendIndicator}
+        <div className="dashboard-grid">
+          {/* Overall average hero card */}
+          <div className={`md-card md-card-elevated animate-in order-moyenne ${styles.heroCard}`} style={{ position: 'relative' }} aria-label="Moyenne générale">
+              {loading ? (
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                  <div className="skeleton" style={{ width: 100, height: 100, borderRadius: '50%' }} />
+                  <div style={{ flex: 1 }}>
+                    <div className="skeleton" style={{ width: '60%', height: 20, marginBottom: 8 }} />
+                    <div className="skeleton" style={{ width: '40%', height: 16 }} />
                   </div>
                 </div>
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Next Event Card */}
-        {nextEvent && (
-          <Link href="/planning" className="md-card md-card-elevated animate-in" style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem', background: 'var(--md-primary-container)', color: 'var(--md-on-primary-container)', textDecoration: 'none' }}>
-            <div style={{ background: 'var(--md-primary)', color: 'var(--md-on-primary)', width: 48, height: 48, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span className="material-symbols-rounded">event</span>
+              ) : (
+                <>
+                  <button 
+                    onClick={() => setShowShare(true)} 
+                    className="md-icon-button" 
+                    style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', color: 'var(--md-on-surface)', border: 'none', width: 48, height: 48, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                    aria-label="Partager mon bilan"
+                  >
+                    <span className="material-symbols-rounded" style={{ fontSize: 24 }}>share</span>
+                  </button>
+                  <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', paddingRight: '2rem' }}>
+                    <ScoreRing value={overallAvg !== null && !isNaN(overallAvg) ? Number(overallAvg.toFixed(2)) : null} size={108} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontSize: 'var(--md-title-large)', fontWeight: 600, color: 'var(--md-on-surface)', margin: '0 0 0.25rem 0', wordBreak: 'break-word', lineHeight: 1.2 }}>Moyenne générale</p>
+                      <p style={{ fontSize: 'var(--md-title-small)', color: 'var(--md-on-surface-variant)' }}>
+                        {semesters.length} semestre{semesters.length !== 1 ? 's' : ''}
+                      </p>
+                      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: 8 }}>
+                        <span className="md-chip active" style={{ height: 28, fontSize: '0.75rem' }}>
+                          <span className="material-symbols-rounded" style={{ fontSize: 14 }}>check_circle</span>
+                          {totalGrades}/{totalSubjects} notés
+                        </span>
+                        {trendIndicator}
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
-            <div style={{ flex: 1 }}>
-              <p style={{ fontSize: 'var(--md-label-small)', fontWeight: 600, opacity: 0.8, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>
-                Prochain cours • {new Date(nextEvent.start).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })}
-              </p>
-              <p style={{ fontSize: 'var(--md-title-medium)', fontWeight: 700, margin: '0 0 4px 0', lineHeight: 1.2 }}>
-                {(function(summary) {
-                  const match = summary.match(/^([\w\.]+)\s+(.*)$/);
-                  if (match) {
-                    return match[1] + ' ' + match[2].charAt(0).toUpperCase() + match[2].slice(1).toLowerCase();
-                  }
-                  return summary.charAt(0).toUpperCase() + summary.slice(1).toLowerCase();
-                })(nextEvent.summary)}
-              </p>
-              <div style={{ display: 'flex', gap: '0.75rem', fontSize: 'var(--md-body-small)', opacity: 0.9 }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <span className="material-symbols-rounded" style={{ fontSize: 14 }}>schedule</span>
-                  {new Date(nextEvent.start).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                </span>
-                {nextEvent.location && (
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <span className="material-symbols-rounded" style={{ fontSize: 14 }}>location_on</span>
-                    {nextEvent.location}
-                  </span>
-                )}
-              </div>
-            </div>
-          </Link>
-        )}
-
-        {/* Menu du jour */}
-        {todayMenu && (
-          <Link href="/cantina" className="md-card md-card-filled animate-in" style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: '1.5rem', textDecoration: 'none', background: 'var(--md-surface-container)' }}>
-            <div style={{ background: 'var(--md-secondary-container)', color: 'var(--md-on-secondary-container)', width: 48, height: 48, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <span className="material-symbols-rounded">restaurant</span>
-            </div>
-            <div style={{ flex: 1 }}>
-              <p style={{ fontSize: 'var(--md-label-small)', fontWeight: 600, opacity: 0.8, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8, color: 'var(--md-on-surface-variant)' }}>
-                Menu du jour • {todayMenu.name}
-              </p>
-              <ul style={{ margin: 0, padding: 0, listStyle: 'none', color: 'var(--md-on-surface)' }}>
-                {todayMenu.plats.map((plat: string, idx: number) => {
-                  let prefix = '•'
-                  const lower = plat.toLowerCase()
-                  if (lower.includes('végét') || lower.includes('soja') || lower.includes('légume')) prefix = '🌱'
-                  else if (lower.includes('poisson') || lower.includes('merlu') || lower.includes('truite') || lower.includes('hoki') || lower.includes('cabillaud') || lower.includes('saumon')) prefix = '🐟'
-                  else if (lower.includes('poulet') || lower.includes('dinde') || lower.includes('volaille')) prefix = '🍗'
-                  else prefix = '🥩'
-
-                  return (
-                    <li key={idx} style={{ fontSize: 'var(--md-body-medium)', marginBottom: 4, display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
-                      <span aria-hidden="true" style={{ marginTop: -1, fontSize: '0.9rem' }}>{prefix}</span>
-                      <span style={{ lineHeight: 1.3 }}>{plat}</span>
-                    </li>
-                  )
-                })}
-              </ul>
-            </div>
-          </Link>
-        )}
 
         {/* Quick links */}
-        <h2 style={{ fontSize: 'var(--md-title-medium)', color: 'var(--md-on-surface-variant)', margin: '1.5rem 0 0.75rem', fontWeight: 500 }}>
-          Accès rapide
-        </h2>
+        <div className="order-rapide">
+          <h2 style={{ fontSize: 'var(--md-title-medium)', color: 'var(--md-on-surface-variant)', margin: '1.5rem 0 0.75rem', fontWeight: 500 }}>
+            Accès rapide
+          </h2>
 
-        <div className="horizontal-scroll" style={{ display: 'flex', overflowX: 'auto', gap: '0.75rem', paddingBottom: '1rem', margin: '0 -1rem', padding: '0 1rem 1rem 1rem', scrollSnapType: 'x mandatory', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
-          {[
-            { href: '/simulator', icon: 'calculate', label: 'Simulateur' },
-            { href: '/documents', icon: 'folder_open', label: 'Documents' },
-            { href: '/cantina', icon: 'restaurant', label: 'Cantine' },
-          ].map(item => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="md-card md-card-elevated animate-in"
-              style={{ flex: '0 0 calc(40% - 0.5rem)', minWidth: 120, scrollSnapAlign: 'start', textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '1rem', height: '100px' }}
-            >
-              <span className="material-symbols-rounded filled" style={{ fontSize: 28, color: 'var(--md-primary)' }}>
-                {item.icon}
-              </span>
-              <span style={{ fontSize: 'var(--md-body-medium)', fontWeight: 500, color: 'var(--md-on-surface)', lineHeight: 1.2 }}>
-                {item.label}
-              </span>
-            </Link>
-          ))}
-          
-          {/* Invisible spacer to prevent right-edge clipping of the padding on iOS/Safari */}
-          <div style={{ width: '1px', flexShrink: 0 }} aria-hidden="true" />
+            <div className="horizontal-scroll" style={{ display: 'flex', overflowX: 'auto', gap: '0.75rem', paddingBottom: '1rem', margin: '0 -1rem', padding: '0 1rem 1rem 1rem', scrollSnapType: 'x mandatory', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
+              {[
+                { href: '/simulator', icon: 'calculate', label: 'Simulateur' },
+                { href: '/documents', icon: 'folder_open', label: 'Documents' },
+                { href: '/cantina', icon: 'restaurant', label: 'Cantine' },
+              ].map(item => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="md-card md-card-elevated animate-in"
+                  style={{ flex: '0 0 calc(40% - 0.5rem)', minWidth: 120, scrollSnapAlign: 'start', textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '1rem', height: '100px' }}
+                >
+                  <span className="material-symbols-rounded filled" style={{ fontSize: 28, color: 'var(--md-primary)' }}>
+                    {item.icon}
+                  </span>
+                  <span style={{ fontSize: 'var(--md-body-medium)', fontWeight: 500, color: 'var(--md-on-surface)', lineHeight: 1.2 }}>
+                    {item.label}
+                  </span>
+                </Link>
+              ))}
+              
+              {/* Invisible spacer to prevent right-edge clipping of the padding on iOS/Safari */}
+              <div style={{ width: '1px', flexShrink: 0 }} aria-hidden="true" />
+            </div>
+        </div>
+
+            {/* Next Event Card */}
+            {nextEvent && (
+              <Link href="/planning" className="md-card md-card-elevated animate-in order-cours" style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem', background: 'var(--md-primary-container)', color: 'var(--md-on-primary-container)', textDecoration: 'none' }}>
+                <div style={{ background: 'var(--md-primary)', color: 'var(--md-on-primary)', width: 48, height: 48, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span className="material-symbols-rounded">event</span>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: 'var(--md-label-small)', fontWeight: 600, opacity: 0.8, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>
+                    Prochain cours • {new Date(nextEvent.start).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })}
+                  </p>
+                  <p style={{ fontSize: 'var(--md-title-medium)', fontWeight: 700, margin: '0 0 4px 0', lineHeight: 1.2 }}>
+                    {(function(summary) {
+                      const match = summary.match(/^([\w\.]+)\s+(.*)$/);
+                      if (match) {
+                        return match[1] + ' ' + match[2].charAt(0).toUpperCase() + match[2].slice(1).toLowerCase();
+                      }
+                      return summary.charAt(0).toUpperCase() + summary.slice(1).toLowerCase();
+                    })(nextEvent.summary)}
+                  </p>
+                  <div style={{ display: 'flex', gap: '0.75rem', fontSize: 'var(--md-body-small)', opacity: 0.9 }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <span className="material-symbols-rounded" style={{ fontSize: 14 }}>schedule</span>
+                      {new Date(nextEvent.start).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                    {nextEvent.location && (
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <span className="material-symbols-rounded" style={{ fontSize: 14 }}>location_on</span>
+                        {nextEvent.location}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </Link>
+            )}
+
+            {/* Menu du jour */}
+            {todayMenu && (
+              <Link href="/cantina" className="md-card md-card-filled animate-in order-menu" style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: '1.5rem', textDecoration: 'none', background: 'var(--md-surface-container)' }}>
+                <div style={{ background: 'var(--md-secondary-container)', color: 'var(--md-on-secondary-container)', width: 48, height: 48, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <span className="material-symbols-rounded">restaurant</span>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: 'var(--md-label-small)', fontWeight: 600, opacity: 0.8, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8, color: 'var(--md-on-surface-variant)' }}>
+                    Menu du jour • {todayMenu.name}
+                  </p>
+                  <ul style={{ margin: 0, padding: 0, listStyle: 'none', color: 'var(--md-on-surface)' }}>
+                    {todayMenu.plats.map((plat: string, idx: number) => {
+                      let prefix = '•'
+                      const lower = plat.toLowerCase()
+                      if (lower.includes('végét') || lower.includes('soja') || lower.includes('légume')) prefix = '🌱'
+                      else if (lower.includes('poisson') || lower.includes('merlu') || lower.includes('truite') || lower.includes('hoki') || lower.includes('cabillaud') || lower.includes('saumon')) prefix = '🐟'
+                      else if (lower.includes('poulet') || lower.includes('dinde') || lower.includes('volaille')) prefix = '🍗'
+                      else prefix = '🥩'
+
+                      return (
+                        <li key={idx} style={{ fontSize: 'var(--md-body-medium)', marginBottom: 4, display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                          <span aria-hidden="true" style={{ marginTop: -1, fontSize: '0.9rem' }}>{prefix}</span>
+                          <span style={{ lineHeight: 1.3 }}>{plat}</span>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </div>
+              </Link>
+            )}
         </div>
       </main>
 

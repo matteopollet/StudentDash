@@ -714,6 +714,17 @@ body {
   }
 }
 
+/* ─── Dashboard Base (Mobile First) ─── */
+.dashboard-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+.order-moyenne { order: 1; }
+.order-cours { order: 2; }
+.order-menu { order: 3; }
+.order-rapide { order: 4; }
+
 /* ─── Desktop Responsive Overrides (MD3 Navigation Rail & Grid) ─── */
 @media (min-width: 900px) {
   /* Transform Bottom Nav into a Navigation Rail on left */
@@ -735,9 +746,9 @@ body {
     width: 100%;
   }
 
-  /* Shift main content & top bar to the right */
+  /* Shift main content & top bar to the right and center within remaining space */
   .page-content {
-    margin-left: 80px;
+    margin-left: calc(80px + max(0px, 100vw - 80px - 800px) / 2);
     padding-bottom: 2rem; /* Remove bottom padding meant for mobile nav */
     max-width: 800px;
   }
@@ -746,6 +757,17 @@ body {
     margin-left: 80px;
     width: calc(100% - 80px);
   }
+
+  /* Dashboard 2-column Grid */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .order-rapide { order: 3; }
+  .order-menu { order: 4; }
 
   /* Dashboard Horizontal Scroll becomes a 3-column Grid */
   .horizontal-scroll {

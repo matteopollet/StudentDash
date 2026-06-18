@@ -165,14 +165,14 @@ export default function SettingsPage() {
 
   return (
     <>
-      <header className="md-top-bar">
+      <header className="md-top-bar" style={{ margin: '0 auto', maxWidth: 800, width: '100%' }}>
         <Link href="/dashboard" className="md-icon-button" style={{ color: 'var(--md-on-surface)', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 48, height: 48, borderRadius: '50%', marginLeft: -8 }}>
           <span className="material-symbols-rounded">arrow_back</span>
         </Link>
         <span className="md-top-bar-title" style={{ marginLeft: 8 }}>Réglages</span>
       </header>
 
-      <main className="page-content">
+      <main className="page-content" style={{ margin: '0 auto' }}>
         {/* Profile section */}
         <section aria-label="Profil">
           <div className="md-card md-card-elevated animate-in" style={{ padding: '1.25rem', marginBottom: '1rem' }}>
