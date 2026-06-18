@@ -129,6 +129,7 @@ export default function DashboardPage() {
   const [lastSync, setLastSync] = useState<string | null>(null)
 
   const [nextEvent, setNextEvent] = useState<any>(null)
+  const [todayMenu, setTodayMenu] = useState<any>(null)
 
   const showSnack = (msg: string) => {
     setSnack(msg)
@@ -137,14 +138,16 @@ export default function DashboardPage() {
 
   const loadData = useCallback(async () => {
     try {
-      const [gradesRes, credRes, planRes] = await Promise.all([
+      const [gradesRes, credRes, planRes, menuRes] = await Promise.all([
         fetch('/api/grades'),
         fetch('/api/credentials'),
-        fetch('/api/planning?limit=1')
+        fetch('/api/planning?limit=1'),
+        fetch('/api/menu')
       ])
       const gradesData = await gradesRes.json()
       const credData = await credRes.json()
       const planData = await planRes.json()
+      const menuData = await menuRes.json()
       
       setData(gradesData)
       setHasCredentials(!!credData.minesId)
@@ -153,6 +156,20 @@ export default function DashboardPage() {
       }
       if (planData.events && planData.events.length > 0) {
         setNextEvent(planData.events[0])
+      }
+      if (menuData?.data?.days) {
+        const now = new Date()
+        let jsDay = now.getDay()
+        const hour = now.getHours()
+
+        // After 14:00, show the menu for the next day
+        if (hour >= 14) {
+          jsDay = (jsDay + 1) % 7
+        }
+
+        // 0=Sunday, 6=Saturday -> map to Monday (index 0)
+        const dayIndex = (jsDay === 0 || jsDay === 6) ? 0 : jsDay - 1
+        setTodayMenu(menuData.data.days[dayIndex])
       }
     } finally {
       setLoading(false)
@@ -408,30 +425,65 @@ export default function DashboardPage() {
           </Link>
         )}
 
+        {/* Menu du jour */}
+        {todayMenu && (
+          <Link href="/cantina" className="md-card md-card-filled animate-in" style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: '1.5rem', textDecoration: 'none', background: 'var(--md-surface-container)' }}>
+            <div style={{ background: 'var(--md-secondary-container)', color: 'var(--md-on-secondary-container)', width: 48, height: 48, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <span className="material-symbols-rounded">restaurant</span>
+            </div>
+            <div style={{ flex: 1 }}>
+              <p style={{ fontSize: 'var(--md-label-small)', fontWeight: 600, opacity: 0.8, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8, color: 'var(--md-on-surface-variant)' }}>
+                Menu du jour • {todayMenu.name}
+              </p>
+              <ul style={{ margin: 0, padding: 0, listStyle: 'none', color: 'var(--md-on-surface)' }}>
+                {todayMenu.plats.map((plat: string, idx: number) => {
+                  let prefix = '•'
+                  const lower = plat.toLowerCase()
+                  if (lower.includes('végét') || lower.includes('soja') || lower.includes('légume')) prefix = '🌱'
+                  else if (lower.includes('poisson') || lower.includes('merlu') || lower.includes('truite') || lower.includes('hoki') || lower.includes('cabillaud') || lower.includes('saumon')) prefix = '🐟'
+                  else if (lower.includes('poulet') || lower.includes('dinde') || lower.includes('volaille')) prefix = '🍗'
+                  else prefix = '🥩'
+
+                  return (
+                    <li key={idx} style={{ fontSize: 'var(--md-body-medium)', marginBottom: 4, display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                      <span aria-hidden="true" style={{ marginTop: -1, fontSize: '0.9rem' }}>{prefix}</span>
+                      <span style={{ lineHeight: 1.3 }}>{plat}</span>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          </Link>
+        )}
+
         {/* Quick links */}
         <h2 style={{ fontSize: 'var(--md-title-medium)', color: 'var(--md-on-surface-variant)', margin: '1.5rem 0 0.75rem', fontWeight: 500 }}>
           Accès rapide
         </h2>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.75rem' }}>
+        <div className="horizontal-scroll" style={{ display: 'flex', overflowX: 'auto', gap: '0.75rem', paddingBottom: '1rem', margin: '0 -1rem', padding: '0 1rem 1rem 1rem', scrollSnapType: 'x mandatory', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
           {[
-            { href: '/simulator', icon: 'calculate', label: 'Simulateur d\'UE' },
+            { href: '/simulator', icon: 'calculate', label: 'Simulateur' },
             { href: '/documents', icon: 'folder_open', label: 'Documents' },
+            { href: '/cantina', icon: 'restaurant', label: 'Cantine' },
           ].map(item => (
             <Link
               key={item.href}
               href={item.href}
               className="md-card md-card-elevated animate-in"
-              style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '1.25rem 1rem' }}
+              style={{ flex: '0 0 calc(40% - 0.5rem)', minWidth: 120, scrollSnapAlign: 'start', textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '1rem', height: '100px' }}
             >
               <span className="material-symbols-rounded filled" style={{ fontSize: 28, color: 'var(--md-primary)' }}>
                 {item.icon}
               </span>
-              <span style={{ fontSize: 'var(--md-body-medium)', fontWeight: 500, color: 'var(--md-on-surface)' }}>
+              <span style={{ fontSize: 'var(--md-body-medium)', fontWeight: 500, color: 'var(--md-on-surface)', lineHeight: 1.2 }}>
                 {item.label}
               </span>
             </Link>
           ))}
+          
+          {/* Invisible spacer to prevent right-edge clipping of the padding on iOS/Safari */}
+          <div style={{ width: '1px', flexShrink: 0 }} aria-hidden="true" />
         </div>
       </main>
 

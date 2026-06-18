@@ -1,0 +1,355 @@
+/* =====================================================
+   Cantina — Material Design 3 Menu Page
+   Mobile-first, pill tabs, scroll-snap swipe, stagger
+   ===================================================== */
+
+/* ─── Week subtitle ─── */
+.weekInfo {
+  font-size: var(--md-body-medium);
+  color: var(--md-on-surface-variant);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.weekInfo .material-symbols-rounded {
+  font-size: 16px;
+  color: var(--md-outline);
+}
+
+/* ─── Tab Bar (MD3 Primary Tabs) ─── */
+.tabBar {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 0;
+  border-bottom: 1px solid var(--md-surface-container-high);
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1rem;
+}
+
+.tabBar::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  padding: 0 1.25rem;
+  font-family: var(--font-family);
+  font-size: var(--md-title-small);
+  font-weight: 500;
+  letter-spacing: 0.00625em;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  background: transparent;
+  color: var(--md-on-surface-variant);
+  transition: color var(--md-motion-duration-short) var(--md-motion-standard),
+              border-color var(--md-motion-duration-short) var(--md-motion-standard);
+  position: relative;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: var(--md-on-surface);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--md-primary);
+  outline-offset: -2px;
+}
+
+.tabActive {
+  color: var(--md-primary);
+  border-bottom-color: var(--md-primary);
+}
+
+/* ─── Swipe Container (mobile) ─── */
+.swipeContainer {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  gap: 1.5rem;
+  margin: 0 -1rem;
+  padding: 0 1rem;
+}
+
+.swipeContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.swipePane {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  min-width: 0;
+}
+
+/* ─── Day Card ─── */
+.dayCard {
+  position: relative;
+  overflow: hidden;
+  animation: fade-in var(--md-motion-duration-medium) var(--md-motion-emphasized) both;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.dayName {
+  font-size: var(--md-title-large);
+  font-weight: 500;
+  color: var(--md-on-surface);
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dayName .material-symbols-rounded {
+  font-size: 20px;
+  color: var(--md-primary);
+}
+
+/* ─── Section Card (Plats / Accompagnements) ─── */
+.sectionCard {
+  background: var(--md-surface-container);
+  border-radius: var(--md-shape-xl, 1.5rem);
+  padding: 1.25rem;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--md-title-small);
+  font-weight: 500;
+  color: var(--md-on-surface-variant);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03125em;
+}
+
+.sectionHeader .material-symbols-rounded {
+  font-size: 18px;
+  color: var(--md-primary);
+  opacity: 0.8;
+}
+
+/* ─── Food List ─── */
+.foodList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.foodItem {
+  position: relative;
+  padding: 0.875rem 0;
+  font-size: var(--md-body-large);
+  color: var(--md-on-surface);
+  line-height: 1.4;
+  border-bottom: 1px solid var(--md-outline-variant);
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.foodItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.foodItem:first-child {
+  padding-top: 0;
+}
+
+/* ─── Empty State ─── */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+  background: var(--md-surface-container);
+  border-radius: var(--md-shape-lg);
+  position: relative;
+  overflow: hidden;
+  animation: fade-in var(--md-motion-duration-medium) var(--md-motion-emphasized) both;
+}
+
+.emptyState::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--md-elevation-1);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.emptyIcon {
+  font-size: 64px;
+  color: var(--md-outline);
+  margin-bottom: 1.25rem;
+  opacity: 0.6;
+}
+
+.emptyTitle {
+  font-size: var(--md-title-medium);
+  font-weight: 500;
+  color: var(--md-on-surface);
+  margin-bottom: 0.5rem;
+}
+
+.emptyDescription {
+  font-size: var(--md-body-medium);
+  color: var(--md-on-surface-variant);
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+/* ─── Error State ─── */
+.errorState {
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  background: var(--md-error-container);
+  border-radius: var(--md-shape-lg);
+  animation: fade-in var(--md-motion-duration-medium) var(--md-motion-emphasized) both;
+}
+
+.errorIcon {
+  font-size: 48px;
+  color: var(--md-error);
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.errorText {
+  color: var(--md-on-error-container);
+  font-size: var(--md-body-large);
+}
+
+/* ─── Skeleton Loading ─── */
+.skeletonWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.skeletonTabs {
+  display: flex;
+  gap: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.skeletonTab {
+  width: 80px;
+  height: 36px;
+  border-radius: var(--md-shape-full);
+  background: var(--md-surface-container-highest);
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.skeletonCard {
+  background: var(--md-surface-container);
+  border-radius: var(--md-shape-lg);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.skeletonTitle {
+  width: 120px;
+  height: 22px;
+  border-radius: var(--md-shape-xs);
+  background: var(--md-surface-container-highest);
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.skeletonSectionLabel {
+  width: 100px;
+  height: 14px;
+  border-radius: var(--md-shape-xs);
+  background: var(--md-surface-container-highest);
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.skeletonItem {
+  height: 24px;
+  border-radius: var(--md-shape-sm);
+  background: var(--md-surface-container-highest);
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.skeletonItem:nth-child(2) {
+  width: 85%;
+}
+
+.skeletonItem:nth-child(3) {
+  width: 70%;
+}
+
+/* ─── Desktop Grid ─── */
+@media (min-width: 900px) {
+  .tabBar {
+    display: none;
+  }
+
+  .swipeContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+    overflow: visible;
+    scroll-snap-type: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .swipePane {
+    flex: unset;
+    scroll-snap-align: unset;
+    scroll-snap-stop: unset;
+  }
+
+  .skeletonWrap {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+
+  .skeletonTabs {
+    display: none;
+  }
+}
+
+/* ─── Stagger delays for day cards ─── */
+.stagger > *:nth-child(1) { animation-delay: 0ms; }
+.stagger > *:nth-child(2) { animation-delay: 60ms; }
+.stagger > *:nth-child(3) { animation-delay: 120ms; }
+.stagger > *:nth-child(4) { animation-delay: 180ms; }
+.stagger > *:nth-child(5) { animation-delay: 240ms; }
+
+/* ─── Reuse keyframes from globals ─── */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
