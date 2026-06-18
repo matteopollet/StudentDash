@@ -17,4 +17,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session
     },
   },
+  events: {
+    async signIn(message) {
+      if (message.user?.id) {
+        prisma.userActivity.create({
+          data: {
+            userId: message.user.id,
+            action: 'login',
+          }
+        }).catch(console.error)
+      }
+    }
+  }
 })
