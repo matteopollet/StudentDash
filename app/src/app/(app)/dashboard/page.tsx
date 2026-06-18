@@ -350,82 +350,51 @@ export default function DashboardPage() {
           </div>
         )}
 
-        <div className="dashboard-grid">
+        <div className="dashboard-layout" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           {/* Overall average hero card */}
-          <div className={`md-card md-card-elevated animate-in order-moyenne ${styles.heroCard}`} style={{ position: 'relative' }} aria-label="Moyenne générale">
-              {loading ? (
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                  <div className="skeleton" style={{ width: 100, height: 100, borderRadius: '50%' }} />
-                  <div style={{ flex: 1 }}>
-                    <div className="skeleton" style={{ width: '60%', height: 20, marginBottom: 8 }} />
-                    <div className="skeleton" style={{ width: '40%', height: 16 }} />
-                  </div>
+          <div className={`md-card md-card-elevated animate-in ${styles.heroCard}`} style={{ position: 'relative' }} aria-label="Moyenne générale">
+            {loading ? (
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <div className="skeleton" style={{ width: 100, height: 100, borderRadius: '50%' }} />
+                <div style={{ flex: 1 }}>
+                  <div className="skeleton" style={{ width: '60%', height: 20, marginBottom: 8 }} />
+                  <div className="skeleton" style={{ width: '40%', height: 16 }} />
                 </div>
-              ) : (
-                <>
-                  <button 
-                    onClick={() => setShowShare(true)} 
-                    className="md-icon-button" 
-                    style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', color: 'var(--md-on-surface)', border: 'none', width: 48, height: 48, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
-                    aria-label="Partager mon bilan"
-                  >
-                    <span className="material-symbols-rounded" style={{ fontSize: 24 }}>share</span>
-                  </button>
-                  <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', paddingRight: '2rem' }}>
-                    <ScoreRing value={overallAvg !== null && !isNaN(overallAvg) ? Number(overallAvg.toFixed(2)) : null} size={108} />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontSize: 'var(--md-title-large)', fontWeight: 600, color: 'var(--md-on-surface)', margin: '0 0 0.25rem 0', wordBreak: 'break-word', lineHeight: 1.2 }}>Moyenne générale</p>
-                      <p style={{ fontSize: 'var(--md-title-small)', color: 'var(--md-on-surface-variant)' }}>
-                        {semesters.length} semestre{semesters.length !== 1 ? 's' : ''}
-                      </p>
-                      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: 8 }}>
-                        <span className="md-chip active" style={{ height: 28, fontSize: '0.75rem' }}>
-                          <span className="material-symbols-rounded" style={{ fontSize: 14 }}>check_circle</span>
-                          {totalGrades}/{totalSubjects} notés
-                        </span>
-                        {trendIndicator}
-                      </div>
+              </div>
+            ) : (
+              <>
+                <button 
+                  onClick={() => setShowShare(true)} 
+                  className="md-icon-button" 
+                  style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', color: 'var(--md-on-surface)', border: 'none', width: 48, height: 48, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                  aria-label="Partager mon bilan"
+                >
+                  <span className="material-symbols-rounded" style={{ fontSize: 24 }}>share</span>
+                </button>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', paddingRight: '2rem' }}>
+                  <ScoreRing value={overallAvg !== null && !isNaN(overallAvg) ? Number(overallAvg.toFixed(2)) : null} size={108} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: 'var(--md-title-large)', fontWeight: 600, color: 'var(--md-on-surface)', margin: '0 0 0.25rem 0', wordBreak: 'break-word', lineHeight: 1.2 }}>Moyenne générale</p>
+                    <p style={{ fontSize: 'var(--md-title-small)', color: 'var(--md-on-surface-variant)' }}>
+                      {semesters.length} semestre{semesters.length !== 1 ? 's' : ''}
+                    </p>
+                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: 8 }}>
+                      <span className="md-chip active" style={{ height: 28, fontSize: '0.75rem' }}>
+                        <span className="material-symbols-rounded" style={{ fontSize: 14 }}>check_circle</span>
+                        {totalGrades}/{totalSubjects} notés
+                      </span>
+                      {trendIndicator}
                     </div>
                   </div>
-                </>
-              )}
-            </div>
+                </div>
+              </>
+            )}
+          </div>
 
-        {/* Quick links */}
-        <div className="order-rapide">
-          <h2 style={{ fontSize: 'var(--md-title-medium)', color: 'var(--md-on-surface-variant)', margin: '1.5rem 0 0.75rem', fontWeight: 500 }}>
-            Accès rapide
-          </h2>
-
-            <div className="horizontal-scroll" style={{ display: 'flex', overflowX: 'auto', gap: '0.75rem', paddingBottom: '1rem', margin: '0 -1rem', padding: '0 1rem 1rem 1rem', scrollSnapType: 'x mandatory', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
-              {[
-                { href: '/simulator', icon: 'calculate', label: 'Simulateur' },
-                { href: '/documents', icon: 'folder_open', label: 'Documents' },
-                { href: '/cantina', icon: 'restaurant', label: 'Cantine' },
-              ].map(item => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="md-card md-card-elevated animate-in"
-                  style={{ flex: '0 0 calc(40% - 0.5rem)', minWidth: 120, scrollSnapAlign: 'start', textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '1rem', height: '100px' }}
-                >
-                  <span className="material-symbols-rounded filled" style={{ fontSize: 28, color: 'var(--md-primary)' }}>
-                    {item.icon}
-                  </span>
-                  <span style={{ fontSize: 'var(--md-body-medium)', fontWeight: 500, color: 'var(--md-on-surface)', lineHeight: 1.2 }}>
-                    {item.label}
-                  </span>
-                </Link>
-              ))}
-              
-              {/* Invisible spacer to prevent right-edge clipping of the padding on iOS/Safari */}
-              <div style={{ width: '1px', flexShrink: 0 }} aria-hidden="true" />
-            </div>
-        </div>
-
+          <div className="dashboard-split">
             {/* Next Event Card */}
             {nextEvent && (
-              <Link href="/planning" className="md-card md-card-elevated animate-in order-cours" style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem', background: 'var(--md-primary-container)', color: 'var(--md-on-primary-container)', textDecoration: 'none' }}>
+              <Link href="/planning" className="md-card md-card-elevated animate-in" style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'var(--md-primary-container)', color: 'var(--md-on-primary-container)', textDecoration: 'none' }}>
                 <div style={{ background: 'var(--md-primary)', color: 'var(--md-on-primary)', width: 48, height: 48, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <span className="material-symbols-rounded">event</span>
                 </div>
@@ -460,7 +429,7 @@ export default function DashboardPage() {
 
             {/* Menu du jour */}
             {todayMenu && (
-              <Link href="/cantina" className="md-card md-card-filled animate-in order-menu" style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: '1.5rem', textDecoration: 'none', background: 'var(--md-surface-container)' }}>
+              <Link href="/cantina" className="md-card md-card-filled animate-in" style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', textDecoration: 'none', background: 'var(--md-surface-container)' }}>
                 <div style={{ background: 'var(--md-secondary-container)', color: 'var(--md-on-secondary-container)', width: 48, height: 48, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <span className="material-symbols-rounded">restaurant</span>
                 </div>
@@ -488,6 +457,39 @@ export default function DashboardPage() {
                 </div>
               </Link>
             )}
+          </div>
+
+          {/* Quick links */}
+          <div>
+            <h2 style={{ fontSize: 'var(--md-title-medium)', color: 'var(--md-on-surface-variant)', margin: '0 0 0.75rem', fontWeight: 500 }}>
+              Accès rapide
+            </h2>
+
+            <div className="horizontal-scroll" style={{ display: 'flex', overflowX: 'auto', gap: '0.75rem', paddingBottom: '1rem', margin: '0 -1rem', padding: '0 1rem 1rem 1rem', scrollSnapType: 'x mandatory', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
+              {[
+                { href: '/simulator', icon: 'calculate', label: 'Simulateur' },
+                { href: '/documents', icon: 'folder_open', label: 'Documents' },
+                { href: '/cantina', icon: 'restaurant', label: 'Cantine' },
+              ].map(item => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="md-card md-card-elevated animate-in"
+                  style={{ flex: '0 0 calc(40% - 0.5rem)', minWidth: 120, scrollSnapAlign: 'start', textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '1rem', height: '100px' }}
+                >
+                  <span className="material-symbols-rounded filled" style={{ fontSize: 28, color: 'var(--md-primary)' }}>
+                    {item.icon}
+                  </span>
+                  <span style={{ fontSize: 'var(--md-body-medium)', fontWeight: 500, color: 'var(--md-on-surface)', lineHeight: 1.2 }}>
+                    {item.label}
+                  </span>
+                </Link>
+              ))}
+              
+              {/* Invisible spacer to prevent right-edge clipping of the padding on iOS/Safari */}
+              <div style={{ width: '1px', flexShrink: 0 }} aria-hidden="true" />
+            </div>
+          </div>
         </div>
       </main>
 

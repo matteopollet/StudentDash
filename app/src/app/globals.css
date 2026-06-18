@@ -715,15 +715,11 @@ body {
 }
 
 /* ─── Dashboard Base (Mobile First) ─── */
-.dashboard-grid {
+.dashboard-split {
   display: flex;
   flex-direction: column;
+  gap: 1.5rem;
 }
-
-.order-moyenne { order: 1; }
-.order-cours { order: 2; }
-.order-menu { order: 3; }
-.order-rapide { order: 4; }
 
 /* ─── Desktop Responsive Overrides (MD3 Navigation Rail & Grid) ─── */
 @media (min-width: 900px) {
@@ -759,15 +755,12 @@ body {
   }
 
   /* Dashboard 2-column Grid */
-  .dashboard-grid {
+  .dashboard-split {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
     align-items: start;
   }
-
-  .order-rapide { order: 3; }
-  .order-menu { order: 4; }
 
   /* Dashboard Horizontal Scroll becomes a 3-column Grid */
   .horizontal-scroll {
