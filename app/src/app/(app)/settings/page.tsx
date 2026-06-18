@@ -165,7 +165,7 @@ export default function SettingsPage() {
 
   return (
     <>
-      <header className="md-top-bar" style={{ margin: '0 auto', maxWidth: 800, width: '100%' }}>
+      <header className="md-top-bar" style={{ margin: 0, width: '100%', padding: '0 calc(max(1rem, (100vw - 800px) / 2))' }}>
         <Link href="/dashboard" className="md-icon-button" style={{ color: 'var(--md-on-surface)', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 48, height: 48, borderRadius: '50%', marginLeft: -8 }}>
           <span className="material-symbols-rounded">arrow_back</span>
         </Link>
@@ -627,6 +627,25 @@ export default function SettingsPage() {
                 </div>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* About / Changelog */}
+        <section aria-label="À propos">
+          <h2 style={{ fontSize: 'var(--md-title-medium)', fontWeight: 500, color: 'var(--md-on-surface-variant)', margin: '1.25rem 0 0.75rem' }}>
+            À propos
+          </h2>
+          <div className="md-card md-card-elevated animate-in" style={{ padding: '0.5rem', marginBottom: '1.5rem' }}>
+            <Link href="/changelog" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem', textDecoration: 'none', color: 'var(--md-on-surface)' }}>
+              <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--md-primary-container)', color: 'var(--md-on-primary-container)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span className="material-symbols-rounded">update</span>
+              </div>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: 'var(--md-body-large)', fontWeight: 500, margin: 0 }}>Notes de mise à jour</p>
+                <p style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)', margin: 0 }}>Découvrez les dernières nouveautés (v2.0.0)</p>
+              </div>
+              <span className="material-symbols-rounded" style={{ color: 'var(--md-on-surface-variant)' }}>chevron_right</span>
+            </Link>
           </div>
         </section>
 
