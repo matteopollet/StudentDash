@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { useTranslation } from '@/i18n/I18nProvider'
 
 type SimulatorData = Record<string, Record<string, {
   name: string,
@@ -9,6 +10,7 @@ type SimulatorData = Record<string, Record<string, {
 const TARGET_AVG = 8
 
 export default function SimulatorClient({ initialData }: { initialData: SimulatorData }) {
+  const { t, lang } = useTranslation()
   const allSemesters = Object.keys(initialData).sort((a, b) => {
     const numA = parseInt(a.replace(/\D/g, ''), 10) || 0
     const numB = parseInt(b.replace(/\D/g, ''), 10) || 0
@@ -51,7 +53,7 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
   if (!semesters.length) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--md-on-surface-variant)' }}>
-        Aucune donnée de programme disponible.
+        {lang === 'fr' ? 'Aucune donnée de programme disponible.' : 'No program data available.'}
       </div>
     )
   }
@@ -153,7 +155,7 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
               cursor: 'pointer',
               padding: '0 4px',
             }}
-            aria-label="Sélectionner le semestre"
+            aria-label={lang === 'fr' ? 'Sélectionner le semestre' : 'Select semester'}
           >
             {semesters.map(sem => <option key={sem} value={sem}>{sem}</option>)}
           </select>
@@ -179,7 +181,7 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
         {/* 1. Visualisation de l'État Actuel */}
         <div className="md-card md-card-elevated animate-in" style={{ marginBottom: '1.5rem', padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <p style={{ fontSize: 'var(--md-title-medium)', fontWeight: 600, color: 'var(--md-on-surface)', marginBottom: '1rem' }}>
-            État Actuel : {activeUe}
+            {lang === 'fr' ? 'État Actuel :' : 'Current Status:'} {activeUe}
           </p>
 
           <div style={{ position: 'relative', width: 220, height: 130, display: 'flex', justifyContent: 'center' }}>
@@ -197,7 +199,7 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
                 strokeWidth="3" 
                 strokeLinecap="round"
               />
-              <text x={70 + Math.cos(angle)*85} y={70 - Math.sin(angle)*85 + 4} textAnchor="middle" fontSize="10" fontWeight="600" fill="var(--md-on-surface-variant)">Seuil ({TARGET_AVG})</text>
+              <text x={70 + Math.cos(angle)*85} y={70 - Math.sin(angle)*85 + 4} textAnchor="middle" fontSize="10" fontWeight="600" fill="var(--md-on-surface-variant)">{lang === 'fr' ? 'Seuil' : 'Threshold'} ({TARGET_AVG})</text>
               
               {/* Progress track */}
               {currentUeAvg !== null && (
@@ -234,11 +236,11 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
             gap: '0.5rem'
           }}>
             {currentUeAvg === null ? (
-              <>En attente de notes</>
+              <>{lang === 'fr' ? 'En attente de notes' : 'Waiting for grades'}</>
             ) : isRealValidated ? (
-              <><span className="material-symbols-rounded" style={{ fontSize: 18 }}>check_circle</span> VALIDÉ</>
+              <><span className="material-symbols-rounded" style={{ fontSize: 18 }}>check_circle</span> {lang === 'fr' ? 'VALIDÉ' : 'VALIDATED'}</>
             ) : (
-              <><span className="material-symbols-rounded" style={{ fontSize: 18 }}>cancel</span> À VALIDER</>
+              <><span className="material-symbols-rounded" style={{ fontSize: 18 }}>cancel</span> {lang === 'fr' ? 'À VALIDER' : 'TO VALIDATE'}</>
             )}
           </div>
         </div>
@@ -259,26 +261,26 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
             </span>
             <div style={{ flex: 1 }}>
               <p style={{ fontSize: 'var(--md-label-large)', color: 'var(--md-primary)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>
-                Objectif (Matières restantes)
+                {lang === 'fr' ? 'Objectif (Matières restantes)' : 'Target (Remaining subjects)'}
               </p>
               <p style={{ fontSize: 'var(--md-display-medium)', fontWeight: 700, color: 'var(--md-on-primary-container)', lineHeight: 1 }}>
                 {unlockedMissingCoef > 0 ? (
                   uniformRequiredGrade <= 0 ? (
                     <span style={{ fontSize: 'var(--md-headline-medium)', display: 'flex', alignItems: 'center', gap: 8 }}>
-                      🎉 Objectif atteint
+                      🎉 {lang === 'fr' ? 'Objectif atteint' : 'Target reached'}
                     </span>
-                  ) : uniformRequiredGrade > 20 ? 'Impossible' : uniformRequiredGrade.toFixed(2).replace('.', ',')
+                  ) : uniformRequiredGrade > 20 ? (lang === 'fr' ? 'Impossible' : 'Impossible') : uniformRequiredGrade.toFixed(2).replace('.', ',')
                 ) : (
                   <span style={{ fontSize: 'var(--md-headline-medium)', display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span className="material-symbols-rounded">{isSimValidated ? 'verified' : 'warning'}</span> 
-                    {isSimValidated ? 'Validé' : 'Échec'}
+                    {isSimValidated ? (lang === 'fr' ? 'Validé' : 'Validated') : (lang === 'fr' ? 'Échec' : 'Failed')}
                   </span>
                 )}
                 {unlockedMissingCoef > 0 && uniformRequiredGrade > 0 && uniformRequiredGrade <= 20 && <span style={{ fontSize: 'var(--md-title-medium)', fontWeight: 400, opacity: 0.8 }}> / 20</span>}
               </p>
               {unlockedMissingCoef > 0 && uniformRequiredGrade > 20 && (
                 <p style={{ fontSize: 'var(--md-body-small)', marginTop: 8, color: 'var(--md-error)' }}>
-                  Mathématiquement impossible d'atteindre {TARGET_AVG}/20 avec les notes verrouillées.
+                  {lang === 'fr' ? "Mathématiquement impossible d'atteindre" : "Mathematically impossible to reach"} {TARGET_AVG}/20 {lang === 'fr' ? "avec les notes verrouillées." : "with locked grades."}
                 </p>
               )}
             </div>
@@ -296,7 +298,7 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
           }}>
             <div>
               <p style={{ fontSize: 'var(--md-label-medium)', color: 'var(--md-on-primary-container)', opacity: 0.8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                Moyenne UE simulée
+                {lang === 'fr' ? 'Moyenne UE simulée' : 'Simulated UE average'}
               </p>
               <p style={{ fontSize: 'var(--md-title-large)', fontWeight: 700, color: isSimValidated ? 'var(--md-success)' : 'var(--md-on-primary-container)' }}>
                 {simulatedUeAvg !== null ? simulatedUeAvg.toFixed(2).replace('.', ',') : '—'} <span style={{ fontSize: 'var(--md-title-medium)', fontWeight: 400, opacity: 0.8 }}>/ 20</span>
@@ -307,7 +309,7 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
 
         {/* 3. Détail des Enseignements (Interactif) */}
         <h2 style={{ fontSize: 'var(--md-title-medium)', fontWeight: 500, color: 'var(--md-on-surface-variant)', marginBottom: '0.75rem' }}>
-          Détail des enseignements
+          {lang === 'fr' ? 'Détail des enseignements' : 'Subject details'}
         </h2>
 
         <div className="stagger" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.5rem' }}>
@@ -333,8 +335,8 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
                   </p>
                   <p style={{ fontSize: 'var(--md-label-small)', color: 'var(--md-on-surface-variant)', display: 'flex', alignItems: 'center', gap: 6 }}>
                     Coef {subject.coef}
-                    {isReal && <span style={{ color: 'var(--md-primary)', background: 'var(--md-primary-container)', padding: '2px 6px', borderRadius: 4, fontSize: 10, fontWeight: 600 }}>Note réelle</span>}
-                    {!isReal && <span style={{ color: 'var(--md-secondary)', background: 'var(--md-secondary-container)', padding: '2px 6px', borderRadius: 4, fontSize: 10, fontWeight: 600 }}>Simulé</span>}
+                    {isReal && <span style={{ color: 'var(--md-primary)', background: 'var(--md-primary-container)', padding: '2px 6px', borderRadius: 4, fontSize: 10, fontWeight: 600 }}>{lang === 'fr' ? 'Note réelle' : 'Real grade'}</span>}
+                    {!isReal && <span style={{ color: 'var(--md-secondary)', background: 'var(--md-secondary-container)', padding: '2px 6px', borderRadius: 4, fontSize: 10, fontWeight: 600 }}>{lang === 'fr' ? 'Simulé' : 'Simulated'}</span>}
                   </p>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
@@ -357,7 +359,7 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
                           cursor: 'pointer',
                           opacity: lockedGrades[subject.name] ? 1 : 0.6
                         }}
-                        aria-label={lockedGrades[subject.name] ? "Déverrouiller cette note" : "Verrouiller cette note"}
+                        aria-label={lockedGrades[subject.name] ? (lang === 'fr' ? "Déverrouiller cette note" : "Unlock this grade") : (lang === 'fr' ? "Verrouiller cette note" : "Lock this grade")}
                       >
                         <span className="material-symbols-rounded" style={{ fontSize: 20 }}>
                           {lockedGrades[subject.name] ? 'lock' : 'lock_open_right'}
@@ -390,7 +392,7 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
                           }}
                           onFocus={(e) => { e.target.style.borderColor = 'var(--md-primary)'; e.target.style.borderWidth = '2px'; }}
                           onBlur={(e) => { e.target.style.borderColor = 'var(--md-outline)'; e.target.style.borderWidth = '1px'; }}
-                          aria-label={`Note simulée pour ${subject.name}`}
+                          aria-label={lang === 'fr' ? `Note simulée pour ${subject.name}` : `Simulated grade for ${subject.name}`}
                         />
                         <span className="material-symbols-rounded" style={{ position: 'absolute', right: 8, fontSize: 16, color: lockedGrades[subject.name] ? 'transparent' : 'var(--md-on-surface-variant)', pointerEvents: 'none' }}>edit</span>
                       </div>
@@ -421,7 +423,7 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
             }}
           >
             <span className="material-symbols-rounded filled">calculate</span>
-            Calculer le minimum
+            {t.simulator.calculate}
           </button>
         </div>
       )}

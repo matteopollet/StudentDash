@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 
 import Link from 'next/link'
 import styles from './page.module.css'
+import { useTranslation } from '@/i18n/I18nProvider'
 
 interface GradeData {
   grades: any[]
@@ -121,6 +122,7 @@ function CanvasScoreRing({ value, max = 20, size = 100 }: { value: number | null
 
 export default function DashboardPage() {
   const { data: session } = useSession()
+  const { t, lang } = useTranslation()
   const [data, setData] = useState<GradeData | null>(null)
   const [loading, setLoading] = useState(true)
   const [syncing, setSyncing] = useState(false)
@@ -300,8 +302,8 @@ export default function DashboardPage() {
             disabled={syncing || !hasCredentials}
             className="md-icon-button"
             style={{ background: 'transparent', border: 'none', color: 'var(--md-on-surface)', width: 48, height: 48, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-            aria-label="Synchroniser les notes"
-            title={!hasCredentials ? 'Configurez vos identifiants dans Réglages' : undefined}
+            aria-label={t.dashboard.syncGrades}
+            title={!hasCredentials ? t.dashboard.configureCreds : undefined}
           >
             <span className={`material-symbols-rounded ${syncing ? 'spin' : ''}`}>sync</span>
           </button>
@@ -318,16 +320,16 @@ export default function DashboardPage() {
         <section className={styles.welcome} aria-label="Bienvenue" style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', marginBottom: '1.5rem' }}>
           <div>
             <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface-variant)' }}>
-              Bonjour,
+              {t.dashboard.hello}
             </p>
             <h1 style={{ fontSize: 'var(--md-headline-medium)', fontWeight: 400, color: 'var(--md-on-surface)' }}>
-              {session?.user?.name?.split(' ')[0] ?? 'Étudiant'} 👋
+              {session?.user?.name?.split(' ')[0] ?? t.dashboard.student} 👋
             </h1>
           </div>
           {lastSync && (
             <p style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)' }}>
               <span className="material-symbols-rounded" style={{ fontSize: 16 }}>history</span>
-              Dernière synchro: {lastSync}
+              {t.dashboard.lastSync} {lastSync}
             </p>
           )}
         </section>
@@ -339,12 +341,12 @@ export default function DashboardPage() {
               <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--md-primary-container)', color: 'var(--md-on-primary-container)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
                 <span className="material-symbols-rounded filled" style={{ fontSize: 32 }}>person_add</span>
               </div>
-              <h2 style={{ fontSize: 'var(--md-headline-small)', margin: '0 0 1rem 0', color: 'var(--md-on-surface)' }}>Bienvenue ! 👋</h2>
+              <h2 style={{ fontSize: 'var(--md-headline-small)', margin: '0 0 1rem 0', color: 'var(--md-on-surface)' }}>{t.dashboard.welcomeTitle}</h2>
               <p style={{ fontSize: 'var(--md-body-large)', color: 'var(--md-on-surface-variant)', marginBottom: '2rem', lineHeight: 1.5 }}>
-                Pour voir vos notes et votre emploi du temps, vous devez renseigner vos identifiants Mines Alès (CyberNotes) dans les paramètres.
+                {t.dashboard.welcomeDesc}
               </p>
               <Link href="/settings" className="md-btn md-btn-filled" style={{ width: '100%', height: 48, fontSize: '1rem' }}>
-                Aller aux paramètres
+                {t.dashboard.goToSettings}
               </Link>
             </div>
           </div>
@@ -374,14 +376,14 @@ export default function DashboardPage() {
                 <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', paddingRight: '2rem' }}>
                   <ScoreRing value={overallAvg !== null && !isNaN(overallAvg) ? Number(overallAvg.toFixed(2)) : null} size={108} />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 'var(--md-title-large)', fontWeight: 600, color: 'var(--md-on-surface)', margin: '0 0 0.25rem 0', wordBreak: 'break-word', lineHeight: 1.2 }}>Moyenne générale</p>
+                    <p style={{ fontSize: 'var(--md-title-large)', fontWeight: 600, color: 'var(--md-on-surface)', margin: '0 0 0.25rem 0', wordBreak: 'break-word', lineHeight: 1.2 }}>{t.dashboard.overallAvg}</p>
                     <p style={{ fontSize: 'var(--md-title-small)', color: 'var(--md-on-surface-variant)' }}>
-                      {semesters.length} semestre{semesters.length !== 1 ? 's' : ''}
+                      {semesters.length} {semesters.length !== 1 ? t.dashboard.semesters : t.dashboard.semester}
                     </p>
                     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: 8 }}>
                       <span className="md-chip active" style={{ height: 28, fontSize: '0.75rem' }}>
                         <span className="material-symbols-rounded" style={{ fontSize: 14 }}>check_circle</span>
-                        {totalGrades}/{totalSubjects} notés
+                        {totalGrades}/{totalSubjects} {t.dashboard.graded}
                       </span>
                       {trendIndicator}
                     </div>
@@ -400,7 +402,7 @@ export default function DashboardPage() {
                 </div>
                 <div style={{ flex: 1 }}>
                   <p style={{ fontSize: 'var(--md-label-small)', fontWeight: 600, opacity: 0.8, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>
-                    Prochain cours • {new Date(nextEvent.start).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })}
+                    {t.dashboard.nextClass} • {new Date(nextEvent.start).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', { weekday: 'short', day: 'numeric', month: 'short' })}
                   </p>
                   <p style={{ fontSize: 'var(--md-title-medium)', fontWeight: 700, margin: '0 0 4px 0', lineHeight: 1.2 }}>
                     {(function(summary) {
@@ -435,7 +437,7 @@ export default function DashboardPage() {
                 </div>
                 <div style={{ flex: 1 }}>
                   <p style={{ fontSize: 'var(--md-label-small)', fontWeight: 600, opacity: 0.8, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8, color: 'var(--md-on-surface-variant)' }}>
-                    Menu du jour • {todayMenu.name}
+                    {t.dashboard.todayMenu} • {todayMenu.name}
                   </p>
                   <ul style={{ margin: 0, padding: 0, listStyle: 'none', color: 'var(--md-on-surface)' }}>
                     {todayMenu.plats.map((plat: string, idx: number) => {
@@ -462,14 +464,14 @@ export default function DashboardPage() {
           {/* Quick links */}
           <div>
             <h2 style={{ fontSize: 'var(--md-title-medium)', color: 'var(--md-on-surface-variant)', margin: '0 0 0.75rem', fontWeight: 500 }}>
-              Accès rapide
+              {t.dashboard.quickAccess}
             </h2>
 
             <div className="horizontal-scroll" style={{ display: 'flex', overflowX: 'auto', gap: '0.75rem', paddingBottom: '1rem', margin: '0 -1rem', padding: '0 1rem 1rem 1rem', scrollSnapType: 'x mandatory', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
               {[
-                { href: '/simulator', icon: 'calculate', label: 'Simulateur' },
-                { href: '/documents', icon: 'folder_open', label: 'Documents' },
-                { href: '/cantina', icon: 'restaurant', label: 'Cantine' },
+                { href: '/simulator', icon: 'calculate', label: t.nav.simulator },
+                { href: '/documents', icon: 'folder_open', label: t.nav.documents },
+                { href: '/cantina', icon: 'restaurant', label: t.nav.cantina },
               ].map(item => (
                 <Link
                   key={item.href}
@@ -539,7 +541,7 @@ export default function DashboardPage() {
             {/* Gauge */}
             <div style={{ zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '2rem' }}>
               <div style={{ marginBottom: '1rem', fontSize: '0.8rem', color: 'var(--md-on-surface-variant)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '2px' }}>
-                Moyenne Générale
+                {t.dashboard.overallAvg}
               </div>
               <CanvasScoreRing value={overallAvg !== null && !isNaN(overallAvg) ? Number(overallAvg.toFixed(2)) : null} size={130} />
             </div>
@@ -550,7 +552,7 @@ export default function DashboardPage() {
               <div style={{ flex: 1, minWidth: 0, background: 'rgba(74, 222, 128, 0.1)', padding: '1rem', borderRadius: 'var(--md-shape-lg)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', color: '#4ade80', marginBottom: '0.5rem' }}>
                   <span className="material-symbols-rounded" style={{ fontSize: 20 }}>trending_up</span>
-                  <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Meilleure Note</span>
+                  <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{t.dashboard.bestGrade}</span>
                 </div>
                 <span style={{ fontSize: '1.8rem', fontWeight: 800, color: '#4ade80', lineHeight: 1 }}>
                   {bestGradeObj?.value?.toFixed(2) ?? '—'}
@@ -564,7 +566,7 @@ export default function DashboardPage() {
               <div style={{ flex: 1, minWidth: 0, background: 'rgba(248, 113, 113, 0.1)', padding: '1rem', borderRadius: 'var(--md-shape-lg)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', color: '#f87171', marginBottom: '0.5rem' }}>
                   <span className="material-symbols-rounded" style={{ fontSize: 20 }}>trending_down</span>
-                  <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Pire Note</span>
+                  <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{t.dashboard.worstGrade}</span>
                 </div>
                 <span style={{ fontSize: '1.8rem', fontWeight: 800, color: '#f87171', lineHeight: 1 }}>
                   {worstGradeObj?.value?.toFixed(2) ?? '—'}
@@ -580,7 +582,7 @@ export default function DashboardPage() {
               <div style={{ width: '100%', zIndex: 1 }}>
                 <div style={{ background: 'var(--md-surface)', borderRadius: 'var(--md-shape-lg)', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', border: '1px solid var(--md-outline-variant)' }}>
                   <div style={{ background: 'var(--md-surface-variant)', padding: '0.5rem 0.75rem', borderBottom: '1px solid var(--md-outline-variant)' }}>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--md-on-surface-variant)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Moyennes par Semestre</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--md-on-surface-variant)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{t.dashboard.semestersAvg}</span>
                   </div>
                   <div style={{ padding: '0.5rem' }}>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.4rem' }}>
@@ -601,7 +603,7 @@ export default function DashboardPage() {
             {/* Footer Branding */}
             <div style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '6px', opacity: 0.5, zIndex: 1 }}>
               <span className="material-symbols-rounded" style={{ fontSize: 16 }}>verified</span>
-              <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>Généré par StudentDash</span>
+              <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>{t.dashboard.generatedBy}</span>
             </div>
             
           </div>
@@ -613,7 +615,7 @@ export default function DashboardPage() {
               onClick={() => setShowShare(false)}
               disabled={isSharing}
             >
-              Fermer
+              {t.dashboard.close}
             </button>
             <button 
               className="md-btn md-btn-filled"
@@ -621,9 +623,9 @@ export default function DashboardPage() {
               disabled={isSharing}
             >
               {isSharing ? (
-                <><span className="material-symbols-rounded spin" style={{ fontSize: 18 }}>sync</span> Création...</>
+                <><span className="material-symbols-rounded spin" style={{ fontSize: 18 }}>sync</span> {t.dashboard.creating}</>
               ) : (
-                <><span className="material-symbols-rounded" style={{ fontSize: 18 }}>share</span> Partager l'image</>
+                <><span className="material-symbols-rounded" style={{ fontSize: 18 }}>share</span> {t.dashboard.shareImage}</>
               )}
             </button>
           </div>

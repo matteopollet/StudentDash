@@ -35,6 +35,8 @@ export const viewport: Viewport = {
 }
 
 import { ThemeProvider } from '@/components/ThemeProvider'
+import { getLang } from '@/i18n/getLang'
+import { I18nProvider } from '@/i18n/I18nProvider'
 
 export default async function RootLayout({
   children,
@@ -42,20 +44,24 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   const session = await auth()
+  const lang = await getLang()
+  
   return (
-    <html lang="fr" className={roboto.variable}>
+    <html lang={lang} className={roboto.variable}>
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>
       <body>
-        <ThemeProvider>
-          <SessionProvider session={session}>
-            <PWARegister />
-            <PWAInstallPrompt />
-            {children}
-          </SessionProvider>
-        </ThemeProvider>
+        <I18nProvider initialLang={lang}>
+          <ThemeProvider>
+            <SessionProvider session={session}>
+              <PWARegister />
+              <PWAInstallPrompt />
+              {children}
+            </SessionProvider>
+          </ThemeProvider>
+        </I18nProvider>
       </body>
     </html>
   )

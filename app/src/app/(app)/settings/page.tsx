@@ -4,9 +4,11 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useTheme } from '@/components/ThemeProvider'
+import { useTranslation } from '@/i18n/I18nProvider'
 
 export default function SettingsPage() {
   const { data: session } = useSession()
+  const { t, lang, setLang } = useTranslation()
   const { mode, setMode, colorHex, setColorHex } = useTheme()
   const [minesId, setMinesId] = useState('')
   const [minesPassword, setMinesPassword] = useState('')
@@ -37,10 +39,10 @@ export default function SettingsPage() {
       setMinesId('')
       setMinesPassword('')
       setLastSync(null)
-      setStatus({ type: 'success', msg: 'Données supprimées avec succès.' })
+      setStatus({ type: 'success', msg: t.settings.status.dataDeleted })
       setDeleteStep(0)
     } catch {
-      setStatus({ type: 'error', msg: 'Erreur lors de la suppression.' })
+      setStatus({ type: 'error', msg: t.settings.status.deleteError })
     }
   }
 
@@ -56,7 +58,7 @@ export default function SettingsPage() {
 
   const handleSave = async () => {
     if (!minesId || !minesPassword) {
-      setStatus({ type: 'error', msg: 'Veuillez remplir tous les champs obligatoires.' })
+      setStatus({ type: 'error', msg: t.settings.status.fillFields })
       return
     }
     setSaving(true)
@@ -69,7 +71,7 @@ export default function SettingsPage() {
       })
       const d = await res.json()
       if (d.success) {
-        setStatus({ type: 'success', msg: `✓ Identifiants sauvegardés et ${d.gradesCount} notes récupérées. Synchronisation du planning en cours...` })
+        setStatus({ type: 'success', msg: `${t.settings.status.credsSaved} ${d.gradesCount} ${t.settings.status.gradesRetrieved}` })
         setExistingId(minesId)
         setMinesPassword('')
         setLastSync(new Date().toLocaleString('fr-FR'))
@@ -78,18 +80,18 @@ export default function SettingsPage() {
           const planRes = await fetch('/api/planning', { method: 'POST' })
           const planData = await planRes.json()
           if (planData.success) {
-            setStatus({ type: 'success', msg: `✓ Tout est prêt ! ${d.gradesCount} notes et ${planData.count} cours synchronisés.` })
+            setStatus({ type: 'success', msg: `${t.settings.status.allReady} ${d.gradesCount} ${lang === 'fr' ? 'notes et' : 'grades and'} ${planData.count} ${t.settings.status.classesSynced}` })
           } else {
-            setStatus({ type: 'success', msg: `✓ Notes OK, mais erreur planning : ${planData.error}` })
+            setStatus({ type: 'success', msg: `${t.settings.status.planningError} ${planData.error}` })
           }
         } catch {
-          setStatus({ type: 'success', msg: `✓ Notes OK, erreur réseau pour le planning.` })
+          setStatus({ type: 'success', msg: t.settings.status.planningNetworkError })
         }
       } else {
-        setStatus({ type: 'error', msg: d.error ?? 'Erreur lors de la validation des identifiants.' })
+        setStatus({ type: 'error', msg: d.error ?? t.settings.status.credsValError })
       }
     } catch {
-      setStatus({ type: 'error', msg: 'Erreur réseau. Réessayez.' })
+      setStatus({ type: 'error', msg: t.settings.status.networkError })
     } finally {
       setSaving(false)
     }
@@ -138,7 +140,7 @@ export default function SettingsPage() {
           })
         }
         setPushEnabled(false)
-        setStatus({ type: 'success', msg: 'Notifications désactivées.' })
+        setStatus({ type: 'success', msg: t.settings.status.notifDisabled })
       } else {
         const perm = await Notification.requestPermission()
         if (perm === 'granted') {
@@ -151,13 +153,13 @@ export default function SettingsPage() {
             body: JSON.stringify(sub)
           })
           setPushEnabled(true)
-          setStatus({ type: 'success', msg: 'Notifications activées !' })
+          setStatus({ type: 'success', msg: t.settings.status.notifEnabled })
         } else {
-          setStatus({ type: 'error', msg: 'Permission refusée par le navigateur.' })
+          setStatus({ type: 'error', msg: t.settings.status.notifRefused })
         }
       }
     } catch (e: any) {
-      setStatus({ type: 'error', msg: `Erreur Push: ${e.message}` })
+      setStatus({ type: 'error', msg: `${t.settings.status.pushError} ${e.message}` })
     } finally {
       setPushLoading(false)
     }
@@ -169,12 +171,40 @@ export default function SettingsPage() {
         <Link href="/dashboard" className="md-icon-button" style={{ color: 'var(--md-on-surface)', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 48, height: 48, borderRadius: '50%', marginLeft: -8 }}>
           <span className="material-symbols-rounded">arrow_back</span>
         </Link>
-        <span className="md-top-bar-title" style={{ marginLeft: 8 }}>Réglages</span>
+        <span className="md-top-bar-title" style={{ marginLeft: 8 }}>{t.settings.title}</span>
       </header>
 
       <main className="page-content" style={{ margin: '0 auto' }}>
+        {/* Language section */}
+        <section aria-label={t.settings.language}>
+          <h2 style={{ fontSize: 'var(--md-title-medium)', fontWeight: 500, color: 'var(--md-on-surface-variant)', margin: '1.25rem 0 0.75rem' }}>
+            {t.settings.language}
+          </h2>
+          <div className="md-card md-card-elevated animate-in" style={{ padding: '1.25rem', marginBottom: '1rem' }}>
+            <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)', marginBottom: '0.75rem' }}>
+              {t.settings.languageDesc}
+            </p>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button 
+                className={`md-btn ${lang === 'fr' ? 'md-btn-filled' : 'md-btn-outlined'}`}
+                onClick={() => setLang('fr')}
+                style={{ flex: 1 }}
+              >
+                Français
+              </button>
+              <button 
+                className={`md-btn ${lang === 'en' ? 'md-btn-filled' : 'md-btn-outlined'}`}
+                onClick={() => setLang('en')}
+                style={{ flex: 1 }}
+              >
+                English
+              </button>
+            </div>
+          </div>
+        </section>
+
         {/* Profile section */}
-        <section aria-label="Profil">
+        <section aria-label={t.settings.profile}>
           <div className="md-card md-card-elevated animate-in" style={{ padding: '1.25rem', marginBottom: '1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
               {session?.user?.image && (
@@ -198,23 +228,23 @@ export default function SettingsPage() {
             <div className="md-divider" />
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.75rem' }}>
               <div>
-                <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)' }}>Connexion Google</p>
+                <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)' }}>{t.settings.googleAuth}</p>
                 <p style={{ fontSize: 'var(--md-label-small)', color: 'var(--md-on-surface-variant)', marginTop: 2 }}>
-                  Authentification OAuth 2.0
+                  {t.settings.oauthAuth}
                 </p>
               </div>
               <div className="md-chip" style={{ background: 'var(--md-success-container)', color: 'var(--md-on-success-container)', border: 'none' }}>
                 <span className="material-symbols-rounded filled" style={{ fontSize: 14 }}>check_circle</span>
-                Connecté
+                {t.settings.connected}
               </div>
             </div>
           </div>
         </section>
 
         {/* CyberNotes credentials */}
-        <section aria-label="Identifiants CyberNotes">
+        <section aria-label={t.settings.cyberNotes}>
           <h2 style={{ fontSize: 'var(--md-title-medium)', fontWeight: 500, color: 'var(--md-on-surface-variant)', margin: '1.25rem 0 0.75rem' }}>
-            Identifiants CyberNotes
+            {t.settings.cyberNotes}
           </h2>
 
           <div className="md-card md-card-elevated animate-in" style={{ padding: '1.25rem', marginBottom: '1rem' }}>
@@ -223,11 +253,11 @@ export default function SettingsPage() {
                 <span className="material-symbols-rounded filled" style={{ color: 'var(--md-on-success-container)', fontSize: 18 }}>check_circle</span>
                 <div>
                   <p style={{ fontSize: 'var(--md-body-small)', fontWeight: 600, color: 'var(--md-on-success-container)' }}>
-                    Identifiant actuel : <code>{existingId}</code>
+                    {t.settings.currentId} <code>{existingId}</code>
                   </p>
                   {lastSync && (
                     <p style={{ fontSize: 'var(--md-label-small)', color: 'var(--md-on-success-container)', opacity: 0.8, marginTop: 2 }}>
-                      Dernière sync : {lastSync}
+                      {t.settings.lastSyncDate} {lastSync}
                     </p>
                   )}
                 </div>
@@ -248,7 +278,7 @@ export default function SettingsPage() {
                     zIndex: 1 
                   }}
                 >
-                  Identifiant Mines Alès
+                  {t.settings.minesId}
                 </label>
                 <input
                   id="mines-id"
@@ -289,7 +319,7 @@ export default function SettingsPage() {
                   zIndex: 1 
                 }}
               >
-                Parcours Académique
+                {t.settings.academicPath}
               </label>
               <select
                 id="academic-path"
@@ -312,8 +342,8 @@ export default function SettingsPage() {
                 onFocus={(e) => { e.target.style.borderColor = 'var(--md-primary)'; e.target.style.borderWidth = '2px'; }}
                 onBlur={(e) => { e.target.style.borderColor = 'var(--md-outline)'; e.target.style.borderWidth = '1px'; }}
               >
-                <option value="DL">Développement Logiciel (DL)</option>
-                <option value="SR">Systèmes et Réseaux (SR)</option>
+                <option value="DL">{t.settings.pathDL}</option>
+                <option value="SR">{t.settings.pathSR}</option>
               </select>
             </div>
 
@@ -331,7 +361,7 @@ export default function SettingsPage() {
                   zIndex: 1 
                 }}
               >
-                Mot de passe Mines Alès
+                {t.settings.minesPassword}
               </label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -372,7 +402,7 @@ export default function SettingsPage() {
                     display: 'flex',
                     alignItems: 'center',
                   }}
-                  aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                  aria-label={showPassword ? t.settings.hidePassword : t.settings.showPassword}
                 >
                   <span className="material-symbols-rounded" style={{ fontSize: 20 }}>
                     {showPassword ? 'visibility_off' : 'visibility'}
@@ -407,37 +437,37 @@ export default function SettingsPage() {
               {saving ? (
                 <>
                   <span className="material-symbols-rounded spin" style={{ fontSize: 18 }}>sync</span>
-                  Validation en cours…
+                  {t.settings.validating}
                 </>
               ) : (
                 <>
                   <span className="material-symbols-rounded filled" style={{ fontSize: 18 }}>save</span>
-                  Enregistrer et synchroniser
+                  {t.settings.saveAndSync}
                 </>
               )}
             </button>
 
             <p style={{ fontSize: '0.75rem', color: 'var(--md-on-surface-variant)', marginTop: '1.25rem', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
               <span className="material-symbols-rounded" style={{ fontSize: 16 }}>lock</span>
-              Votre mot de passe est chiffré avec AES-256 avant d&apos;être stocké.
+              {t.settings.encryptionDesc}
             </p>
           </div>
         </section>
 
         {/* Notifications section */}
-        <section aria-label="Notifications">
+        <section aria-label={t.settings.notifications}>
           <h2 style={{ fontSize: 'var(--md-title-medium)', fontWeight: 500, color: 'var(--md-on-surface-variant)', margin: '1.25rem 0 0.75rem' }}>
-            Notifications
+            {t.settings.notifications}
           </h2>
 
           <div className="md-card md-card-elevated animate-in" style={{ padding: '1.25rem', marginBottom: '1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)', fontWeight: 500 }}>
-                  Nouvelles notes
+                  {t.settings.newGrades}
                 </p>
                 <p style={{ fontSize: 'var(--md-label-small)', color: 'var(--md-on-surface-variant)', marginTop: 4, maxWidth: '80%' }}>
-                  Recevez une alerte lorsqu'une nouvelle note est publiée pour votre promotion.
+                  {t.settings.newGradesDesc}
                 </p>
               </div>
               <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', position: 'relative' }}>
@@ -475,14 +505,14 @@ export default function SettingsPage() {
         </section>
 
         {/* Appearance section */}
-        <section aria-label="Apparence">
+        <section aria-label={t.settings.appearance}>
           <h2 style={{ fontSize: 'var(--md-title-medium)', fontWeight: 500, color: 'var(--md-on-surface-variant)', margin: '1.25rem 0 0.75rem' }}>
-            Apparence
+            {t.settings.appearance}
           </h2>
 
           <div className="md-card md-card-elevated animate-in" style={{ padding: '1.25rem', marginBottom: '1rem' }}>
             <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)', fontWeight: 500, marginBottom: '0.75rem' }}>
-              Mode d'affichage
+              {t.settings.displayMode}
             </p>
             
             <div style={{ display: 'flex', background: 'var(--md-surface-variant)', borderRadius: '2rem', padding: '4px', marginBottom: '1.5rem' }}>
@@ -511,25 +541,25 @@ export default function SettingsPage() {
                   <span className="material-symbols-rounded" style={{ fontSize: 18 }}>
                     {m === 'system' ? 'smartphone' : m === 'light' ? 'light_mode' : 'dark_mode'}
                   </span>
-                  {m === 'system' ? 'Système' : m === 'light' ? 'Clair' : 'Sombre'}
+                  {m === 'system' ? t.settings.system : m === 'light' ? t.settings.light : t.settings.dark}
                 </button>
               ))}
             </div>
 
             <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)', fontWeight: 500, marginBottom: '0.75rem' }}>
-              Couleur d'accentuation
+              {t.settings.accentColor}
             </p>
             
             <div style={{ display: 'flex', gap: '0.75rem', overflowX: 'auto', paddingBottom: '0.5rem', scrollbarWidth: 'none' }}>
               {[
-                { hex: '#6750A4', name: 'Violet (Défaut)' },
-                { hex: '#006A60', name: 'Menthe' },
-                { hex: '#0061A4', name: 'Bleu Océan' },
-                { hex: '#8C4A60', name: 'Rose Poudré' },
-                { hex: '#984061', name: 'Framboise' },
-                { hex: '#A23F16', name: 'Terre Cuite' },
-                { hex: '#4B6320', name: 'Vert Kaki' },
-                { hex: '#6A5F00', name: 'Or' },
+                { hex: '#6750A4', name: t.settings.colorDefault },
+                { hex: '#006A60', name: t.settings.colorMint },
+                { hex: '#0061A4', name: t.settings.colorOcean },
+                { hex: '#8C4A60', name: t.settings.colorPowderPink },
+                { hex: '#984061', name: t.settings.colorRaspberry },
+                { hex: '#A23F16', name: t.settings.colorTerracotta },
+                { hex: '#4B6320', name: t.settings.colorKhaki },
+                { hex: '#6A5F00', name: t.settings.colorGold },
               ].map(color => (
                 <button
                   key={color.hex}
@@ -563,18 +593,18 @@ export default function SettingsPage() {
 
         {/* Mobile App Install section */}
         {!isStandalone && (
-          <section aria-label="Application Mobile">
+          <section aria-label={t.settings.mobileApp}>
             <h2 style={{ fontSize: 'var(--md-title-medium)', fontWeight: 500, color: 'var(--md-on-surface-variant)', margin: '1.25rem 0 0.75rem' }}>
-              Application Mobile
+              {t.settings.mobileApp}
             </h2>
 
             <div className="md-card md-card-elevated animate-in" style={{ padding: '1.25rem', marginBottom: '1rem', background: 'var(--md-primary-container)', border: '1px solid rgba(103, 80, 164, 0.2)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
                 <span className="material-symbols-rounded filled" style={{ color: 'var(--md-on-primary-container)', fontSize: 32 }}>install_mobile</span>
                 <div>
-                  <p style={{ fontSize: 'var(--md-body-large)', color: 'var(--md-on-primary-container)', fontWeight: 600 }}>Installer StudentDash</p>
+                  <p style={{ fontSize: 'var(--md-body-large)', color: 'var(--md-on-primary-container)', fontWeight: 600 }}>{t.settings.installApp}</p>
                   <p style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-primary-container)', opacity: 0.9 }}>
-                    Ajoutez l'application sur votre téléphone pour un accès instantané et des notifications.
+                    {t.settings.installDesc}
                   </p>
                 </div>
               </div>
@@ -583,21 +613,21 @@ export default function SettingsPage() {
                 {isIOS ? (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)' }}>
-                      <strong>Sur iPhone (Safari) :</strong>
+                      <strong>{t.settings.onIphone}</strong>
                     </p>
                     <ol style={{ margin: 0, paddingLeft: '1.25rem', color: 'var(--md-on-surface-variant)', fontSize: '0.85rem' }}>
-                      <li style={{ marginBottom: 6 }}>Appuyez sur l'icône de <strong>Partage</strong> en bas (le carré avec la flèche).</li>
-                      <li>Faites défiler et choisissez <strong>Sur l'écran d'accueil</strong>.</li>
+                      <li style={{ marginBottom: 6 }}>{t.settings.iphoneStep1}</li>
+                      <li>{t.settings.iphoneStep2}</li>
                     </ol>
                   </div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)' }}>
-                      <strong>Sur Android (Chrome) :</strong>
+                      <strong>{t.settings.onAndroid}</strong>
                     </p>
                     <ol style={{ margin: 0, paddingLeft: '1.25rem', color: 'var(--md-on-surface-variant)', fontSize: '0.85rem' }}>
-                      <li style={{ marginBottom: 6 }}>Appuyez sur le menu (les <strong>3 petits points</strong> en haut à droite).</li>
-                      <li>Choisissez <strong>Ajouter à l'écran d'accueil</strong> ou <strong>Installer l'application</strong>.</li>
+                      <li style={{ marginBottom: 6 }}>{t.settings.androidStep1}</li>
+                      <li>{t.settings.androidStep2}</li>
                     </ol>
                   </div>
                 )}
@@ -607,17 +637,17 @@ export default function SettingsPage() {
         )}
 
         {/* About section */}
-        <section aria-label="À propos">
+        <section aria-label={t.settings.about}>
           <h2 style={{ fontSize: 'var(--md-title-medium)', fontWeight: 500, color: 'var(--md-on-surface-variant)', margin: '1.25rem 0 0.75rem' }}>
-            À propos
+            {t.settings.about}
           </h2>
 
           <div className="md-card animate-in" style={{ padding: '1rem', marginBottom: '1rem' }}>
             {[
-              { icon: 'school', label: 'Formation', value: 'INFRES17 — Mines Alès' },
-              { icon: 'calendar_today', label: 'Promotion', value: '2024 – 2027' },
-              { icon: 'code', label: 'Stack', value: 'Next.js · Prisma · PostgreSQL' },
-              { icon: 'security', label: 'Chiffrement', value: 'AES-256-CBC' },
+              { icon: 'school', label: t.settings.aboutLabels.formation, value: 'INFRES17 — Mines Alès' },
+              { icon: 'calendar_today', label: t.settings.aboutLabels.promotion, value: '2024 – 2027' },
+              { icon: 'code', label: t.settings.aboutLabels.stack, value: 'Next.js · Prisma · PostgreSQL' },
+              { icon: 'security', label: t.settings.aboutLabels.encryption, value: 'AES-256-CBC' },
             ].map(item => (
               <div key={item.icon} className="md-list-item" style={{ padding: '0.75rem 0', display: 'flex', gap: '1rem', alignItems: 'center' }}>
                 <span className="material-symbols-rounded filled" style={{ color: 'var(--md-on-surface-variant)', fontSize: 24, flexShrink: 0 }}>{item.icon}</span>
@@ -630,22 +660,35 @@ export default function SettingsPage() {
           </div>
         </section>
 
-        {/* About / Changelog */}
-        <section aria-label="À propos">
+        {/* About / Changelog / GitHub */}
+        <section aria-label={t.settings.about}>
           <h2 style={{ fontSize: 'var(--md-title-medium)', fontWeight: 500, color: 'var(--md-on-surface-variant)', margin: '1.25rem 0 0.75rem' }}>
-            À propos
+            {t.settings.about}
           </h2>
-          <div className="md-card md-card-elevated animate-in" style={{ padding: '0.5rem', marginBottom: '1.5rem' }}>
+          <div className="md-card md-card-elevated animate-in" style={{ padding: '0.5rem', marginBottom: '1.5rem', display: 'flex', flexDirection: 'column' }}>
             <Link href="/changelog" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem', textDecoration: 'none', color: 'var(--md-on-surface)' }}>
               <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--md-primary-container)', color: 'var(--md-on-primary-container)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <span className="material-symbols-rounded">update</span>
               </div>
               <div style={{ flex: 1 }}>
-                <p style={{ fontSize: 'var(--md-body-large)', fontWeight: 500, margin: 0 }}>Notes de mise à jour</p>
-                <p style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)', margin: 0 }}>Découvrez les dernières nouveautés (v2.0.0)</p>
+                <p style={{ fontSize: 'var(--md-body-large)', fontWeight: 500, margin: 0 }}>{t.settings.changelog}</p>
+                <p style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)', margin: 0 }}>{t.settings.changelogDesc}</p>
               </div>
               <span className="material-symbols-rounded" style={{ color: 'var(--md-on-surface-variant)' }}>chevron_right</span>
             </Link>
+            
+            <div style={{ height: 1, background: 'var(--md-outline-variant)', margin: '0 0.75rem', opacity: 0.5 }} />
+            
+            <a href="https://github.com/matteopollet/StudentDash" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem', textDecoration: 'none', color: 'var(--md-on-surface)' }}>
+              <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--md-secondary-container)', color: 'var(--md-on-secondary-container)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span className="material-symbols-rounded">code</span>
+              </div>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: 'var(--md-body-large)', fontWeight: 500, margin: 0 }}>{t.settings.contribute}</p>
+                <p style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)', margin: 0 }}>{t.settings.contributeDesc}</p>
+              </div>
+              <span className="material-symbols-rounded" style={{ color: 'var(--md-on-surface-variant)' }}>open_in_new</span>
+            </a>
           </div>
         </section>
 
@@ -657,7 +700,7 @@ export default function SettingsPage() {
           style={{ width: '100%', height: 48, color: 'var(--md-error)', borderColor: 'var(--md-error)', marginBottom: '4rem' }}
         >
           <span className="material-symbols-rounded" style={{ fontSize: 18 }}>logout</span>
-          Se déconnecter
+          {t.settings.logout}
         </button>
 
         <div style={{ textAlign: 'center', marginTop: '2rem' }}>
@@ -665,7 +708,7 @@ export default function SettingsPage() {
             onClick={() => setDeleteStep(1)} 
             style={{ background: 'none', border: 'none', fontSize: '10px', color: 'var(--md-on-surface-variant)', opacity: 0.2, cursor: 'text' }}
           >
-            supprimer les données
+            {t.settings.deleteData}
           </button>
         </div>
 
@@ -677,23 +720,23 @@ export default function SettingsPage() {
                 <>
                   <span className="material-symbols-rounded filled" style={{ fontSize: 64, color: 'var(--md-error)', marginBottom: '1rem' }}>warning</span>
                   <h2 style={{ fontSize: 'var(--md-headline-small)', textAlign: 'center', marginBottom: '1rem' }}>
-                    Voulez-vous vraiment nous quitter ?
+                    {t.settings.deleteStep1Title}
                   </h2>
                   <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface-variant)', textAlign: 'center', marginBottom: '2rem' }}>
-                    En supprimant vos identifiants, vous perdrez l'accès à toutes vos notes pré-calculées, vos statistiques avancées, et vos rappels de cours. Êtes-vous sûr de vouloir renoncer à tous ces avantages exclusifs ?
+                    {t.settings.deleteStep1Desc}
                   </p>
                   <button 
                     className="md-btn md-btn-filled" 
                     style={{ width: '100%', height: 56, fontSize: '1.1rem', background: 'var(--md-success)', color: 'var(--md-on-primary)', marginBottom: '1rem' }}
                     onClick={() => setDeleteStep(0)}
                   >
-                    Non, je veux garder mes données et mes avantages
+                    {t.settings.deleteStep1Keep}
                   </button>
                   <button 
                     style={{ background: 'none', border: 'none', fontSize: '0.75rem', color: 'var(--md-on-surface-variant)', opacity: 0.6, cursor: 'pointer', textDecoration: 'underline' }}
                     onClick={() => setDeleteStep(2)}
                   >
-                    Oui, je renonce à mes avantages
+                    {t.settings.deleteStep1Abandon}
                   </button>
                 </>
               )}
@@ -702,7 +745,7 @@ export default function SettingsPage() {
                 <>
                   <span className="material-symbols-rounded" style={{ fontSize: 48, color: 'var(--md-outline)', marginBottom: '1rem' }}>help_center</span>
                   <h2 style={{ fontSize: 'var(--md-title-large)', textAlign: 'center', marginBottom: '1rem' }}>
-                    Êtes-vous absolument sûr de ne pas vouloir conserver vos données ?
+                    {t.settings.deleteStep2Title}
                   </h2>
                   <div style={{ alignSelf: 'flex-start', display: 'flex', gap: '0.5rem', marginBottom: '2rem', alignItems: 'flex-start' }}>
                     <input 
@@ -713,7 +756,7 @@ export default function SettingsPage() {
                       style={{ marginTop: '0.25rem' }}
                     />
                     <label htmlFor="confirm-delete" style={{ fontSize: '0.8rem', color: 'var(--md-on-surface-variant)', lineHeight: 1.4 }}>
-                      Je confirme que je ne souhaite pas annuler la non-conservation de mon compte et je comprends que cette action est définitive.
+                      {t.settings.deleteStep2Confirm}
                     </label>
                   </div>
 
@@ -722,7 +765,7 @@ export default function SettingsPage() {
                     style={{ width: '100%', height: 48, background: 'var(--md-primary)', color: 'var(--md-on-primary)', marginBottom: '1.5rem' }}
                     onClick={() => setDeleteStep(0)}
                   >
-                    Annuler la suppression
+                    {t.settings.deleteStep2Cancel}
                   </button>
                   
                   <button 
@@ -730,7 +773,7 @@ export default function SettingsPage() {
                     disabled={!deleteCheckbox}
                     onClick={handleDeleteData}
                   >
-                    Supprimer définitivement
+                    {t.settings.deleteStep2Delete}
                   </button>
                 </>
               )}

@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import styles from './cantina.module.css'
+import { useTranslation } from '@/i18n/I18nProvider'
 
 /* ─── Types ─── */
 interface MenuDay {
@@ -32,13 +33,14 @@ function getDefaultDayIndex(): number {
   return jsDay - 1 // Mon=0 … Fri=4
 }
 
-function formatWeekStart(iso: string): string {
+function formatWeekStart(iso: string, lang: string): string {
   const d = new Date(iso)
-  return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+  return d.toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
 /* ─── Component ─── */
 export default function CantinaClient() {
+  const { t, lang } = useTranslation()
   const [days, setDays] = useState<MenuDay[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -185,7 +187,7 @@ export default function CantinaClient() {
       <>
         <header className="md-top-bar">
           <span className="material-symbols-rounded" style={{ color: 'var(--md-primary)' }}>restaurant</span>
-          <h1 className="md-top-bar-title">Cantine</h1>
+          <h1 className="md-top-bar-title">{t.cantina.title}</h1>
         </header>
         <div className="page-content">
           <div className={styles.skeletonWrap}>
@@ -217,7 +219,7 @@ export default function CantinaClient() {
       <>
         <header className="md-top-bar">
           <span className="material-symbols-rounded" style={{ color: 'var(--md-primary)' }}>restaurant</span>
-          <h1 className="md-top-bar-title">Cantine</h1>
+          <h1 className="md-top-bar-title">{t.cantina.title}</h1>
         </header>
         <div className="page-content">
           <div className={styles.errorState}>
@@ -235,14 +237,14 @@ export default function CantinaClient() {
       <>
         <header className="md-top-bar">
           <span className="material-symbols-rounded" style={{ color: 'var(--md-primary)' }}>restaurant</span>
-          <h1 className="md-top-bar-title">Cantine</h1>
+          <h1 className="md-top-bar-title">{t.cantina.title}</h1>
         </header>
         <div className="page-content">
           <div className={styles.emptyState}>
             <span className={`material-symbols-rounded ${styles.emptyIcon}`}>restaurant</span>
-            <p className={styles.emptyTitle}>Le menu de cette semaine n&apos;est pas encore disponible.</p>
+            <p className={styles.emptyTitle}>{t.cantina.noMenu}</p>
             <p className={styles.emptyDescription}>
-              Le menu est généralement publié en début de semaine. Revenez plus tard !
+              {lang === 'fr' ? 'Le menu est généralement publié en début de semaine. Revenez plus tard !' : 'The menu is usually published at the start of the week. Check back later!'}
             </p>
           </div>
         </div>
@@ -255,7 +257,7 @@ export default function CantinaClient() {
     <>
       <header className="md-top-bar">
         <span className="material-symbols-rounded" style={{ color: 'var(--md-primary)' }}>restaurant</span>
-        <h1 className="md-top-bar-title">Cantine</h1>
+        <h1 className="md-top-bar-title">{t.cantina.title}</h1>
       </header>
 
       <div className="page-content">
@@ -263,7 +265,7 @@ export default function CantinaClient() {
         {weekStart && (
           <p className={styles.weekInfo}>
             <span className="material-symbols-rounded">date_range</span>
-            Semaine du {formatWeekStart(weekStart)}
+            {lang === 'fr' ? 'Semaine du' : 'Week of'} {formatWeekStart(weekStart, lang)}
           </p>
         )}
 
@@ -313,7 +315,7 @@ export default function CantinaClient() {
                   <section className={styles.sectionCard}>
                     <h3 className={styles.sectionHeader}>
                       <span className="material-symbols-rounded">restaurant_menu</span>
-                      Plats
+                      {lang === 'fr' ? 'Plats' : 'Main dishes'}
                     </h3>
                     <ul className={styles.foodList}>
                       {day.plats.map((plat, j) => {
@@ -340,7 +342,7 @@ export default function CantinaClient() {
                   <section className={styles.sectionCard}>
                     <h3 className={styles.sectionHeader}>
                       <span className="material-symbols-rounded">grocery</span>
-                      Accompagnements
+                      {lang === 'fr' ? 'Accompagnements' : 'Side dishes'}
                     </h3>
                     <ul className={styles.foodList}>
                       {day.accompagnements.map((acc, j) => (

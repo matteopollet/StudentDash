@@ -1,58 +1,61 @@
 'use client'
 import Link from 'next/link'
-
-const documents = [
-  {
-    id: 'calendrier',
-    title: "Calendrier d'apprentissage",
-    description: "Alternance et périodes en entreprise (2024-2027)",
-    filename: "R-FIA-89-Calendrier_apprentissage_2024-2027_v02.2.pdf",
-    icon: 'calendar_month',
-    containerColor: 'var(--md-primary-container)',
-    onContainerColor: 'var(--md-on-primary-container)'
-  },
-  {
-    id: 'programme',
-    title: "Programme INFRES 17",
-    description: "Syllabus détaillé de la formation",
-    filename: "FIA-Programme-Infres-promotion-17(2024-2027).pdf",
-    icon: 'menu_book',
-    containerColor: 'var(--md-tertiary-container)',
-    onContainerColor: 'var(--md-on-tertiary-container)'
-  },
-  {
-    id: 'referentiel',
-    title: "Référentiel de Compétences",
-    description: "Compétences à valider pour le diplôme",
-    filename: "REFERENTIEL_COMPETENCES_INFRES.pdf",
-    icon: 'verified',
-    containerColor: 'var(--md-success-container)',
-    onContainerColor: 'var(--md-on-success-container)'
-  },
-  {
-    id: 'missions',
-    title: "Missions et Planning (DPPA)",
-    description: "Document Pédagogique et Professionnel d'Apprentissage",
-    filename: "DPPA_missions_planning2024-2027.pdf",
-    icon: 'work',
-    containerColor: '#FFDF99', // Custom amber container
-    onContainerColor: '#261900' // Custom on-amber text
-  }
-]
+import { useTranslation } from '@/i18n/I18nProvider'
 
 export default function DocumentsPage() {
+  const { lang } = useTranslation()
+
+  const documents = [
+    {
+      id: 'calendrier',
+      title: lang === 'fr' ? "Calendrier d'apprentissage" : "Apprenticeship calendar",
+      description: lang === 'fr' ? "Alternance et périodes en entreprise (2024-2027)" : "Work-study periods in company (2024-2027)",
+      filename: "R-FIA-89-Calendrier_apprentissage_2024-2027_v02.2.pdf",
+      icon: 'calendar_month',
+      containerColor: 'var(--md-primary-container)',
+      onContainerColor: 'var(--md-on-primary-container)'
+    },
+    {
+      id: 'programme',
+      title: lang === 'fr' ? "Programme INFRES 17" : "INFRES 17 Program",
+      description: lang === 'fr' ? "Syllabus détaillé de la formation" : "Detailed training syllabus",
+      filename: "FIA-Programme-Infres-promotion-17(2024-2027).pdf",
+      icon: 'menu_book',
+      containerColor: 'var(--md-tertiary-container)',
+      onContainerColor: 'var(--md-on-tertiary-container)'
+    },
+    {
+      id: 'referentiel',
+      title: lang === 'fr' ? "Référentiel de Compétences" : "Skills Framework",
+      description: lang === 'fr' ? "Compétences à valider pour le diplôme" : "Skills to validate for the degree",
+      filename: "REFERENTIEL_COMPETENCES_INFRES.pdf",
+      icon: 'verified',
+      containerColor: 'var(--md-success-container)',
+      onContainerColor: 'var(--md-on-success-container)'
+    },
+    {
+      id: 'missions',
+      title: lang === 'fr' ? "Missions et Planning (DPPA)" : "Missions and Planning (DPPA)",
+      description: lang === 'fr' ? "Document Pédagogique et Professionnel d'Apprentissage" : "Educational and Professional Apprenticeship Document",
+      filename: "DPPA_missions_planning2024-2027.pdf",
+      icon: 'work',
+      containerColor: '#FFDF99', // Custom amber container
+      onContainerColor: '#261900' // Custom on-amber text
+    }
+  ]
+
   return (
     <>
       <header className="md-top-bar">
         <Link href="/dashboard" className="md-btn md-btn-text" style={{ padding: '0 8px', minWidth: 48, marginLeft: -8 }}>
           <span className="material-symbols-rounded">arrow_back</span>
         </Link>
-        <span className="md-top-bar-title" style={{ marginLeft: 8 }}>Documents utiles</span>
+        <span className="md-top-bar-title" style={{ marginLeft: 8 }}>{lang === 'fr' ? 'Documents utiles' : 'Useful documents'}</span>
       </header>
 
       <main className="page-content">
         <p style={{ fontSize: 'var(--md-body-large)', color: 'var(--md-on-surface-variant)', marginBottom: '1.5rem', lineHeight: 1.5 }}>
-          Retrouvez ici tous les documents administratifs et pédagogiques essentiels de votre scolarité.
+          {lang === 'fr' ? 'Retrouvez ici tous les documents administratifs et pédagogiques essentiels de votre scolarité.' : 'Find all the essential administrative and educational documents for your studies here.'}
         </p>
 
         <div className="stagger" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -90,7 +93,7 @@ export default function DocumentsPage() {
                       style={{ height: 32, fontSize: '0.75rem', padding: '0 1rem', background: doc.containerColor, color: doc.onContainerColor }}
                     >
                       <span className="material-symbols-rounded" style={{ fontSize: 16 }}>visibility</span>
-                      Ouvrir
+                      {lang === 'fr' ? 'Ouvrir' : 'Open'}
                     </a>
                     <a 
                       href={`/documents/${doc.filename}`} 
@@ -99,7 +102,7 @@ export default function DocumentsPage() {
                       style={{ height: 32, fontSize: '0.75rem', padding: '0 1rem', color: 'var(--md-on-surface-variant)' }}
                     >
                       <span className="material-symbols-rounded" style={{ fontSize: 16 }}>download</span>
-                      Télécharger
+                      {lang === 'fr' ? 'Télécharger' : 'Download'}
                     </a>
                   </div>
                 </div>

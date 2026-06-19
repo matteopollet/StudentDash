@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
+import { useTranslation } from '@/i18n/I18nProvider'
 
 interface Grade {
   id: string
@@ -36,6 +37,7 @@ function computeUeAvg(subjects: Grade[]): number | null {
 
 function GradesContent() {
   const searchParams = useSearchParams()
+  const { t, lang } = useTranslation()
   const semParam = searchParams.get('semester')
 
   const [data, setData] = useState<GradeData | null>(null)
@@ -80,13 +82,13 @@ function GradesContent() {
       const gradesData = await gradesRes.json()
       
       if (gradesData.success) {
-        showSnack(`Synchronisation réussie (${gradesData.gradesCount} notes)`)
+        showSnack(lang === 'fr' ? `Synchronisation réussie (${gradesData.gradesCount} notes)` : `Sync successful (${gradesData.gradesCount} grades)`)
         loadData()
       } else {
-        showSnack(`Erreur de synchronisation`)
+        showSnack(t.dashboard.syncError)
       }
     } catch (err: any) {
-      showSnack(`Erreur : ${err.message}`)
+      showSnack((lang === 'fr' ? 'Erreur : ' : 'Error: ') + err.message)
     } finally {
       setSyncing(false)
     }
@@ -111,12 +113,12 @@ function GradesContent() {
   return (
     <>
       <header className="md-top-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span className="md-top-bar-title">Mes notes</span>
+        <span className="md-top-bar-title">{t.grades.title}</span>
         <button 
           className="md-icon-button" 
           onClick={handleSync} 
           disabled={syncing} 
-          aria-label="Synchroniser les notes"
+          aria-label={t.dashboard.syncGrades}
             style={{ background: 'transparent', border: 'none', color: 'var(--md-on-surface)', width: 48, height: 48, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         >
           <span className={`material-symbols-rounded ${syncing ? 'spin' : ''}`}>sync</span>
@@ -164,7 +166,7 @@ function GradesContent() {
         {!loading && activeSem && data && (
           <div className="md-card md-card-elevated animate-in" style={{ marginBottom: '1.5rem', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div>
-              <p style={{ fontSize: 'var(--md-title-medium)', color: 'var(--md-on-surface-variant)', marginBottom: '0.25rem' }}>Semestre {activeSem}</p>
+              <p style={{ fontSize: 'var(--md-title-medium)', color: 'var(--md-on-surface-variant)', marginBottom: '0.25rem' }}>{t.dashboard.semester.charAt(0).toUpperCase() + t.dashboard.semester.slice(1)} {activeSem}</p>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem' }}>
                 <span style={{ fontSize: 'var(--md-display-small)', fontWeight: 600, color: 'var(--md-primary)' }}>
                   {data.semesterAverages[activeSem]?.toFixed(2) ?? '—'}
@@ -188,7 +190,7 @@ function GradesContent() {
                 <span className="material-symbols-rounded" style={{ fontSize: 20 }}>
                   {expandedUes.size === Object.keys(currentUes).length ? 'unfold_less' : 'unfold_more'}
                 </span>
-                {expandedUes.size === Object.keys(currentUes).length ? 'Tout réduire' : 'Tout développer'}
+                {expandedUes.size === Object.keys(currentUes).length ? (lang === 'fr' ? 'Tout réduire' : 'Collapse all') : (lang === 'fr' ? 'Tout développer' : 'Expand all')}
               </button>
             </div>
           </div>
@@ -204,7 +206,7 @@ function GradesContent() {
         ) : Object.keys(currentUes).length === 0 ? (
           <div className="md-card animate-in" style={{ padding: '3rem 1rem', textAlign: 'center' }}>
             <span className="material-symbols-rounded" style={{ fontSize: 48, color: 'var(--md-outline)', display: 'block', marginBottom: 16 }}>assignment_late</span>
-            <p style={{ color: 'var(--md-on-surface-variant)' }}>Aucune note pour ce semestre.</p>
+            <p style={{ color: 'var(--md-on-surface-variant)' }}>{t.grades.noGrades}</p>
           </div>
         ) : (
           <div className="stagger" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -269,7 +271,7 @@ function GradesContent() {
                               {grade.subjectName}
                             </p>
                             <p style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)', marginTop: 2 }}>
-                              Coef. {grade.coefficient}
+                              {t.grades.coef} {grade.coefficient}
                               {grade.gradeType ? ` · ${grade.gradeType}` : ''}
                             </p>
                           </div>

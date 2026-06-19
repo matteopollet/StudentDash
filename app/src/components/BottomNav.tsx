@@ -1,18 +1,19 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import styles from './BottomNav.module.css'
-
-const navItems = [
-  { href: '/dashboard', icon: 'dashboard', label: 'Accueil' },
-  { href: '/grades', icon: 'school', label: 'Notes' },
-  { href: '/planning', icon: 'calendar_month', label: 'Planning' },
-]
+import { useTranslation } from '@/i18n/I18nProvider'
 
 export function BottomNav() {
   const pathname = usePathname()
+  const { t } = useTranslation()
 
   if (pathname === '/settings' || pathname === '/changelog') return null
+
+  const navItems = [
+    { href: '/dashboard', icon: 'dashboard', label: t.nav.dashboard },
+    { href: '/grades', icon: 'school', label: t.nav.grades },
+    { href: '/planning', icon: 'calendar_month', label: t.nav.planning },
+  ]
 
   return (
     <nav className="md-nav-bar" role="navigation" aria-label="Navigation principale">

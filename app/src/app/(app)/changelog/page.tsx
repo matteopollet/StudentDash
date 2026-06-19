@@ -1,14 +1,17 @@
+'use client'
 import Link from 'next/link'
 import { changelog } from '@/data/changelog'
+import { useTranslation } from '@/i18n/I18nProvider'
 
 export default function ChangelogPage() {
+  const { lang, t } = useTranslation()
   return (
     <>
       <header className="md-top-bar" style={{ margin: 0, width: '100%', padding: '0 calc(max(1rem, (100vw - 800px) / 2))' }}>
         <Link href="/settings" className="md-icon-button" style={{ color: 'var(--md-on-surface)', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 48, height: 48, borderRadius: '50%', marginLeft: -8 }}>
           <span className="material-symbols-rounded">arrow_back</span>
         </Link>
-        <span className="md-top-bar-title" style={{ marginLeft: 8 }}>Nouveautés</span>
+        <span className="md-top-bar-title" style={{ marginLeft: 8 }}>{t.settings.changelog}</span>
       </header>
 
       <main className="page-content" style={{ margin: '0 auto', paddingBottom: '4rem' }}>
@@ -20,7 +23,7 @@ export default function ChangelogPage() {
                   Version {release.version}
                 </h2>
                 <span style={{ fontSize: 'var(--md-label-medium)', color: 'var(--md-on-surface-variant)', background: 'var(--md-surface-variant)', padding: '4px 10px', borderRadius: '16px', fontWeight: 600 }}>
-                  {release.date}
+                  {release.date[lang as 'fr' | 'en'] || release.date.fr}
                 </span>
               </div>
 
@@ -34,7 +37,7 @@ export default function ChangelogPage() {
                       {section.items.map((item, i) => (
                         <li key={i} style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)', marginBottom: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'flex-start', lineHeight: 1.4 }}>
                           <span aria-hidden="true" style={{ color: 'var(--md-primary)', marginTop: '-1px' }}>•</span>
-                          <span>{item}</span>
+                          <span>{item[lang as 'fr' | 'en'] || item.fr}</span>
                         </li>
                       ))}
                     </ul>

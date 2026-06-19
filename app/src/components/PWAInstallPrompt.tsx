@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import { useTranslation } from '@/i18n/I18nProvider'
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>
@@ -8,6 +9,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export default function PWAInstallPrompt() {
+  const { t, lang } = useTranslation()
   const [showPrompt, setShowPrompt] = useState(false)
   const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null)
 
@@ -55,19 +57,19 @@ export default function PWAInstallPrompt() {
           install_mobile
         </span>
         <div className="pwa-install-text">
-          <strong>Installer StudentDash</strong>
-          <span>Accédez à l&apos;appli depuis votre écran d&apos;accueil</span>
+          <strong>{t.settings.installApp}</strong>
+          <span>{lang === 'fr' ? "Accédez à l'appli depuis votre écran d'accueil" : "Access the app from your home screen"}</span>
         </div>
       </div>
       <div className="pwa-install-actions">
         <button className="md-btn md-btn-text" onClick={handleDismiss}>
-          Plus tard
+          {lang === 'fr' ? 'Plus tard' : 'Later'}
         </button>
         <button className="md-btn md-btn-filled" onClick={handleInstall}>
           <span className="material-symbols-rounded" style={{ fontSize: 18 }}>
             download
           </span>
-          Installer
+          {lang === 'fr' ? 'Installer' : 'Install'}
         </button>
       </div>
     </div>

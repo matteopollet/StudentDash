@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslation } from '@/i18n/I18nProvider'
 
 interface Event {
   id: string
@@ -10,17 +11,18 @@ interface Event {
   end: string
 }
 
-function formatDate(dateStr: string) {
+function formatDate(dateStr: string, lang: string) {
   const d = new Date(dateStr)
-  return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
+  return d.toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long' })
 }
 
-function formatTime(dateStr: string) {
+function formatTime(dateStr: string, lang: string) {
   const d = new Date(dateStr)
-  return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+  return d.toLocaleTimeString(lang === 'fr' ? 'fr-FR' : 'en-US', { hour: '2-digit', minute: '2-digit' })
 }
 
 export default function PlanningClient() {
+  const { t, lang } = useTranslation()
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const [syncing, setSyncing] = useState(false)
@@ -61,14 +63,14 @@ export default function PlanningClient() {
       if (planData.success) msg += (msg ? ' • ' : '✓ ') + `${planData.count} cours`
       
       if (msg) {
-        showSnack(`${msg} synchronisés`)
+        showSnack(`${msg} ${t.dashboard.synced}`)
         loadData()
       } else {
-        showSnack('Erreur lors de la synchronisation')
+        showSnack(t.dashboard.syncError)
       }
     } catch (e: any) {
       setError(e.message)
-      showSnack(`Erreur: ${e.message}`)
+      showSnack((lang === 'fr' ? 'Erreur: ' : 'Error: ') + e.message)
     } finally {
       setSyncing(false)
     }
@@ -77,7 +79,7 @@ export default function PlanningClient() {
   // Group events by day
   const groupedEvents: Record<string, Event[]> = {}
   events.forEach(e => {
-    const day = formatDate(e.start)
+    const day = formatDate(e.start, lang)
     if (!groupedEvents[day]) groupedEvents[day] = []
     groupedEvents[day].push(e)
   })
@@ -96,7 +98,7 @@ export default function PlanningClient() {
     <>
       <header className="md-top-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '64px' }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <span className="md-top-bar-title" style={{ fontSize: 'var(--md-title-large)', fontWeight: 400 }}>Emploi du temps</span>
+          <span className="md-top-bar-title" style={{ fontSize: 'var(--md-title-large)', fontWeight: 400 }}>{t.planning.title}</span>
         </div>
         <button 
           onClick={handleSync} 
@@ -113,7 +115,7 @@ export default function PlanningClient() {
             height: '48px',
             borderRadius: '50%'
           }}
-          aria-label="Synchroniser"
+          aria-label={t.dashboard.syncGrades}
         >
           <span className={`material-symbols-rounded ${syncing ? 'spin' : ''}`}>sync</span>
         </button>
@@ -138,7 +140,7 @@ export default function PlanningClient() {
         {!loading && !error && Object.keys(groupedEvents).length === 0 && (
           <div className="md-card animate-in" style={{ padding: '3rem 1rem', textAlign: 'center' }}>
             <span className="material-symbols-rounded" style={{ fontSize: 48, color: 'var(--md-outline)', display: 'block', marginBottom: 16 }}>event_available</span>
-            <p style={{ color: 'var(--md-on-surface-variant)' }}>Aucun cours à venir !</p>
+            <p style={{ color: 'var(--md-on-surface-variant)' }}>{t.planning.noEvents}</p>
           </div>
         )}
 
@@ -188,13 +190,13 @@ export default function PlanningClient() {
                     return (
                       <div key={event.id} className="md-card md-card-elevated" style={{ padding: '1rem', display: 'flex', gap: '1rem', borderLeft: cardBorder, borderRadius: 'var(--md-shape-md)', background: cardBg }}>
                         <div style={{ display: 'flex', flexDirection: 'column', minWidth: '4.5rem', alignItems: 'center', justifyContent: 'center' }}>
-                          <span style={{ fontSize: 'var(--md-title-medium)', fontWeight: 700, color: textColorMain }}>{formatTime(event.start)}</span>
-                          <span style={{ fontSize: 'var(--md-body-medium)', color: textColorSub, opacity: isNextEvent ? 0.8 : 1 }}>{formatTime(event.end)}</span>
+                          <span style={{ fontSize: 'var(--md-title-medium)', fontWeight: 700, color: textColorMain }}>{formatTime(event.start, lang)}</span>
+                          <span style={{ fontSize: 'var(--md-body-medium)', color: textColorSub, opacity: isNextEvent ? 0.8 : 1 }}>{formatTime(event.end, lang)}</span>
                         </div>
                         <div style={{ flex: 1, paddingLeft: '1rem', borderLeft: innerBorder }}>
                           {isNextEvent && (
                             <p style={{ fontSize: 'var(--md-label-small)', fontWeight: 600, opacity: 0.8, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4, color: textColorMain }}>
-                              Prochain cours
+                              {t.dashboard.nextClass}
                             </p>
                           )}
                           {code ? (
