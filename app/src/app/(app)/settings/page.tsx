@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useTheme } from '@/components/ThemeProvider'
+import { Ripple } from '@/components/Ripple'
 import { useTranslation } from '@/i18n/I18nProvider'
 
 export default function SettingsPage() {
@@ -20,6 +21,14 @@ export default function SettingsPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isStandalone, setIsStandalone] = useState(true)
   const [isIOS, setIsIOS] = useState(false)
+  const [successSnackbar, setSuccessSnackbar] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (successSnackbar) {
+      const timer = setTimeout(() => setSuccessSnackbar(null), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [successSnackbar])
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -30,6 +39,7 @@ export default function SettingsPage() {
     }
   }, [])
   const [deleteStep, setDeleteStep] = useState(0)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [deleteCheckbox, setDeleteCheckbox] = useState(false)
   
   const handleDeleteData = async () => {
@@ -71,7 +81,7 @@ export default function SettingsPage() {
       })
       const d = await res.json()
       if (d.success) {
-        setStatus({ type: 'success', msg: `${t.settings.status.credsSaved} ${d.gradesCount} ${t.settings.status.gradesRetrieved}` })
+        setSuccessSnackbar(`${t.settings.status.credsSaved} ${d.gradesCount} ${t.settings.status.gradesRetrieved}`)
         setExistingId(minesId)
         setMinesPassword('')
         setLastSync(new Date().toLocaleString('fr-FR'))
@@ -80,12 +90,12 @@ export default function SettingsPage() {
           const planRes = await fetch('/api/planning', { method: 'POST' })
           const planData = await planRes.json()
           if (planData.success) {
-            setStatus({ type: 'success', msg: `${t.settings.status.allReady} ${d.gradesCount} ${lang === 'fr' ? 'notes et' : 'grades and'} ${planData.count} ${t.settings.status.classesSynced}` })
+            setSuccessSnackbar(`${t.settings.status.allReady} ${d.gradesCount} ${lang === 'fr' ? 'notes et' : 'grades and'} ${planData.count} ${t.settings.status.classesSynced}`)
           } else {
-            setStatus({ type: 'success', msg: `${t.settings.status.planningError} ${planData.error}` })
+            setSuccessSnackbar(`${t.settings.status.planningError} ${planData.error}`)
           }
         } catch {
-          setStatus({ type: 'success', msg: t.settings.status.planningNetworkError })
+          setSuccessSnackbar(t.settings.status.planningNetworkError)
         }
       } else {
         setStatus({ type: 'error', msg: d.error ?? t.settings.status.credsValError })
@@ -175,35 +185,8 @@ export default function SettingsPage() {
       </header>
 
       <main className="page-content" style={{ margin: '0 auto' }}>
-        {/* Language section */}
-        <section aria-label={t.settings.language}>
-          <h2 style={{ fontSize: 'var(--md-title-medium)', fontWeight: 500, color: 'var(--md-on-surface-variant)', margin: '1.25rem 0 0.75rem' }}>
-            {t.settings.language}
-          </h2>
-          <div className="md-card md-card-elevated animate-in" style={{ padding: '1.25rem', marginBottom: '1rem' }}>
-            <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)', marginBottom: '0.75rem' }}>
-              {t.settings.languageDesc}
-            </p>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <button 
-                className={`md-btn ${lang === 'fr' ? 'md-btn-filled' : 'md-btn-outlined'}`}
-                onClick={() => setLang('fr')}
-                style={{ flex: 1 }}
-              >
-                Français
-              </button>
-              <button 
-                className={`md-btn ${lang === 'en' ? 'md-btn-filled' : 'md-btn-outlined'}`}
-                onClick={() => setLang('en')}
-                style={{ flex: 1 }}
-              >
-                English
-              </button>
-            </div>
-          </div>
-        </section>
-
-        {/* Profile section */}
+                {/* --- 1. Compte & Sécurité --- */}
+{/* Profile section */}
         <section aria-label={t.settings.profile}>
           <div className="md-card md-card-elevated animate-in" style={{ padding: '1.25rem', marginBottom: '1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
@@ -274,7 +257,7 @@ export default function SettingsPage() {
                     background: 'var(--md-surface-container)', 
                     padding: '0 4px', 
                     fontSize: 'var(--md-label-small)', 
-                    color: 'var(--md-primary)',
+                    color: 'var(--md-on-surface-variant)', fontWeight: 500,
                     zIndex: 1 
                   }}
                 >
@@ -315,7 +298,7 @@ export default function SettingsPage() {
                   background: 'var(--md-surface-container)', 
                   padding: '0 4px', 
                   fontSize: 'var(--md-label-small)', 
-                  color: 'var(--md-primary)',
+                  color: 'var(--md-on-surface-variant)', fontWeight: 500,
                   zIndex: 1 
                 }}
               >
@@ -357,7 +340,7 @@ export default function SettingsPage() {
                   background: 'var(--md-surface-container)', 
                   padding: '0 4px', 
                   fontSize: 'var(--md-label-small)', 
-                  color: 'var(--md-primary)',
+                  color: 'var(--md-on-surface-variant)', fontWeight: 500,
                   zIndex: 1 
                 }}
               >
@@ -392,7 +375,7 @@ export default function SettingsPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   style={{
                     position: 'absolute',
-                    right: 12,
+                    right: 4,
                     top: '50%',
                     transform: 'translateY(-50%)',
                     background: 'none',
@@ -401,6 +384,9 @@ export default function SettingsPage() {
                     color: 'var(--md-on-surface-variant)',
                     display: 'flex',
                     alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 48,
+                    height: 48,
                   }}
                   aria-label={showPassword ? t.settings.hidePassword : t.settings.showPassword}
                 >
@@ -411,14 +397,14 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            {status && (
+            {status && status.type === 'error' && (
               <div
                 style={{
                   padding: '0.75rem',
                   borderRadius: 'var(--md-shape-sm)',
                   marginBottom: '1rem',
-                  background: status.type === 'success' ? 'var(--md-success-container)' : 'var(--md-error-container)',
-                  color: status.type === 'success' ? 'var(--md-on-success-container)' : 'var(--md-on-error-container)',
+                  background: 'var(--md-error-container)',
+                  color: 'var(--md-on-error-container)',
                   fontSize: 'var(--md-body-small)',
                 }}
                 role="alert"
@@ -454,57 +440,8 @@ export default function SettingsPage() {
           </div>
         </section>
 
-        {/* Notifications section */}
-        <section aria-label={t.settings.notifications}>
-          <h2 style={{ fontSize: 'var(--md-title-medium)', fontWeight: 500, color: 'var(--md-on-surface-variant)', margin: '1.25rem 0 0.75rem' }}>
-            {t.settings.notifications}
-          </h2>
-
-          <div className="md-card md-card-elevated animate-in" style={{ padding: '1.25rem', marginBottom: '1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div>
-                <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)', fontWeight: 500 }}>
-                  {t.settings.newGrades}
-                </p>
-                <p style={{ fontSize: 'var(--md-label-small)', color: 'var(--md-on-surface-variant)', marginTop: 4, maxWidth: '80%' }}>
-                  {t.settings.newGradesDesc}
-                </p>
-              </div>
-              <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', position: 'relative' }}>
-                <input 
-                  type="checkbox" 
-                  checked={pushEnabled} 
-                  onChange={handlePushToggle} 
-                  disabled={pushLoading}
-                  style={{ opacity: 0, position: 'absolute', width: 0, height: 0 }} 
-                />
-                <div style={{ 
-                  width: 52, 
-                  height: 32, 
-                  background: pushEnabled ? 'var(--md-primary)' : 'var(--md-surface-variant)', 
-                  borderRadius: 16, 
-                  position: 'relative', 
-                  transition: 'background 0.2s',
-                  border: pushEnabled ? 'none' : '2px solid var(--md-outline)',
-                  boxSizing: 'border-box'
-                }}>
-                  <div style={{
-                    width: pushEnabled ? 24 : 16,
-                    height: pushEnabled ? 24 : 16,
-                    background: pushEnabled ? 'var(--md-on-primary)' : 'var(--md-outline)',
-                    borderRadius: '50%',
-                    position: 'absolute',
-                    top: pushEnabled ? 4 : 6,
-                    left: pushEnabled ? 24 : 6,
-                    transition: 'all 0.2s'
-                  }} />
-                </div>
-              </label>
-            </div>
-          </div>
-        </section>
-
-        {/* Appearance section */}
+                {/* --- 2. Préférences de l'Application --- */}
+{/* Appearance section */}
         <section aria-label={t.settings.appearance}>
           <h2 style={{ fontSize: 'var(--md-title-medium)', fontWeight: 500, color: 'var(--md-on-surface-variant)', margin: '1.25rem 0 0.75rem' }}>
             {t.settings.appearance}
@@ -591,6 +528,84 @@ export default function SettingsPage() {
           </div>
         </section>
 
+        {/* Language section */}
+        <section aria-label={t.settings.language}>
+          <h2 style={{ fontSize: 'var(--md-title-medium)', fontWeight: 500, color: 'var(--md-on-surface-variant)', margin: '1.25rem 0 0.75rem' }}>
+            {t.settings.language}
+          </h2>
+          <div className="md-card md-card-elevated animate-in" style={{ padding: '1.25rem', marginBottom: '1rem' }}>
+            <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)', marginBottom: '0.75rem' }}>
+              {t.settings.languageDesc}
+            </p>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button 
+                className={`md-btn ${lang === 'fr' ? 'md-btn-filled' : 'md-btn-outlined'}`}
+                onClick={() => setLang('fr')}
+                style={{ flex: 1 }}
+              >
+                Français
+              </button>
+              <button 
+                className={`md-btn ${lang === 'en' ? 'md-btn-filled' : 'md-btn-outlined'}`}
+                onClick={() => setLang('en')}
+                style={{ flex: 1 }}
+              >
+                English
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Notifications section */}
+        <section aria-label={t.settings.notifications}>
+          <h2 style={{ fontSize: 'var(--md-title-medium)', fontWeight: 500, color: 'var(--md-on-surface-variant)', margin: '1.25rem 0 0.75rem' }}>
+            {t.settings.notifications}
+          </h2>
+
+          <div className="md-card md-card-elevated animate-in" style={{ padding: '1.25rem', marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)', fontWeight: 500 }}>
+                  {t.settings.newGrades}
+                </p>
+                <p style={{ fontSize: 'var(--md-label-small)', color: 'var(--md-on-surface-variant)', marginTop: 4, maxWidth: '80%' }}>
+                  {t.settings.newGradesDesc}
+                </p>
+              </div>
+              <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', position: 'relative' }}>
+                <input 
+                  type="checkbox" 
+                  checked={pushEnabled} 
+                  onChange={handlePushToggle} 
+                  disabled={pushLoading}
+                  style={{ opacity: 0, position: 'absolute', width: 0, height: 0 }} 
+                />
+                <div style={{ 
+                  width: 52, 
+                  height: 32, 
+                  background: pushEnabled ? 'var(--md-primary)' : 'var(--md-surface-variant)', 
+                  borderRadius: 16, 
+                  position: 'relative', 
+                  transition: 'background 0.2s',
+                  border: pushEnabled ? 'none' : '2px solid var(--md-outline)',
+                  boxSizing: 'border-box'
+                }}>
+                  <div style={{
+                    width: pushEnabled ? 24 : 16,
+                    height: pushEnabled ? 24 : 16,
+                    background: pushEnabled ? 'var(--md-on-primary)' : 'var(--md-outline)',
+                    borderRadius: '50%',
+                    position: 'absolute',
+                    top: pushEnabled ? 4 : 6,
+                    left: pushEnabled ? 24 : 6,
+                    transition: 'all 0.2s'
+                  }} />
+                </div>
+              </label>
+            </div>
+          </div>
+        </section>
+
         {/* Mobile App Install section */}
         {!isStandalone && (
           <section aria-label={t.settings.mobileApp}>
@@ -598,18 +613,18 @@ export default function SettingsPage() {
               {t.settings.mobileApp}
             </h2>
 
-            <div className="md-card md-card-elevated animate-in" style={{ padding: '1.25rem', marginBottom: '1rem', background: 'var(--md-primary-container)', border: '1px solid rgba(103, 80, 164, 0.2)' }}>
+            <div className="md-card md-card-elevated animate-in" style={{ padding: '1.25rem', marginBottom: '1rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
-                <span className="material-symbols-rounded filled" style={{ color: 'var(--md-on-primary-container)', fontSize: 32 }}>install_mobile</span>
+                <span className="material-symbols-rounded filled" style={{ color: 'var(--md-primary)', fontSize: 32 }}>install_mobile</span>
                 <div>
-                  <p style={{ fontSize: 'var(--md-body-large)', color: 'var(--md-on-primary-container)', fontWeight: 600 }}>{t.settings.installApp}</p>
-                  <p style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-primary-container)', opacity: 0.9 }}>
+                  <p style={{ fontSize: 'var(--md-body-large)', color: 'var(--md-on-surface)', fontWeight: 600 }}>{t.settings.installApp}</p>
+                  <p style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)' }}>
                     {t.settings.installDesc}
                   </p>
                 </div>
               </div>
 
-              <div style={{ background: 'var(--md-surface)', padding: '1rem', borderRadius: 'var(--md-shape-sm)' }}>
+              <div style={{ background: 'var(--md-surface-variant)', padding: '1rem', borderRadius: 'var(--md-shape-sm)' }}>
                 {isIOS ? (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)' }}>
@@ -636,20 +651,20 @@ export default function SettingsPage() {
           </section>
         )}
 
-        {/* About section */}
+                {/* --- 3. Informations & Support --- */}
         <section aria-label={t.settings.about}>
           <h2 style={{ fontSize: 'var(--md-title-medium)', fontWeight: 500, color: 'var(--md-on-surface-variant)', margin: '1.25rem 0 0.75rem' }}>
             {t.settings.about}
           </h2>
 
-          <div className="md-card animate-in" style={{ padding: '1rem', marginBottom: '1rem' }}>
+          <div className="animate-in" style={{ marginBottom: '1.5rem' }}>
             {[
               { icon: 'school', label: t.settings.aboutLabels.formation, value: 'INFRES17 — Mines Alès' },
               { icon: 'calendar_today', label: t.settings.aboutLabels.promotion, value: '2024 – 2027' },
               { icon: 'code', label: t.settings.aboutLabels.stack, value: 'Next.js · Prisma · PostgreSQL' },
               { icon: 'security', label: t.settings.aboutLabels.encryption, value: 'AES-256-CBC' },
-            ].map(item => (
-              <div key={item.icon} className="md-list-item" style={{ padding: '0.75rem 0', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            ].map((item, i, arr) => (
+              <div key={item.icon} className="md-list-item" style={{ padding: '0.75rem 0', display: 'flex', gap: '1rem', alignItems: 'center', borderBottom: '1px solid var(--md-outline-variant)' }}>
                 <span className="material-symbols-rounded filled" style={{ color: 'var(--md-on-surface-variant)', fontSize: 24, flexShrink: 0 }}>{item.icon}</span>
                 <div style={{ flex: 1 }}>
                   <p style={{ fontSize: 'var(--md-body-large)', color: 'var(--md-on-surface)', lineHeight: 1.2 }}>{item.value}</p>
@@ -658,15 +673,10 @@ export default function SettingsPage() {
               </div>
             ))}
           </div>
-        </section>
 
-        {/* About / Changelog / GitHub */}
-        <section aria-label={t.settings.about}>
-          <h2 style={{ fontSize: 'var(--md-title-medium)', fontWeight: 500, color: 'var(--md-on-surface-variant)', margin: '1.25rem 0 0.75rem' }}>
-            {t.settings.about}
-          </h2>
           <div className="md-card md-card-elevated animate-in" style={{ padding: '0.5rem', marginBottom: '1.5rem', display: 'flex', flexDirection: 'column' }}>
-            <Link href="/changelog" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem', textDecoration: 'none', color: 'var(--md-on-surface)' }}>
+            <Link href="/changelog" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem', textDecoration: 'none', color: 'var(--md-on-surface)', position: 'relative', overflow: 'hidden' }}>
+              <Ripple />
               <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--md-primary-container)', color: 'var(--md-on-primary-container)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <span className="material-symbols-rounded">update</span>
               </div>
@@ -679,7 +689,8 @@ export default function SettingsPage() {
             
             <div style={{ height: 1, background: 'var(--md-outline-variant)', margin: '0 0.75rem', opacity: 0.5 }} />
             
-            <a href="https://github.com/matteopollet/StudentDash" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem', textDecoration: 'none', color: 'var(--md-on-surface)' }}>
+            <a href="https://github.com/matteopollet/StudentDash" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem', textDecoration: 'none', color: 'var(--md-on-surface)', position: 'relative', overflow: 'hidden' }}>
+              <Ripple />
               <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--md-secondary-container)', color: 'var(--md-on-secondary-container)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <span className="material-symbols-rounded">code</span>
               </div>
@@ -692,96 +703,92 @@ export default function SettingsPage() {
           </div>
         </section>
 
-        {/* Sign out */}
-        <button
-          id="btn-signout"
-          className="md-btn md-btn-outlined"
-          onClick={() => signOut({ callbackUrl: '/login' })}
-          style={{ width: '100%', height: 48, color: 'var(--md-error)', borderColor: 'var(--md-error)', marginBottom: '4rem' }}
-        >
-          <span className="material-symbols-rounded" style={{ fontSize: 18 }}>logout</span>
-          {t.settings.logout}
-        </button>
-
-        <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-          <button 
-            onClick={() => setDeleteStep(1)} 
-            style={{ background: 'none', border: 'none', fontSize: '10px', color: 'var(--md-on-surface-variant)', opacity: 0.2, cursor: 'text' }}
+                {/* --- 4. Zone de Danger --- */}
+        <section aria-label="Danger Zone">
+          <button
+            id="btn-signout"
+            className="md-btn md-btn-outlined"
+            onClick={() => signOut({ callbackUrl: '/login' })}
+            style={{ width: '100%', height: 48, color: 'var(--md-on-surface)', borderColor: 'var(--md-outline)', marginBottom: '2rem', marginTop: '1rem', position: 'relative', overflow: 'hidden' }}
           >
-            {t.settings.deleteData}
+            <Ripple />
+            <span className="material-symbols-rounded" style={{ fontSize: 18 }}>logout</span>
+            {t.settings.logout}
           </button>
-        </div>
+
+          <h2 style={{ fontSize: 'var(--md-title-medium)', fontWeight: 500, color: 'var(--md-error)', margin: '1.25rem 0 0.75rem' }}>
+            Zone de Danger
+          </h2>
+          <div className="md-card md-card-elevated animate-in" style={{ padding: '1.25rem', marginBottom: '4rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface)' }}>
+                <strong>{t.settings.deleteData}</strong>
+              </p>
+              <p style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)', marginBottom: '0.5rem' }}>
+                {lang === 'fr' ? 'Action irréversible. Toutes vos données seront supprimées.' : 'Irreversible action. All your data will be deleted.'}
+              </p>
+              <button 
+                onClick={() => { setDeleteStep(1); setDeleteConfirmText(''); }}
+                className="md-btn"
+                style={{ width: '100%', height: 48, background: 'var(--md-error)', color: 'var(--md-on-error)' }}
+              >
+                <span className="material-symbols-rounded" style={{ fontSize: 18 }}>delete_forever</span>
+                {t.settings.deleteData}
+              </button>
+            </div>
+          </div>
+        </section>
 
         {deleteStep > 0 && (
           <div style={{ position: 'fixed', inset: 0, zIndex: 200, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', backdropFilter: 'blur(2px)' }}>
             <div className="md-card md-card-elevated" style={{ maxWidth: 450, width: '100%', padding: '2rem', background: 'var(--md-surface)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               
-              {deleteStep === 1 && (
-                <>
-                  <span className="material-symbols-rounded filled" style={{ fontSize: 64, color: 'var(--md-error)', marginBottom: '1rem' }}>warning</span>
-                  <h2 style={{ fontSize: 'var(--md-headline-small)', textAlign: 'center', marginBottom: '1rem' }}>
-                    {t.settings.deleteStep1Title}
-                  </h2>
-                  <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface-variant)', textAlign: 'center', marginBottom: '2rem' }}>
-                    {t.settings.deleteStep1Desc}
-                  </p>
-                  <button 
-                    className="md-btn md-btn-filled" 
-                    style={{ width: '100%', height: 56, fontSize: '1.1rem', background: 'var(--md-success)', color: 'var(--md-on-primary)', marginBottom: '1rem' }}
-                    onClick={() => setDeleteStep(0)}
-                  >
-                    {t.settings.deleteStep1Keep}
-                  </button>
-                  <button 
-                    style={{ background: 'none', border: 'none', fontSize: '0.75rem', color: 'var(--md-on-surface-variant)', opacity: 0.6, cursor: 'pointer', textDecoration: 'underline' }}
-                    onClick={() => setDeleteStep(2)}
-                  >
-                    {t.settings.deleteStep1Abandon}
-                  </button>
-                </>
-              )}
+              <span className="material-symbols-rounded filled" style={{ fontSize: 64, color: 'var(--md-error)', marginBottom: '1rem' }}>warning</span>
+              <h2 style={{ fontSize: 'var(--md-headline-small)', textAlign: 'center', marginBottom: '1rem' }}>
+                {t.settings.deleteStep1Title}
+              </h2>
+              <p style={{ fontSize: 'var(--md-body-medium)', color: 'var(--md-on-surface-variant)', textAlign: 'center', marginBottom: '1.5rem' }}>
+                {lang === 'fr' ? 'Pour confirmer, veuillez taper' : 'To confirm, please type'} <strong>{lang === 'fr' ? 'SUPPRIMER' : 'DELETE'}</strong> {lang === 'fr' ? 'ci-dessous.' : 'below.'}
+              </p>
+              
+              <input
+                type="text"
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder={lang === 'fr' ? 'SUPPRIMER' : 'DELETE'}
+                style={{
+                  width: '100%', height: 48, padding: '0 1rem', marginBottom: '1.5rem',
+                  background: 'transparent', border: '1px solid var(--md-outline)', borderRadius: 'var(--md-shape-xs)',
+                  color: 'var(--md-on-surface)', fontFamily: 'var(--font-family)', fontSize: 'var(--md-body-large)',
+                  outline: 'none', textAlign: 'center'
+                }}
+              />
 
-              {deleteStep === 2 && (
-                <>
-                  <span className="material-symbols-rounded" style={{ fontSize: 48, color: 'var(--md-outline)', marginBottom: '1rem' }}>help_center</span>
-                  <h2 style={{ fontSize: 'var(--md-title-large)', textAlign: 'center', marginBottom: '1rem' }}>
-                    {t.settings.deleteStep2Title}
-                  </h2>
-                  <div style={{ alignSelf: 'flex-start', display: 'flex', gap: '0.5rem', marginBottom: '2rem', alignItems: 'flex-start' }}>
-                    <input 
-                      type="checkbox" 
-                      id="confirm-delete" 
-                      checked={deleteCheckbox} 
-                      onChange={(e) => setDeleteCheckbox(e.target.checked)} 
-                      style={{ marginTop: '0.25rem' }}
-                    />
-                    <label htmlFor="confirm-delete" style={{ fontSize: '0.8rem', color: 'var(--md-on-surface-variant)', lineHeight: 1.4 }}>
-                      {t.settings.deleteStep2Confirm}
-                    </label>
-                  </div>
+              <button 
+                className="md-btn md-btn-filled" 
+                style={{ width: '100%', height: 48, background: 'var(--md-error)', color: 'var(--md-on-error)', marginBottom: '1rem', opacity: deleteConfirmText === (lang === 'fr' ? 'SUPPRIMER' : 'DELETE') ? 1 : 0.5, transition: 'opacity 0.2s' }}
+                disabled={deleteConfirmText !== (lang === 'fr' ? 'SUPPRIMER' : 'DELETE')}
+                onClick={handleDeleteData}
+              >
+                {t.settings.deleteData}
+              </button>
 
-                  <button 
-                    className="md-btn md-btn-filled" 
-                    style={{ width: '100%', height: 48, background: 'var(--md-primary)', color: 'var(--md-on-primary)', marginBottom: '1.5rem' }}
-                    onClick={() => setDeleteStep(0)}
-                  >
-                    {t.settings.deleteStep2Cancel}
-                  </button>
-                  
-                  <button 
-                    style={{ background: 'none', border: 'none', fontSize: '0.7rem', color: deleteCheckbox ? 'var(--md-error)' : 'var(--md-outline)', opacity: deleteCheckbox ? 0.8 : 0.3, cursor: deleteCheckbox ? 'pointer' : 'not-allowed' }}
-                    disabled={!deleteCheckbox}
-                    onClick={handleDeleteData}
-                  >
-                    {t.settings.deleteStep2Delete}
-                  </button>
-                </>
-              )}
-
+              <button 
+                style={{ background: 'none', border: 'none', fontSize: '0.85rem', color: 'var(--md-on-surface-variant)', cursor: 'pointer' }}
+                onClick={() => { setDeleteStep(0); setDeleteConfirmText(''); }}
+              >
+                {t.settings.deleteStep2Cancel}
+              </button>
             </div>
           </div>
         )}
       </main>
+
+      {successSnackbar && (
+        <div className="md-snackbar">
+          {successSnackbar}
+        </div>
+      )}
     </>
   )
 }
