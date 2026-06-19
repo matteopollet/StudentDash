@@ -58,6 +58,48 @@ export const changelog: ChangelogRelease[] = [
             en: "Added clear instructions for developers wishing to improve the project and adapt it to other schools."
           }
         ]
+      },
+      {
+        title: "DATA VISUALIZATION",
+        items: [
+          {
+            fr: "Intégration de graphiques interactifs (Recharts) pour visualiser l'évolution de la moyenne générale.",
+            en: "Integrated interactive charts (Recharts) to visualize the evolution of the overall average."
+          },
+          {
+            fr: "Ajout d'une courbe de projection prédictive sur le Simulateur pour anticiper son semestre.",
+            en: "Added a predictive projection curve on the Simulator to anticipate the semester."
+          }
+        ]
+      },
+      {
+        title: "PURPOSEFUL MOTION & UI",
+        items: [
+          {
+            fr: "Intégration de Framer Motion pour des animations fluides respectant le 'Purposeful Motion' du Material Design 3.",
+            en: "Integration of Framer Motion for fluid animations respecting Material Design 3 'Purposeful Motion'."
+          },
+          {
+            fr: "Ajout de transitions de pages (Fade-Through) pour une navigation plus douce et native.",
+            en: "Added page transitions (Fade-Through) for smoother, native-like navigation."
+          },
+          {
+            fr: "Ajout d'indicateurs glissants intelligents sur les sélections d'onglets (Paramètres et Notes).",
+            en: "Added smart sliding indicators on tab selections (Settings and Grades)."
+          },
+          {
+            fr: "Théâtralisation du remplissage des jauges circulaires sur le tableau de bord et le simulateur.",
+            en: "Animated the filling of circular gauges on the dashboard and simulator."
+          },
+          {
+            fr: "Ajout d'un effet 'Ripple' au clic sur les éléments interactifs pour un meilleur retour visuel.",
+            en: "Added a 'Ripple' effect on click for interactive elements for better visual feedback."
+          },
+          {
+            fr: "Harmonisation stricte des couleurs : suppression des couleurs codées en dur pour respecter le thème actif de l'utilisateur.",
+            en: "Strict color harmonization: removed hardcoded colors to fully respect the user's active theme."
+          }
+        ]
       }
     ]
   },
