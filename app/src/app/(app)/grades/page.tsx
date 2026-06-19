@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { useTranslation } from '@/i18n/I18nProvider'
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 
 interface Grade {
   id: string
@@ -125,7 +126,35 @@ function GradesContent() {
         </button>
       </header>
 
-      <main className="page-content">
+      <main className="page-content" style={{ padding: '1rem' }}>
+        
+        {/* Full Interactive Chart */}
+        {!loading && data && Object.keys(data.semesterAverages).length > 1 && (
+          <div className="md-card md-card-elevated animate-in" style={{ marginBottom: '1.5rem', padding: '1.5rem', background: 'var(--md-surface-container)' }}>
+            <p style={{ fontSize: 'var(--md-title-medium)', color: 'var(--md-on-surface-variant)', marginBottom: '1rem' }}>{lang === 'fr' ? 'Évolution globale' : 'Overall evolution'}</p>
+            <div style={{ width: '100%', height: 200 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={Object.keys(data.semesterAverages).sort().filter(s => data.semesterAverages[s] !== null).map(s => ({ name: s, value: Number(data.semesterAverages[s]!.toFixed(2)) }))} margin={{ top: 10, right: 10, left: 10, bottom: 20 }}>
+                  <defs>
+                    <linearGradient id="gradesGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="var(--md-primary)" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="var(--md-primary)" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'var(--md-on-surface)', fontSize: 12 }} dy={10} />
+                  <YAxis hide domain={['dataMin - 0.5', 'dataMax + 0.5']} />
+                  <Tooltip 
+                    contentStyle={{ background: 'var(--md-surface-container-highest)', border: 'none', borderRadius: 'var(--md-shape-sm)', color: 'var(--md-on-surface)', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+                    itemStyle={{ color: 'var(--md-primary)', fontWeight: 'bold' }}
+                    formatter={(value: any) => [`${value} / 20`, lang === 'fr' ? 'Moyenne' : 'Average']}
+                  />
+                  <Area type="monotone" dataKey="value" stroke="var(--md-primary)" strokeWidth={3} fillOpacity={1} fill="url(#gradesGrad)" isAnimationActive={true} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
         {/* Segmented Button for Semester selector */}
         <div style={{ display: 'flex', overflowX: 'auto', paddingBottom: '0.5rem', marginBottom: '1.5rem', width: '100%', WebkitOverflowScrolling: 'touch' }} role="tablist" aria-label="Semestres">
           {loading ? (

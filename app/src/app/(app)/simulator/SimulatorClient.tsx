@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useTranslation } from '@/i18n/I18nProvider'
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 
 type SimulatorData = Record<string, Record<string, {
   name: string,
@@ -163,7 +164,7 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
         </div>
       </header>
 
-      <main className="page-content">
+      <main className="page-content" style={{ paddingBottom: '88px' }}>
         {/* UE selector */}
         <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem', marginBottom: '1.5rem', marginTop: '0.5rem' }}>
           {Object.entries(ues).map(([code, _]) => (
@@ -176,6 +177,46 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
               {code}
             </button>
           ))}
+        </div>
+
+        {/* Predictive Chart */}
+        <div className="md-card md-card-elevated animate-in" style={{ marginBottom: '1.5rem', padding: '1.5rem', background: 'var(--md-surface-container)' }}>
+          <p style={{ fontSize: 'var(--md-title-medium)', color: 'var(--md-on-surface-variant)', marginBottom: '1rem' }}>{lang === 'fr' ? 'Projection sur les semestres' : 'Semester projection'}</p>
+          <div style={{ width: '100%', height: 160 }}>
+            <ResponsiveContainer width="100%" height="100%">
+                <AreaChart 
+                data={semesters.map(sem => {
+                  if (sem === activeSem) {
+                    return { name: sem, value: simulatedUeAvg !== null ? Number(simulatedUeAvg.toFixed(2)) : null }
+                  }
+                  let pts = 0, coef = 0
+                  Object.values(initialData[sem] || {}).forEach(ueGroup => {
+                    ueGroup.subjects.forEach(s => {
+                      if (s.grade !== '') { pts += parseFloat(s.grade) * s.coef; coef += s.coef }
+                    })
+                  })
+                  const avg = coef > 0 ? pts / coef : null
+                  return { name: sem, value: avg !== null ? Number(avg.toFixed(2)) : null }
+                }).filter(d => d.value !== null)} 
+                margin={{ top: 10, right: 10, left: 10, bottom: 20 }}
+              >
+                <defs>
+                  <linearGradient id="simGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="var(--md-primary)" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="var(--md-primary)" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'var(--md-on-surface)', fontSize: 12 }} dy={10} />
+                <YAxis hide domain={['dataMin - 1', 'dataMax + 1']} />
+                <Tooltip 
+                  contentStyle={{ background: 'var(--md-surface-container-highest)', border: 'none', borderRadius: 'var(--md-shape-sm)', color: 'var(--md-on-surface)' }}
+                  itemStyle={{ color: 'var(--md-primary)', fontWeight: 'bold' }}
+                  formatter={(val: any) => [`${val} / 20`, lang === 'fr' ? 'Moyenne' : 'Average']}
+                />
+                <Area type="monotone" dataKey="value" stroke="var(--md-primary)" strokeWidth={3} strokeDasharray="5 5" fillOpacity={1} fill="url(#simGrad)" isAnimationActive={true} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
         {/* 1. Visualisation de l'État Actuel */}
