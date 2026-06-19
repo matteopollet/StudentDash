@@ -13,10 +13,25 @@ interface GradeData {
 }
 
 function ScoreRing({ value, max = 20, size = 100, disableAnimation = false }: { value: number | null; max?: number; size?: number; disableAnimation?: boolean }) {
+  const [animatedValue, setAnimatedValue] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (value !== null && !disableAnimation) {
+      // Un court délai garantit que le rendu initial à 0 est "peint" par le navigateur, 
+      // ce qui permet de déclencher la transition CSS de 0 vers la valeur cible.
+      const timer = setTimeout(() => {
+        setAnimatedValue(value)
+      }, 50)
+      return () => clearTimeout(timer)
+    } else {
+      setAnimatedValue(value)
+    }
+  }, [value, disableAnimation])
+
   const radius = (size - 12) / 2
   const circumference = 2 * Math.PI * radius
-  const progress = value !== null ? (value / max) * circumference : 0
-  const color = value === null ? 'var(--md-outline)' : value >= 14 ? '#4ade80' : value >= 12 ? '#86efac' : value >= 10 ? '#facc15' : 'var(--md-error)'
+  const progress = animatedValue !== null ? (animatedValue / max) * circumference : 0
+  const color = value === null ? 'var(--md-outline)' : 'var(--md-primary)'
 
   return (
     <div className="score-ring" style={{ flexShrink: 0, width: size, height: size, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -40,7 +55,7 @@ function ScoreRing({ value, max = 20, size = 100, disableAnimation = false }: { 
         />
       </svg>
       <div className="score-ring-text" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 1 }}>
-        <div style={{ fontSize: size > 80 ? '1.5rem' : '1rem', fontWeight: 800, color: color, lineHeight: 1 }}>
+        <div style={{ fontSize: size > 80 ? '1.5rem' : '1rem', fontWeight: 800, color: 'var(--md-on-surface)', lineHeight: 1 }}>
           {value !== null ? value.toFixed(2) : '—'}
         </div>
         <div style={{ fontSize: size > 80 ? '0.85rem' : '0.65rem', color: 'var(--md-on-surface-variant)', marginTop: 4, fontWeight: 600 }}>/20</div>
@@ -51,7 +66,7 @@ function ScoreRing({ value, max = 20, size = 100, disableAnimation = false }: { 
 
 function CanvasScoreRing({ value, max = 20, size = 100 }: { value: number | null; max?: number; size?: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const color = value === null ? 'var(--md-outline)' : value >= 14 ? '#4ade80' : value >= 12 ? '#86efac' : value >= 10 ? '#facc15' : 'var(--md-error)'
+  const color = value === null ? 'var(--md-outline)' : 'var(--md-primary)'
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -111,7 +126,7 @@ function CanvasScoreRing({ value, max = 20, size = 100 }: { value: number | null
         style={{ width: size, height: size, position: 'absolute', top: 0, left: 0 }}
       />
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 1 }}>
-        <div style={{ fontSize: size > 80 ? '1.5rem' : '1rem', fontWeight: 800, color: color, lineHeight: 1 }}>
+        <div style={{ fontSize: size > 80 ? '1.5rem' : '1rem', fontWeight: 800, color: 'var(--md-on-surface)', lineHeight: 1 }}>
           {value !== null ? value.toFixed(2) : '—'}
         </div>
         <div style={{ fontSize: size > 80 ? '0.85rem' : '0.65rem', color: 'var(--md-on-surface-variant)', marginTop: 4, fontWeight: 600 }}>/20</div>
@@ -224,19 +239,14 @@ export default function DashboardPage() {
       const isPositive = diff > 0;
       const isNeutral = diff === 0;
       trendIndicator = (
-        <span style={{ 
-          display: 'inline-flex', 
-          alignItems: 'center', 
-          gap: 4, 
+        <span className="md-chip" style={{ 
+          height: 28, 
           fontSize: '0.75rem', 
-          fontWeight: 600, 
-          padding: '0 8px', 
-          height: 28,
-          borderRadius: 'var(--md-shape-sm)', 
+          border: 'none',
           background: isPositive ? 'var(--md-success-container)' : isNeutral ? 'var(--md-surface-variant)' : 'var(--md-error-container)', 
           color: isPositive ? 'var(--md-on-success-container)' : isNeutral ? 'var(--md-on-surface)' : 'var(--md-on-error-container)' 
         }} aria-label={isPositive ? 'En hausse' : isNeutral ? 'Stable' : 'En baisse'}>
-          <span className="material-symbols-rounded" style={{ fontSize: 16 }}>
+          <span className="material-symbols-rounded" style={{ fontSize: 14 }}>
             {isPositive ? 'trending_up' : isNeutral ? 'trending_flat' : 'trending_down'}
           </span>
           {isPositive ? '+' : ''}{diff.toFixed(2)}
