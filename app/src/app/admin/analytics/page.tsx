@@ -101,24 +101,24 @@ export default async function AnalyticsPage() {
       </header>
       
       <main className="page-content" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
-          <div className="md-card md-card-elevated" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.5rem' }}>
-            <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'var(--md-primary-container)', color: 'var(--md-on-primary-container)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span className="material-symbols-rounded" style={{ fontSize: 28 }}>login</span>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div className="md-card md-card-elevated" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem' }}>
+            <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--md-primary-container)', color: 'var(--md-on-primary-container)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <span className="material-symbols-rounded" style={{ fontSize: 24 }}>login</span>
             </div>
-            <div>
-              <p style={{ margin: 0, fontSize: 'var(--md-label-large)', color: 'var(--md-on-surface-variant)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Connexions (Aujourd'hui)</p>
-              <p style={{ margin: 0, fontSize: 'var(--md-display-small)', fontWeight: 600, color: 'var(--md-on-surface)' }}>{todayLogins}</p>
+            <div style={{ overflow: 'hidden' }}>
+              <p style={{ margin: 0, fontSize: 'var(--md-label-medium)', color: 'var(--md-on-surface-variant)', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>Connexions auj.</p>
+              <p style={{ margin: 0, fontSize: 'var(--md-headline-medium)', fontWeight: 600, color: 'var(--md-on-surface)' }}>{todayLogins}</p>
             </div>
           </div>
 
-          <div className="md-card md-card-elevated" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.5rem' }}>
-            <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'var(--md-tertiary-container)', color: 'var(--md-on-tertiary-container)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span className="material-symbols-rounded" style={{ fontSize: 28 }}>group</span>
+          <div className="md-card md-card-elevated" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem' }}>
+            <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--md-tertiary-container)', color: 'var(--md-on-tertiary-container)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <span className="material-symbols-rounded" style={{ fontSize: 24 }}>group</span>
             </div>
-            <div>
-              <p style={{ margin: 0, fontSize: 'var(--md-label-large)', color: 'var(--md-on-surface-variant)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Utilisateurs Actifs (Auj.)</p>
-              <p style={{ margin: 0, fontSize: 'var(--md-display-small)', fontWeight: 600, color: 'var(--md-on-surface)' }}>{activeUsersToday.length}</p>
+            <div style={{ overflow: 'hidden' }}>
+              <p style={{ margin: 0, fontSize: 'var(--md-label-medium)', color: 'var(--md-on-surface-variant)', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>Utilisateurs actifs</p>
+              <p style={{ margin: 0, fontSize: 'var(--md-headline-medium)', fontWeight: 600, color: 'var(--md-on-surface)' }}>{activeUsersToday.length}</p>
             </div>
           </div>
         </div>
@@ -131,9 +131,9 @@ export default async function AnalyticsPage() {
           
           <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             {topPagesRaw.map((page, i) => (
-              <li key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem', background: 'var(--md-surface-container-lowest)', borderRadius: 'var(--md-shape-md)', border: '1px solid var(--md-outline-variant)' }}>
+              <li key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 0', borderBottom: i < topPagesRaw.length - 1 ? '1px solid var(--md-outline-variant)' : 'none' }}>
                 <span style={{ fontSize: 'var(--md-body-large)', color: 'var(--md-on-surface)', fontWeight: 500 }}>{page.path}</span>
-                <span style={{ background: 'var(--md-secondary-container)', color: 'var(--md-on-secondary-container)', padding: '0.25rem 0.75rem', borderRadius: '1rem', fontSize: 'var(--md-label-medium)', fontWeight: 600 }}>
+                <span style={{ background: 'var(--md-secondary-container)', color: 'var(--md-on-secondary-container)', padding: '0.25rem 0.75rem', borderRadius: '1rem', fontSize: 'var(--md-label-medium)', fontWeight: 600, flexShrink: 0 }}>
                   {page._count.path} vues
                 </span>
               </li>
@@ -158,8 +158,8 @@ export default async function AnalyticsPage() {
               {topActiveUsersRaw.map((stat, i) => {
                 const user = topUsersMap.get(stat.userId)
                 return (
-                  <li key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem', background: 'var(--md-surface-container-lowest)', borderRadius: 'var(--md-shape-md)', border: '1px solid var(--md-outline-variant)' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                  <li key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 0', borderBottom: i < topActiveUsersRaw.length - 1 ? '1px solid var(--md-outline-variant)' : 'none' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', paddingRight: '1rem' }}>
                       <span style={{ fontSize: 'var(--md-body-large)', color: 'var(--md-on-surface)', fontWeight: 500, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{user?.name || 'Inconnu'}</span>
                       <span style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{user?.email}</span>
                     </div>
@@ -186,16 +186,16 @@ export default async function AnalyticsPage() {
             
             <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               {recentActiveUsers.map((activity, i) => (
-                <li key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem', background: 'var(--md-surface-container-lowest)', borderRadius: 'var(--md-shape-md)', border: '1px solid var(--md-outline-variant)' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                <li key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 0', borderBottom: i < recentActiveUsers.length - 1 ? '1px solid var(--md-outline-variant)' : 'none' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', paddingRight: '1rem' }}>
                     <span style={{ fontSize: 'var(--md-body-large)', color: 'var(--md-on-surface)', fontWeight: 500, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{activity.user?.name || 'Inconnu'}</span>
                     <span style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{activity.user?.email}</span>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0 }}>
-                    <span style={{ fontSize: 'var(--md-label-small)', color: 'var(--md-on-surface-variant)' }}>
+                    <span style={{ fontSize: 'var(--md-body-small)', color: 'var(--md-on-surface-variant)' }}>
                       {activity.createdAt.toLocaleString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
                     </span>
-                    <span style={{ fontSize: '0.65rem', color: 'var(--md-primary)' }}>
+                    <span style={{ fontSize: 'var(--md-label-medium)', color: 'var(--md-primary)', fontWeight: 500 }}>
                       {activity.path}
                     </span>
                   </div>
