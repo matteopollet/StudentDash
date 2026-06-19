@@ -54,7 +54,7 @@ export default function DocumentsPage() {
       </header>
 
       <main className="page-content">
-        <p style={{ fontSize: 'var(--md-body-large)', color: 'var(--md-on-surface-variant)', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+        <p style={{ fontSize: 'var(--md-body-large)', color: 'var(--md-on-surface-variant)', marginBottom: '2.5rem', lineHeight: 1.5 }}>
           {lang === 'fr' ? 'Retrouvez ici tous les documents administratifs et pédagogiques essentiels de votre scolarité.' : 'Find all the essential administrative and educational documents for your studies here.'}
         </p>
 
@@ -90,7 +90,7 @@ export default function DocumentsPage() {
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="md-btn md-btn-filled"
-                      style={{ height: 32, fontSize: '0.75rem', padding: '0 1rem', background: doc.containerColor, color: doc.onContainerColor }}
+                      style={{ height: 32, fontSize: '0.75rem', padding: '0 1rem', background: 'var(--md-primary-container)', color: 'var(--md-on-primary-container)' }}
                     >
                       <span className="material-symbols-rounded" style={{ fontSize: 16 }}>visibility</span>
                       {lang === 'fr' ? 'Ouvrir' : 'Open'}
