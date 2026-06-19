@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useTheme } from '@/components/ThemeProvider'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Ripple } from '@/components/Ripple'
 import { useTranslation } from '@/i18n/I18nProvider'
 
@@ -452,7 +453,7 @@ export default function SettingsPage() {
               {t.settings.displayMode}
             </p>
             
-            <div style={{ display: 'flex', background: 'var(--md-surface-variant)', borderRadius: '2rem', padding: '4px', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', background: 'var(--md-surface-variant)', borderRadius: '2rem', padding: '4px', marginBottom: '1.5rem', position: 'relative' }}>
               {(['system', 'light', 'dark'] as const).map(m => (
                 <button
                   key={m}
@@ -462,7 +463,7 @@ export default function SettingsPage() {
                     height: 40,
                     borderRadius: '2rem',
                     border: 'none',
-                    background: mode === m ? 'var(--md-surface)' : 'transparent',
+                    background: 'transparent',
                     color: mode === m ? 'var(--md-on-surface)' : 'var(--md-on-surface-variant)',
                     fontWeight: mode === m ? 600 : 500,
                     fontSize: '0.85rem',
@@ -470,11 +471,19 @@ export default function SettingsPage() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: 6,
-                    boxShadow: mode === m ? '0 2px 4px rgba(0,0,0,0.1)' : 'none',
-                    transition: 'all 0.2s',
-                    cursor: 'pointer'
+                    transition: 'color 0.2s',
+                    cursor: 'pointer',
+                    position: 'relative',
+                    zIndex: 1
                   }}
                 >
+                  {mode === m && (
+                    <motion.div
+                      layoutId="theme-active-pill"
+                      style={{ position: 'absolute', inset: 0, background: 'var(--md-surface)', borderRadius: 9999, boxShadow: '0 2px 4px rgba(0,0,0,0.1)', zIndex: -1 }}
+                      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                    />
+                  )}
                   <span className="material-symbols-rounded" style={{ fontSize: 18 }}>
                     {m === 'system' ? 'smartphone' : m === 'light' ? 'light_mode' : 'dark_mode'}
                   </span>
@@ -739,9 +748,23 @@ export default function SettingsPage() {
           </div>
         </section>
 
+        <AnimatePresence>
         {deleteStep > 0 && (
-          <div style={{ position: 'fixed', inset: 0, zIndex: 200, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', backdropFilter: 'blur(2px)' }}>
-            <div className="md-card md-card-elevated" style={{ maxWidth: 450, width: '100%', padding: '2rem', background: 'var(--md-surface)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <motion.div 
+            style={{ position: 'fixed', inset: 0, zIndex: 200, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', backdropFilter: 'blur(2px)' }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <motion.div 
+              className="md-card md-card-elevated" 
+              style={{ maxWidth: 450, width: '100%', padding: '2rem', background: 'var(--md-surface)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+              transition={{ duration: 0.15, ease: 'easeOut' }}
+            >
               
               <span className="material-symbols-rounded filled" style={{ fontSize: 64, color: 'var(--md-error)', marginBottom: '1rem' }}>warning</span>
               <h2 style={{ fontSize: 'var(--md-headline-small)', textAlign: 'center', marginBottom: '1rem' }}>
@@ -779,16 +802,25 @@ export default function SettingsPage() {
               >
                 {t.settings.deleteStep2Cancel}
               </button>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         )}
+        </AnimatePresence>
       </main>
 
+      <AnimatePresence>
       {successSnackbar && (
-        <div className="md-snackbar">
+        <motion.div 
+          className="md-snackbar"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 50 }}
+          transition={{ duration: 0.25, ease: 'easeOut' }}
+        >
           {successSnackbar}
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </>
   )
 }

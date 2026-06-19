@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from '@/i18n/I18nProvider'
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
+import { motion } from 'framer-motion'
 
 type SimulatorData = Record<string, Record<string, {
   name: string,
@@ -244,15 +245,16 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
               
               {/* Progress track */}
               {currentUeAvg !== null && (
-                <path 
+                <motion.path 
                   d="M 10 70 A 60 60 0 0 1 130 70" 
                   fill="none" 
                   stroke={isRealValidated ? "var(--md-primary)" : "var(--md-error)"} 
                   strokeWidth="12" 
                   strokeLinecap="round" 
                   strokeDasharray={gaugeCircumference} 
-                  strokeDashoffset={gaugeCircumference - gaugeProgress} 
-                  style={{ transition: 'stroke-dashoffset 0.8s cubic-bezier(0.2, 0, 0, 1)' }} 
+                  initial={{ strokeDashoffset: gaugeCircumference }}
+                  animate={{ strokeDashoffset: gaugeCircumference - gaugeProgress }} 
+                  transition={{ duration: 0.8, ease: "circOut" }} 
                 />
               )}
             </svg>
@@ -449,7 +451,9 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
       {/* Extended FAB for Calculate */}
       {unlockedMissingCoef > 0 && uniformRequiredGrade <= 20 && (
         <div style={{ position: 'fixed', bottom: '96px', left: 0, right: 0, display: 'flex', justifyContent: 'center', zIndex: 10, pointerEvents: 'none' }}>
-          <button 
+          <motion.button 
+            whileTap={{ scale: 0.96 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
             className="md-btn md-btn-filled" 
             onClick={handleCalculateMinimum}
             style={{ 
@@ -465,7 +469,7 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
           >
             <span className="material-symbols-rounded filled">calculate</span>
             {t.simulator.calculate}
-          </button>
+          </motion.button>
         </div>
       )}
     </>

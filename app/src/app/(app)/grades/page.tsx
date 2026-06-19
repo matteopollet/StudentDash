@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { useTranslation } from '@/i18n/I18nProvider'
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface Grade {
   id: string
@@ -167,7 +168,7 @@ function GradesContent() {
                   role="tab"
                   aria-selected={activeSem === sem}
                   style={{
-                    background: activeSem === sem ? 'var(--md-secondary-container)' : 'transparent',
+                    background: 'transparent',
                     color: activeSem === sem ? 'var(--md-on-secondary-container)' : 'var(--md-on-surface)',
                     border: 'none',
                     borderRight: i < semesters.length - 1 ? '1px solid var(--md-outline)' : 'none',
@@ -178,11 +179,20 @@ function GradesContent() {
                     fontSize: 'var(--md-label-large)',
                     fontWeight: 500,
                     cursor: 'pointer',
-                    transition: 'background-color 200ms'
+                    transition: 'color 200ms',
+                    position: 'relative',
+                    zIndex: 1
                   }}
                   onClick={() => setActiveSem(sem)}
                   id={`tab-${sem}`}
                 >
+                  {activeSem === sem && (
+                    <motion.div
+                      layoutId="grade-active-sem"
+                      style={{ position: 'absolute', inset: 0, background: 'var(--md-secondary-container)', zIndex: -1 }}
+                      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                    />
+                  )}
                   {activeSem === sem && <span className="material-symbols-rounded" style={{ fontSize: 18, marginRight: 8 }}>check</span>}
                   {sem}
                 </button>
@@ -281,8 +291,16 @@ function GradesContent() {
                   </button>
 
                   {/* Subjects list */}
+                  <AnimatePresence>
                   {isExpanded && (
-                    <div id={`ue-${ueCode}`} style={{ borderTop: '1px solid var(--md-outline-variant)' }}>
+                    <motion.div 
+                      id={`ue-${ueCode}`} 
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: 'easeOut' }}
+                      style={{ borderTop: '1px solid var(--md-outline-variant)', overflow: 'hidden' }}
+                    >
                       {subjects.map((grade, j) => (
                         <div
                           key={grade.id}
@@ -309,8 +327,9 @@ function GradesContent() {
                           </span>
                         </div>
                       ))}
-                    </div>
+                    </motion.div>
                   )}
+                  </AnimatePresence>
                 </div>
               )
             })}

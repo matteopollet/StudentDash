@@ -12,25 +12,12 @@ interface GradeData {
   semesterAverages: Record<string, number | null>
 }
 
+import { motion } from 'framer-motion'
+
 function ScoreRing({ value, max = 20, size = 100, disableAnimation = false }: { value: number | null; max?: number; size?: number; disableAnimation?: boolean }) {
-  const [animatedValue, setAnimatedValue] = useState<number | null>(null)
-
-  useEffect(() => {
-    if (value !== null && !disableAnimation) {
-      // Un court délai garantit que le rendu initial à 0 est "peint" par le navigateur, 
-      // ce qui permet de déclencher la transition CSS de 0 vers la valeur cible.
-      const timer = setTimeout(() => {
-        setAnimatedValue(value)
-      }, 50)
-      return () => clearTimeout(timer)
-    } else {
-      setAnimatedValue(value)
-    }
-  }, [value, disableAnimation])
-
   const radius = (size - 12) / 2
   const circumference = 2 * Math.PI * radius
-  const progress = animatedValue !== null ? (animatedValue / max) * circumference : 0
+  const progress = value !== null ? (value / max) * circumference : 0
   const color = value === null ? 'var(--md-outline)' : 'var(--md-primary)'
 
   return (
@@ -42,17 +29,19 @@ function ScoreRing({ value, max = 20, size = 100, disableAnimation = false }: { 
           stroke="var(--md-surface-container-highest)"
           strokeWidth={8}
         />
-        <circle
-          cx={size / 2} cy={size / 2} r={radius}
-          fill="none"
-          stroke={color}
-          strokeWidth={8}
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={circumference - progress}
-          transform={`rotate(-90 ${size / 2} ${size / 2})`}
-          style={{ transition: disableAnimation ? 'none' : 'stroke-dashoffset 800ms var(--md-motion-emphasized)' }}
-        />
+        <g transform={`rotate(-90 ${size / 2} ${size / 2})`}>
+          <motion.circle
+            cx={size / 2} cy={size / 2} r={radius}
+            fill="none"
+            stroke={color}
+            strokeWidth={8}
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            initial={{ strokeDashoffset: circumference }}
+            animate={{ strokeDashoffset: circumference - progress }}
+            transition={{ duration: disableAnimation ? 0 : 0.8, ease: "circOut" }}
+          />
+        </g>
       </svg>
       <div className="score-ring-text" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 1 }}>
         <div style={{ fontSize: size > 80 ? '1.5rem' : '1rem', fontWeight: 800, color: 'var(--md-on-surface)', lineHeight: 1 }}>
