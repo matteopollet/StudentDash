@@ -216,7 +216,7 @@ export default function SettingsPage() {
                   {t.settings.oauthAuth}
                 </p>
               </div>
-              <div className="md-chip" style={{ background: 'var(--md-success-container)', color: 'var(--md-on-success-container)', border: 'none' }}>
+              <div className="md-chip" style={{ background: 'var(--md-primary-container)', color: 'var(--md-on-primary-container)', border: 'none' }}>
                 <span className="material-symbols-rounded filled" style={{ fontSize: 14 }}>check_circle</span>
                 {t.settings.connected}
               </div>
@@ -232,14 +232,14 @@ export default function SettingsPage() {
 
           <div className="md-card md-card-elevated animate-in" style={{ padding: '1.25rem', marginBottom: '1rem' }}>
             {existingId && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', padding: '0.75rem', borderRadius: 'var(--md-shape-sm)', background: 'var(--md-success-container)' }}>
-                <span className="material-symbols-rounded filled" style={{ color: 'var(--md-on-success-container)', fontSize: 18 }}>check_circle</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', padding: '0.75rem', borderRadius: 'var(--md-shape-sm)', background: 'var(--md-primary-container)' }}>
+                <span className="material-symbols-rounded filled" style={{ color: 'var(--md-on-primary-container)', fontSize: 18 }}>check_circle</span>
                 <div>
-                  <p style={{ fontSize: 'var(--md-body-small)', fontWeight: 600, color: 'var(--md-on-success-container)' }}>
+                  <p style={{ fontSize: 'var(--md-body-small)', fontWeight: 600, color: 'var(--md-on-primary-container)' }}>
                     {t.settings.currentId} <code>{existingId}</code>
                   </p>
                   {lastSync && (
-                    <p style={{ fontSize: 'var(--md-label-small)', color: 'var(--md-on-success-container)', opacity: 0.8, marginTop: 2 }}>
+                    <p style={{ fontSize: 'var(--md-label-small)', color: 'var(--md-on-primary-container)', opacity: 0.8, marginTop: 2 }}>
                       {t.settings.lastSyncDate} {lastSync}
                     </p>
                   )}
