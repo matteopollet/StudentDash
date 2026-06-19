@@ -206,7 +206,7 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
                 <path 
                   d="M 10 70 A 60 60 0 0 1 130 70" 
                   fill="none" 
-                  stroke={isRealValidated ? "var(--md-success)" : "var(--md-error)"} 
+                  stroke={isRealValidated ? "var(--md-primary)" : "var(--md-error)"} 
                   strokeWidth="12" 
                   strokeLinecap="round" 
                   strokeDasharray={gaugeCircumference} 
@@ -227,8 +227,8 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
             marginTop: '1rem', 
             padding: '0.5rem 1rem', 
             borderRadius: 'var(--md-shape-full)', 
-            background: currentUeAvg === null ? 'var(--md-surface-container-highest)' : isRealValidated ? 'var(--md-success-container)' : 'var(--md-error-container)',
-            color: currentUeAvg === null ? 'var(--md-on-surface-variant)' : isRealValidated ? 'var(--md-success)' : 'var(--md-error)',
+            background: currentUeAvg === null ? 'var(--md-surface-container-highest)' : isRealValidated ? 'var(--md-primary-container)' : 'var(--md-error-container)',
+            color: currentUeAvg === null ? 'var(--md-on-surface-variant)' : isRealValidated ? 'var(--md-on-primary-container)' : 'var(--md-on-error-container)',
             fontWeight: 700,
             fontSize: 'var(--md-label-large)',
             display: 'flex',
@@ -251,8 +251,8 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
           style={{ 
             marginBottom: '2rem', 
             padding: '1.5rem',
-            background: 'var(--md-primary-container)',
-            color: 'var(--md-on-primary-container)'
+            background: 'var(--md-secondary-container)',
+            color: 'var(--md-on-secondary-container)'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: '1.25rem' }}>
@@ -263,7 +263,7 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
               <p style={{ fontSize: 'var(--md-label-large)', color: 'var(--md-primary)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>
                 {lang === 'fr' ? 'Objectif (Matières restantes)' : 'Target (Remaining subjects)'}
               </p>
-              <p style={{ fontSize: 'var(--md-display-medium)', fontWeight: 700, color: 'var(--md-on-primary-container)', lineHeight: 1 }}>
+              <p style={{ fontSize: 'var(--md-display-medium)', fontWeight: 700, color: 'var(--md-on-secondary-container)', lineHeight: 1 }}>
                 {unlockedMissingCoef > 0 ? (
                   uniformRequiredGrade <= 0 ? (
                     <span style={{ fontSize: 'var(--md-headline-medium)', display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -297,10 +297,10 @@ export default function SimulatorClient({ initialData }: { initialData: Simulato
             gap: '1rem'
           }}>
             <div>
-              <p style={{ fontSize: 'var(--md-label-medium)', color: 'var(--md-on-primary-container)', opacity: 0.8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              <p style={{ fontSize: 'var(--md-label-medium)', color: 'var(--md-on-secondary-container)', opacity: 0.8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 {lang === 'fr' ? 'Moyenne UE simulée' : 'Simulated UE average'}
               </p>
-              <p style={{ fontSize: 'var(--md-title-large)', fontWeight: 700, color: isSimValidated ? 'var(--md-success)' : 'var(--md-on-primary-container)' }}>
+              <p style={{ fontSize: 'var(--md-title-large)', fontWeight: 700, color: 'var(--md-on-secondary-container)' }}>
                 {simulatedUeAvg !== null ? simulatedUeAvg.toFixed(2).replace('.', ',') : '—'} <span style={{ fontSize: 'var(--md-title-medium)', fontWeight: 400, opacity: 0.8 }}>/ 20</span>
               </p>
             </div>
